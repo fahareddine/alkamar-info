@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Détail produit — Alkamar Info</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Page produit ─────────────────────────────────── */
+    .product-page {
+      max-width: 1100px;
+      margin: 32px auto;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    @media (max-width: 768px) {
+      .product-page { grid-template-columns: 1fr; gap: 24px; }
+    }
+
+    /* Galerie */
+    .gallery { display: flex; flex-direction: column; gap: 12px; }
+    .gallery__main {
+      background: #f8fafc;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      aspect-ratio: 4/3;
+    }
+    .gallery__main img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 16px;
+    }
+    .gallery__thumbs {
+      display: flex;
+      gap: 10px;
+    }
+    .gallery__thumb {
+      width: 72px;
+      height: 56px;
+      background: #f8fafc;
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      overflow: hidden;
+      flex-shrink: 0;
+      transition: border-color .15s;
+    }
+    .gallery__thumb.active { border-color: var(--primary); }
+    .gallery__thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
+
+    /* Infos produit */
+    .prod-info {}
+    .prod-brand {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .prod-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+      margin-bottom: 6px;
+    }
+    .prod-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+    }
+    .prod-rating {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+    .prod-rating .stars { color: #f59e0b; font-size: 16px; }
+    .prod-rating .count { font-size: 13px; color: var(--text-muted); }
+
+    .prod-price-block {
+      background: #f0f9ff;
+      border: 1px solid #bae6fd;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 18px;
+    }
+    .prod-price-old {
+      font-size: 13px;
+      color: #94a3b8;
+      text-decoration: line-through;
+      margin-bottom: 2px;
+    }
+    .prod-price-main {
+      font-size: 2.4rem;
+      font-weight: 900;
+      color: var(--primary);
+      line-height: 1;
+    }
+    .prod-price-main span { font-size: 1.2rem; font-weight: 600; }
+    .prod-price-kmf {
+      font-size: 15px;
+      font-weight: 700;
+      color: #059669;
+      margin-top: 4px;
+    }
+    .prod-price-ttc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    .prod-stock {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .prod-stock::before { content: '●'; font-size: 10px; }
+    .prod-stock.in-stock { color: #059669; }
+    .prod-stock.in-stock::before { color: #059669; }
+    .prod-stock.low-stock { color: #d97706; }
+    .prod-stock.low-stock::before { color: #d97706; }
+    .prod-stock.out-stock { color: #dc2626; }
+    .prod-stock.out-stock::before { color: #dc2626; }
+
+    .prod-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .btn-add-cart {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 24px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      font-family: inherit;
+    }
+    .btn-add-cart:hover { background: #162f7a; transform: translateY(-1px); }
+    .btn-add-cart:active { transform: none; }
+    .btn-whatsapp {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: #22c55e;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background .15s;
+      font-family: inherit;
+    }
+    .btn-whatsapp:hover { background: #16a34a; }
+
+    .prod-assurances {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .assurance-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    /* Onglets détail */
+    .detail-tabs {
+      max-width: 1100px;
+      margin: 0 auto 40px;
+      padding: 0 20px;
+    }
+    .detail-tabs__nav {
+      display: flex;
+      border-bottom: 2px solid var(--border);
+      gap: 0;
+      margin-bottom: 24px;
+    }
+    .detail-tab-btn {
+      padding: 12px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: none;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      background: none;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color .15s, border-color .15s;
+    }
+    .detail-tab-btn:hover { color: var(--primary); }
+    .detail-tab-btn.active { color: var(--primary); border-bottom-color: var(--accent); font-weight: 700; }
+
+    .detail-panel { display: none; }
+    .detail-panel.active { display: block; }
+
+    /* Specs table */
+    .specs-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .specs-table tr:nth-child(even) { background: #f8fafc; }
+    .specs-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .specs-table td:first-child { font-weight: 600; color: #334155; width: 220px; }
+
+    /* Features */
+    .features-list {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 10px;
+    }
+    .features-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #14532d;
+    }
+    .features-list li::before { content: '✓'; color: #16a34a; font-weight: 800; flex-shrink: 0; }
+
+    /* Description */
+    .prod-description {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #334155;
+    }
+
+    /* Erreur 404 */
+    .not-found {
+      text-align: center;
+      padding: 80px 20px;
+      color: var(--text-muted);
+    }
+    .not-found h1 { font-size: 2rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; }
+
+    /* Produits similaires */
+    .similar-section {
+      max-width: 1100px;
+      margin: 0 auto 48px;
+      padding: 0 20px;
+    }
+    .similar-section h3 {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 16px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--border);
+    }
+    .similar-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar__inner">
+      <span>📦 Livraison gratuite dès 150 € · Paiement mobile money accepté</span>
+      <div class="topbar__links">
+        <a href="#">Mon compte</a>
+        <a href="#">Mes commandes</a>
+        <a href="#">+269 331 27 22</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">A</div>
+        <span class="logo__text">Alkamar<span>Info</span></span>
+      </a>
+      <div class="search-bar">
+        <select class="search-bar__select"><option>Toutes catégories</option></select>
+        <input class="search-bar__input" type="text" placeholder="Rechercher un produit…" id="searchInput">
+        <button class="search-bar__btn" onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__actions">
+        <a href="index.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Accueil</span>
+        </a>
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Panier</span>
+          <span class="cart-badge">0</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Fil d'Ariane dynamique -->
+  <nav class="breadcrumb" id="breadcrumb">
+    <a href="index.html">Accueil</a>
+    <span class="sep">›</span>
+    <span id="bc-cat">Ordinateurs</span>
+    <span class="sep">›</span>
+    <span id="bc-product">…</span>
+  </nav>
+
+  <!-- Contenu principal -->
+  <div id="product-content">
+    <!-- Rempli par JS -->
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo__icon">A</div>
+          <span class="logo__text">Alkamar<span>Info</span></span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7">Votre boutique informatique aux Comores.<br>Matériel neuf et reconditionné, service local.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Catégories</div>
+        <ul class="footer-links">
+          <li><a href="ordinateurs.html?tab=portables">PC Portables</a></li>
+          <li><a href="ordinateurs.html?tab=bureau">PC de Bureau</a></li>
+          <li><a href="ordinateurs.html?tab=gaming">PC Gaming</a></li>
+          <li><a href="ordinateurs.html?tab=reconditiones">Reconditionnés</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Contact</div>
+        <ul class="footer-links">
+          <li>📞 +269 331 27 22</li>
+          <li>✉️ contact@alkamar-info.com</li>
+          <li>📍 Moroni, Comores</li>
+          <li>⏰ Lun–Sam 8h–19h</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2025 Alkamar Info — Tous droits réservés</div>
+  </footer>
+
+  <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">
+    ✅ Produit ajouté au panier
+  </div>
+
+  <script src="js/products.js"></script>
+  <script>
+    const id = new URLSearchParams(window.location.search).get('id');
+    const p = id && PRODUCTS_BY_ID[id];
+
+    function stars(n) {
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
+    }
+
+    const CAT_LABELS = {
+      portables: 'PC Portables', bureau: 'PC de Bureau', gaming: 'PC Gaming',
+      toutunun: 'Tout-en-un', reconditiones: 'Reconditionnés', minipc: 'Mini PC'
+    };
+
+    if (!p) {
+      document.getElementById('product-content').innerHTML = `
+        <div class="not-found">
+          <h1>Produit introuvable</h1>
+          <p>Ce produit n'existe pas ou a été retiré de la boutique.</p>
+          <a href="ordinateurs.html" class="btn-add-cart" style="display:inline-flex;margin-top:24px;text-decoration:none">← Retour aux ordinateurs</a>
+        </div>`;
+    } else {
+      // Breadcrumb
+      document.title = p.name + ' — Alkamar Info';
+      document.getElementById('bc-cat').innerHTML = `<a href="ordinateurs.html?tab=${p.subcategory}">${CAT_LABELS[p.subcategory] || 'Ordinateurs'}</a>`;
+      document.getElementById('bc-product').textContent = p.name;
+
+      // Galerie
+      const thumbsHTML = (p.gallery || [p.image]).map((src, i) =>
+        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${src}', this)">
+          <img src="${src}" alt="" loading="lazy">
+        </div>`
+      ).join('');
+
+      // Prix barré
+      const oldPriceHTML = p.priceOld
+        ? `<div class="prod-price-old">${p.priceOld},00 €</div>`
+        : '';
+
+      // Badge
+      const badgeHTML = p.badge
+        ? `<span class="badge ${p.badgeClass}" style="font-size:13px;padding:4px 12px">${p.badge}</span>`
+        : '';
+
+      // Stock class map
+      const stockMap = { 'in-stock': 'in-stock', 'low-stock': 'low-stock', 'out-stock': 'out-stock' };
+
+      // Features
+      const featuresHTML = (p.features || []).map(f => `<li>${f}</li>`).join('');
+
+      // Specs
+      const specsHTML = Object.entries(p.specs || {}).map(([k,v]) =>
+        `<tr><td>${k}</td><td>${v}</td></tr>`
+      ).join('');
+
+      // Message WhatsApp
+      const waMsg = encodeURIComponent(`Bonjour, je suis intéressé par le produit : ${p.name} (${p.price} €). Pouvez-vous me donner plus d'informations ?`);
+
+      document.getElementById('product-content').innerHTML = `
+        <!-- Vue principale -->
+        <div class="product-page">
+          <!-- Galerie images -->
+          <div class="gallery">
+            <div class="gallery__main">
+              <img src="${p.image}" alt="${p.name}" id="main-img">
+            </div>
+            ${(p.gallery && p.gallery.length > 1) ? `<div class="gallery__thumbs">${thumbsHTML}</div>` : ''}
+          </div>
+
+          <!-- Informations produit -->
+          <div class="prod-info">
+            ${badgeHTML}
+            <div class="prod-brand" style="margin-top:${p.badge?'10px':'0'}">${p.brand}</div>
+            <h1 class="prod-name">${p.name}</h1>
+            <div class="prod-subtitle">${p.subtitle}</div>
+
+            <div class="prod-rating">
+              <span class="stars">${stars(p.rating)}</span>
+              <span class="count">${p.ratingCount} avis clients</span>
+            </div>
+
+            <div class="prod-price-block">
+              ${oldPriceHTML}
+              <div class="prod-price-main">${p.price}<span>,00 €</span></div>
+              <div class="prod-price-kmf">≈ ${p.priceKmf.toLocaleString('fr-FR')} KMF</div>
+              <div class="prod-price-ttc">Toutes taxes comprises · Livraison selon zone</div>
+            </div>
+
+            <div class="prod-stock ${p.stockClass}">${p.stock}</div>
+
+            <div class="prod-actions">
+              <button class="btn-add-cart" onclick="addToCart()">
+                <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="20" height="20"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                Ajouter au panier
+              </button>
+              <a href="https://wa.me/269331272?text=${waMsg}" target="_blank" class="btn-whatsapp">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.131.558 4.13 1.535 5.862L.057 23.571l5.853-1.535A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.373l-.359-.213-3.476.911.927-3.381-.234-.372A9.818 9.818 0 1112 21.818z"/></svg>
+                Commander via WhatsApp
+              </a>
+            </div>
+
+            <div class="prod-assurances">
+              <div class="assurance-item">🛡️ Garantie ${p.specs && p.specs['Garantie'] ? p.specs['Garantie'] : '24 mois'}</div>
+              <div class="assurance-item">📦 Livraison Comores</div>
+              <div class="assurance-item">💳 Mobile Money accepté</div>
+              <div class="assurance-item">🔄 Retour 14 jours</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Onglets détail -->
+        <div class="detail-tabs">
+          <div class="detail-tabs__nav">
+            <button class="detail-tab-btn active" onclick="showPanel('specs', this)">Fiche technique</button>
+            <button class="detail-tab-btn" onclick="showPanel('features', this)">Points forts</button>
+            <button class="detail-tab-btn" onclick="showPanel('description', this)">Description</button>
+          </div>
+
+          <div class="detail-panel active" id="panel-specs">
+            <table class="specs-table">
+              <tbody>${specsHTML}</tbody>
+            </table>
+          </div>
+
+          <div class="detail-panel" id="panel-features">
+            <ul class="features-list">${featuresHTML}</ul>
+          </div>
+
+          <div class="detail-panel" id="panel-description">
+            <div class="prod-description">${p.description || 'Aucune description disponible.'}</div>
+          </div>
+        </div>`;
+
+      // Produits similaires
+      const similar = PRODUCTS.filter(x => x.subcategory === p.subcategory && x.id !== p.id).slice(0, 4);
+      if (similar.length) {
+        const simCards = similar.map(s => `
+          <a href="produit.html?id=${s.id}" style="text-decoration:none">
+            <div class="product-card" style="cursor:pointer">
+              ${s.badge ? `<div class="card-badges"><span class="badge ${s.badgeClass}">${s.badge}</span></div>` : '<div class="card-badges"></div>'}
+              <div class="card-img">
+                <img src="${s.image}" alt="${s.name}" width="220" height="170" loading="lazy">
+              </div>
+              <div class="card-body">
+                <div class="card-brand">${s.brand}</div>
+                <div class="card-title">${s.name}</div>
+                <div class="card-price-block">
+                  <span class="price-main">${s.price}<span class="price-cents">,00 €</span></span>
+                  <div style="font-size:11px;color:#059669;font-weight:600">≈ ${s.priceKmf.toLocaleString('fr-FR')} KMF</div>
+                </div>
+              </div>
+            </div>
+          </a>`).join('');
+
+        document.getElementById('product-content').insertAdjacentHTML('beforeend', `
+          <div class="similar-section">
+            <h3>Produits similaires</h3>
+            <div class="similar-grid">${simCards}</div>
+          </div>`);
+      }
+    }
+
+    /* ── Galerie ─────────────────────────────────────── */
+    function switchImg(src, thumb) {
+      document.getElementById('main-img').src = src;
+      document.querySelectorAll('.gallery__thumb').forEach(t => t.classList.remove('active'));
+      thumb.classList.add('active');
+    }
+
+    /* ── Onglets détail ──────────────────────────────── */
+    function showPanel(id, btn) {
+      document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.detail-tab-btn').forEach(b => b.classList.remove('active'));
+      document.getElementById('panel-' + id).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    /* ── Panier ──────────────────────────────────────── */
+    let cartCount = 0;
+    function addToCart() {
+      cartCount++;
+      document.querySelector('.cart-badge').textContent = cartCount;
+      const n = document.getElementById('cart-notif');
+      n.style.display = 'flex';
+      setTimeout(() => n.style.display = 'none', 2500);
+    }
+
+    /* ── Recherche ───────────────────────────────────── */
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      if (q) window.location.href = 'index.html?q=' + encodeURIComponent(q);
+    }
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+  </script>
+
+</body>
+</html>

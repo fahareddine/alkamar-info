@@ -94,8 +94,8 @@
       </a>
       <div class="search-bar">
         <select class="search-bar__select"><option>Toutes catégories</option><option selected>Ordinateurs</option></select>
-        <input class="search-bar__input" type="text" placeholder="Rechercher un ordinateur…">
-        <button class="search-bar__btn">
+        <input class="search-bar__input" type="text" placeholder="Rechercher un ordinateur…" id="searchInput">
+        <button class="search-bar__btn" onclick="doSearch()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
         </button>
       </div>
@@ -105,7 +105,7 @@
           <span>Accueil</span>
         </a>
         <a href="#" class="header__action">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           <span>Panier</span>
           <span class="cart-badge">0</span>
         </a>
@@ -123,12 +123,12 @@
   <!-- Onglets sous-catégories -->
   <div class="cat-tabs">
     <div class="cat-tabs__inner">
-      <button class="cat-tab active" onclick="showTab('portables')">💻 PC Portables</button>
-      <button class="cat-tab" onclick="showTab('bureau')">🖥️ PC de Bureau</button>
-      <button class="cat-tab" onclick="showTab('gaming')">🎮 PC Gaming</button>
-      <button class="cat-tab" onclick="showTab('toutunun')">📺 Tout-en-un</button>
-      <button class="cat-tab" onclick="showTab('reconditiones')">♻️ Reconditionnés Grade A</button>
-      <button class="cat-tab" onclick="showTab('minipc')">📦 Mini PC</button>
+      <button class="cat-tab active" onclick="showTab('portables', this)">💻 PC Portables</button>
+      <button class="cat-tab" onclick="showTab('bureau', this)">🖥️ PC de Bureau</button>
+      <button class="cat-tab" onclick="showTab('gaming', this)">🎮 PC Gaming</button>
+      <button class="cat-tab" onclick="showTab('toutunun', this)">📺 Tout-en-un</button>
+      <button class="cat-tab" onclick="showTab('reconditiones', this)">♻️ Reconditionnés Grade A</button>
+      <button class="cat-tab" onclick="showTab('minipc', this)">📦 Mini PC</button>
     </div>
   </div>
 
@@ -143,764 +143,283 @@
     <div class="page-layout" style="grid-template-columns:1fr">
       <div class="products-zone">
         <div class="products-toolbar">
-          <div class="products-toolbar__count"><strong>6</strong> PC Portables disponibles</div>
+          <div class="products-toolbar__count" id="count-portables">Chargement…</div>
           <div class="toolbar-sort">
             <label>Trier :</label>
-            <select><option>Prix croissant</option><option>Prix décroissant</option><option>Meilleures ventes</option></select>
+            <select onchange="sortGrid('portables', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
           </div>
         </div>
-        <div class="products-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-
-          <!-- Lenovo IdeaPad 3 -->
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--deal">Bon prix</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img">
-              <img src="https://placehold.co/220x170/f1f5f9/64748b?text=Lenovo+IdeaPad+3" alt="Lenovo IdeaPad 3" width="220" height="170">
-            </div>
-            <div class="card-body">
-              <div class="card-brand">Lenovo</div>
-              <div class="card-title">IdeaPad 3 15" — Intel Celeron N4020 · 4 Go RAM · 128 Go SSD · HD</div>
-              <div class="card-specs">Écran 15.6" HD · Windows 11 S · USB-C · WiFi 5</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(64)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">249<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 122 200 KMF</div>
-                <div class="price-ttc">Prix TTC</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <!-- HP 15s -->
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--new">Nouveau</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img">
-              <img src="https://placehold.co/220x170/f1f5f9/64748b?text=HP+15s" alt="HP 15s" width="220" height="170">
-            </div>
-            <div class="card-body">
-              <div class="card-brand">HP</div>
-              <div class="card-title">HP 15s-fq5010nf — Intel Core i3-1215U · 8 Go · 256 Go SSD · FHD</div>
-              <div class="card-specs">Écran 15.6" FHD · Windows 11 · Batterie 12h · 1,69 kg</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(112)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">349<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 171 400 KMF</div>
-                <div class="price-ttc">Prix TTC</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <!-- Acer Aspire 5 -->
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--deal">Populaire</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img">
-              <img src="https://placehold.co/220x170/f1f5f9/64748b?text=Acer+Aspire+5" alt="Acer Aspire 5" width="220" height="170">
-            </div>
-            <div class="card-body">
-              <div class="card-brand">Acer</div>
-              <div class="card-title">Aspire 5 A515-57 — Intel Core i5-1235U · 8 Go · 512 Go SSD · FHD IPS</div>
-              <div class="card-specs">Écran 15.6" IPS · Windows 11 · USB-C · Empreinte digitale</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(198)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">449<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 220 500 KMF</div>
-                <div class="price-ttc">Prix TTC</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <!-- Lenovo IdeaPad 5 -->
-          <div class="product-card">
-            <button class="card-wishlist">♡</button>
-            <div class="card-img">
-              <img src="https://placehold.co/220x170/f1f5f9/64748b?text=Lenovo+IdeaPad+5" alt="Lenovo IdeaPad 5" width="220" height="170">
-            </div>
-            <div class="card-body">
-              <div class="card-brand">Lenovo</div>
-              <div class="card-title">IdeaPad 5 14" — AMD Ryzen 5 5500U · 8 Go · 512 Go SSD · FHD IPS</div>
-              <div class="card-specs">Écran 14" IPS · Windows 11 · Autonomie 10h · 1,46 kg</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(156)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">499<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 245 000 KMF</div>
-                <div class="price-ttc">Prix TTC</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <!-- Asus VivoBook 15 -->
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--new">Nouveau</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img">
-              <img src="https://placehold.co/220x170/f1f5f9/64748b?text=Asus+VivoBook+15" alt="Asus VivoBook 15" width="220" height="170">
-            </div>
-            <div class="card-body">
-              <div class="card-brand">Asus</div>
-              <div class="card-title">VivoBook 15 X1502 — Intel Core i5-1235U · 16 Go · 512 Go SSD · FHD</div>
-              <div class="card-specs">Écran 15.6" FHD · Windows 11 · OLED dispo · Clavier rétroéclairé</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(89)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">549<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 269 500 KMF</div>
-                <div class="price-ttc">Prix TTC</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <!-- Dell Inspiron 15 -->
-          <div class="product-card">
-            <button class="card-wishlist">♡</button>
-            <div class="card-img">
-              <img src="https://placehold.co/220x170/f1f5f9/64748b?text=Dell+Inspiron+15" alt="Dell Inspiron 15" width="220" height="170">
-            </div>
-            <div class="card-body">
-              <div class="card-brand">Dell</div>
-              <div class="card-title">Inspiron 15 3520 — Intel Core i5-1235U · 8 Go · 512 Go SSD · FHD</div>
-              <div class="card-specs">Écran 15.6" FHD · Windows 11 · HDMI · Lecteur SD · 1,69 kg</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(143)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">499<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 245 000 KMF</div>
-                <div class="price-ttc">Prix TTC</div>
-              </div>
-              <div class="card-stock low-stock">Plus que 4 !</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-        </div>
+        <div class="products-grid" id="grid-portables" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PC DE BUREAU ═════════════════════════════════════ -->
+  <!-- ══ PC DE BUREAU ══════════════════════════════════════ -->
   <div class="subcat-section" id="tab-bureau">
     <div class="subcat-header">
       <div class="subcat-header__inner">
         <h2>🖥️ PC de Bureau</h2>
-        <p>Ordinateurs fixes pour le bureau, l'entreprise et la maison</p>
+        <p>Ordinateurs fixes de bureau pour le travail, la famille et la créativité</p>
       </div>
     </div>
     <div class="page-layout" style="grid-template-columns:1fr">
       <div class="products-zone">
         <div class="products-toolbar">
-          <div class="products-toolbar__count"><strong>4</strong> PC Bureau disponibles</div>
+          <div class="products-toolbar__count" id="count-bureau">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('bureau', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
         </div>
-        <div class="products-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--deal">Bon prix</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Lenovo+M75q" alt="Lenovo ThinkCentre M75q" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Lenovo</div>
-              <div class="card-title">ThinkCentre M75q Gen 2 — Ryzen 3 PRO 4350GE · 8 Go · 256 Go SSD</div>
-              <div class="card-specs">Compact Tiny · Windows 11 Pro · 4x USB · HDMI + DP · WiFi</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(74)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">389<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 191 000 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=HP+ProDesk+400" alt="HP ProDesk 400" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">HP</div>
-              <div class="card-title">ProDesk 400 G7 MT — Intel Core i5-10500 · 8 Go · 256 Go SSD</div>
-              <div class="card-specs">Tour Micro · Windows 11 Pro · DVD · 6x USB · VGA + DP</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(52)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">449<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 220 500 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--new">Nouveau</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Dell+OptiPlex" alt="Dell OptiPlex 3080" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Dell</div>
-              <div class="card-title">OptiPlex 3090 MT — Intel Core i5-10505 · 16 Go · 512 Go SSD</div>
-              <div class="card-specs">Tour · Windows 11 Pro · HDMI + DP · USB-C · Extensible</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(38)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">549<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 269 500 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Asus+ExpertCenter" alt="Asus ExpertCenter" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Asus</div>
-              <div class="card-title">ExpertCenter D500TC — Intel Core i7-10700 · 16 Go · 512 Go SSD</div>
-              <div class="card-specs">Tour · Windows 11 Pro · HDMI · DP · 8x USB · Extensible</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(29)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">649<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 318 600 KMF</div>
-              </div>
-              <div class="card-stock low-stock">Plus que 2 !</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-        </div>
+        <div class="products-grid" id="grid-bureau" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
       </div>
     </div>
   </div>
 
-  <!-- ══ PC GAMING ════════════════════════════════════════ -->
+  <!-- ══ PC GAMING ══════════════════════════════════════ -->
   <div class="subcat-section" id="tab-gaming">
-    <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#7c3aed 100%)">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #7f1d1d 100%);">
       <div class="subcat-header__inner">
         <h2>🎮 PC Gaming</h2>
-        <p>Portables gaming haute performance — pour jouer sans compromis</p>
+        <p>Ordinateurs portables gaming — puissance maximale pour jouer partout</p>
       </div>
     </div>
     <div class="page-layout" style="grid-template-columns:1fr">
       <div class="products-zone">
         <div class="products-toolbar">
-          <div class="products-toolbar__count"><strong>4</strong> PC Gaming disponibles</div>
+          <div class="products-toolbar__count" id="count-gaming">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('gaming', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
         </div>
-        <div class="products-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--deal">Bon prix</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Lenovo+Gaming+3" alt="Lenovo IdeaPad Gaming 3" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Lenovo</div>
-              <div class="card-title">IdeaPad Gaming 3 — Ryzen 5 5600H · RTX 3050 · 8 Go · 512 Go SSD</div>
-              <div class="card-specs">15.6" FHD 120Hz · Windows 11 · HDMI · USB-C · 2,2 kg</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(187)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">699<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 343 200 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--new">Nouveau</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Acer+Nitro+5" alt="Acer Nitro 5" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Acer</div>
-              <div class="card-title">Nitro 5 AN515 — Intel Core i5-12500H · RTX 3050 · 8 Go · 512 Go SSD</div>
-              <div class="card-specs">15.6" FHD 144Hz · Windows 11 · DualFan · USB-C · Rétroéclairé</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(234)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">749<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 367 800 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--promo">Top vente</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Asus+TUF+A15" alt="Asus TUF Gaming A15" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Asus</div>
-              <div class="card-title">TUF Gaming A15 — Ryzen 7 7745HX · RTX 4060 · 16 Go · 512 Go SSD</div>
-              <div class="card-specs">15.6" FHD 144Hz · Windows 11 · MUX Switch · USB-C · 2,2 kg</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(312)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">899<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 441 400 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=MSI+Thin+GF63" alt="MSI Thin GF63" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">MSI</div>
-              <div class="card-title">Thin GF63 12UC — Intel Core i5-12450H · RTX 3050 · 8 Go · 512 Go SSD</div>
-              <div class="card-specs">15.6" FHD 144Hz · Windows 11 · Design fin 1,86 kg</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(98)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">729<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 357 900 KMF</div>
-              </div>
-              <div class="card-stock low-stock">Plus que 3 !</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-        </div>
+        <div class="products-grid" id="grid-gaming" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
       </div>
     </div>
   </div>
 
-  <!-- ══ TOUT-EN-UN ═══════════════════════════════════════ -->
+  <!-- ══ TOUT-EN-UN ══════════════════════════════════════ -->
   <div class="subcat-section" id="tab-toutunun">
     <div class="subcat-header">
       <div class="subcat-header__inner">
-        <h2>📺 PC Tout-en-un</h2>
-        <p>Ordinateurs intégrés dans l'écran — zéro encombrement, design épuré</p>
-      </div>
-    </div>
-    <div class="page-layout" style="grid-template-columns:1fr">
-      <div class="products-zone">
-        <div class="products-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--new">Nouveau</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=HP+AIO+24" alt="HP All-in-One 24" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">HP</div>
-              <div class="card-title">All-in-One 24-cb1025nf — Intel Core i5-1235U · 8 Go · 512 Go SSD · 23.8" FHD</div>
-              <div class="card-specs">Écran IPS 23.8" · Webcam HD · Windows 11 · WiFi 6 · Bluetooth</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(67)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">699<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 343 200 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Lenovo+AIO+27" alt="Lenovo IdeaCentre AIO 27" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Lenovo</div>
-              <div class="card-title">IdeaCentre AIO 3 27" — AMD Ryzen 5 5500U · 8 Go · 512 Go SSD · FHD</div>
-              <div class="card-specs">Grand écran 27" FHD · Webcam pop-up · Windows 11 · Clavier + souris inclus</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(44)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">849<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 416 900 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ══ RECONDITIONNÉS ════════════════════════════════════ -->
-  <div class="subcat-section" id="tab-reconditiones">
-    <div class="subcat-header" style="background:linear-gradient(135deg,#064e3b 0%,#065f46 100%)">
-      <div class="subcat-header__inner">
-        <h2>♻️ Reconditionnés Grade A</h2>
-        <p>PC portables testés, nettoyés, garantis 6 mois — jusqu'à 60% moins cher que le neuf</p>
+        <h2>📺 Tout-en-un (AIO)</h2>
+        <p>Ordinateurs tout-en-un — élégance et performance sans encombrement</p>
       </div>
     </div>
     <div class="page-layout" style="grid-template-columns:1fr">
       <div class="products-zone">
         <div class="products-toolbar">
-          <div class="products-toolbar__count"><strong>5</strong> reconditionnés Grade A disponibles</div>
+          <div class="products-toolbar__count" id="count-toutunun">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('toutunun', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
         </div>
-        <div class="products-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--reco">Grade A</span><span class="badge badge--deal">-55%</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=ThinkPad+T470" alt="Lenovo ThinkPad T470" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Lenovo</div>
-              <div class="card-title">ThinkPad T470 — Intel Core i5-7200U · 8 Go · 256 Go SSD · 14" FHD</div>
-              <div class="card-specs">Clavier rétroéclairé · USB-C · HDMI · Autonomie 8h · 1,68 kg</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(89)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">219<span class="price-cents">,00 €</span></span>
-                <span class="price-old">489 €</span>
-                <div class="price-kmf">≈ 107 500 KMF</div>
-                <div class="price-eco">♻️ Garanti 6 mois</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--reco">Grade A</span><span class="badge badge--deal">-52%</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=HP+EliteBook+840" alt="HP EliteBook 840 G3" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">HP</div>
-              <div class="card-title">EliteBook 840 G3 — Intel Core i5-6300U · 8 Go · 256 Go SSD · 14" FHD</div>
-              <div class="card-specs">Lecteur d'empreinte · USB-C · HDMI · WiFi · Aluminium brossé</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(67)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">199<span class="price-cents">,00 €</span></span>
-                <span class="price-old">419 €</span>
-                <div class="price-kmf">≈ 97 700 KMF</div>
-                <div class="price-eco">♻️ Garanti 6 mois</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--reco">Grade A</span><span class="badge badge--promo">-54%</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Dell+Latitude+5490" alt="Dell Latitude 5490" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Dell</div>
-              <div class="card-title">Latitude 5490 — Intel Core i5-8250U · 16 Go · 512 Go SSD · 14" FHD</div>
-              <div class="card-specs">16 Go RAM · SSD 512 Go · USB-C · HDMI · Dock compatible</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(112)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">289<span class="price-cents">,00 €</span></span>
-                <span class="price-old">629 €</span>
-                <div class="price-kmf">≈ 141 900 KMF</div>
-                <div class="price-eco">♻️ Garanti 6 mois</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--reco">Grade A</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=ThinkPad+T480s" alt="Lenovo ThinkPad T480s" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Lenovo</div>
-              <div class="card-title">ThinkPad T480s — Intel Core i5-8250U · 8 Go · 256 Go SSD · 14" FHD</div>
-              <div class="card-specs">Ultra-léger 1,65 kg · USB-C · HDMI · Autonomie 12h</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(145)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">320<span class="price-cents">,00 €</span></span>
-                <span class="price-old">699 €</span>
-                <div class="price-kmf">≈ 157 100 KMF</div>
-                <div class="price-eco">♻️ Garanti 6 mois</div>
-              </div>
-              <div class="card-stock low-stock">Plus que 2 !</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--reco">Grade A</span><span class="badge badge--deal">-58%</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=HP+EliteBook+850" alt="HP EliteBook 850 G5" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">HP</div>
-              <div class="card-title">EliteBook 850 G5 — Intel Core i7-8550U · 16 Go · 512 Go SSD · 15.6" FHD</div>
-              <div class="card-specs">Grand écran 15.6" · 16 Go RAM · USB-C · HDMI · Lecteur empreinte</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(78)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">369<span class="price-cents">,00 €</span></span>
-                <span class="price-old">879 €</span>
-                <div class="price-kmf">≈ 181 200 KMF</div>
-                <div class="price-eco">♻️ Garanti 6 mois</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-        </div>
+        <div class="products-grid" id="grid-toutunun" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
       </div>
     </div>
   </div>
 
-  <!-- ══ MINI PC ═══════════════════════════════════════════ -->
-  <div class="subcat-section" id="tab-minipc">
-    <div class="subcat-header">
+  <!-- ══ RECONDITIONNÉS ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-reconditiones">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);">
       <div class="subcat-header__inner">
-        <h2>📦 Mini PC</h2>
-        <p>PC compacts et silencieux — idéal pour bureau, salon ou serveur local</p>
+        <h2>♻️ Ordinateurs Reconditionnés Grade A</h2>
+        <p>Ordinateurs reconditionnés certifiés — jusqu'à -50% sur des machines pro</p>
       </div>
     </div>
     <div class="page-layout" style="grid-template-columns:1fr">
       <div class="products-zone">
-        <div class="products-grid" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))">
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--deal">Meilleure vente</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Beelink+Mini+S12" alt="Beelink Mini S12 Pro" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Beelink</div>
-              <div class="card-title">Mini S12 Pro — Intel N100 · 8 Go · 256 Go SSD · WiFi 6 · BT 5.2</div>
-              <div class="card-specs">2x HDMI 4K · 4x USB · LAN Gigabit · Silencieux · Windows 11</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(421)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">189<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 92 800 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-reconditiones">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('reconditiones', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
           </div>
-
-          <div class="product-card">
-            <div class="card-badges"><span class="badge badge--new">Nouveau</span></div>
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=GMKtec+NucBox" alt="GMKtec NucBox G3" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">GMKtec</div>
-              <div class="card-title">NucBox G3 — Intel N97 · 8 Go · 512 Go SSD · WiFi 6 · Windows 11</div>
-              <div class="card-specs">2x HDMI · USB-C · 4x USB · LAN 1G · Très compact 0,4L</div>
-              <div class="card-rating"><span class="stars">★★★★☆</span><span class="rating-count">(134)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">219<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 107 500 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
-          <div class="product-card">
-            <button class="card-wishlist">♡</button>
-            <div class="card-img"><img src="https://placehold.co/220x170/f1f5f9/64748b?text=Asus+NUC+14" alt="Asus NUC 14 Pro" width="220" height="170"></div>
-            <div class="card-body">
-              <div class="card-brand">Asus</div>
-              <div class="card-title">NUC 14 Pro+ — Intel Core Ultra 5 125H · Sans RAM/SSD (configurable)</div>
-              <div class="card-specs">Thunderbolt 4 · HDMI 2.1 · WiFi 6E · Bluetooth 5.3 · Ultra compact</div>
-              <div class="card-rating"><span class="stars">★★★★★</span><span class="rating-count">(56)</span></div>
-              <div class="card-price-block">
-                <span class="price-main">499<span class="price-cents">,00 €</span></span>
-                <div class="price-kmf">≈ 245 000 KMF</div>
-              </div>
-              <div class="card-stock in-stock">En stock</div>
-            </div>
-            <div class="card-footer">
-              <button class="btn-cart" onclick="addToCart(this)">
-                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                Ajouter au panier
-              </button>
-              <a href="#" class="btn-detail">Voir le détail</a>
-            </div>
-          </div>
-
         </div>
+        <div class="products-grid" id="grid-reconditiones" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
       </div>
     </div>
   </div>
 
-  <!-- Réassurance -->
-  <div class="reassurance">
-    <div class="reassurance__inner">
-      <div class="reassurance-item"><div class="reassurance-item__icon">🚚</div><div><div class="reassurance-item__title">Livraison rapide</div><div class="reassurance-item__text">Expédition sous 24h · Gratuit dès 150 €</div></div></div>
-      <div class="reassurance-item"><div class="reassurance-item__icon">🛡️</div><div><div class="reassurance-item__title">Garantie 6 à 24 mois</div><div class="reassurance-item__text">Reconditionnés testés et certifiés Grade A</div></div></div>
-      <div class="reassurance-item"><div class="reassurance-item__icon">🔒</div><div><div class="reassurance-item__title">Paiement sécurisé</div><div class="reassurance-item__text">CB, mobile money, virement</div></div></div>
-      <div class="reassurance-item"><div class="reassurance-item__icon">↩️</div><div><div class="reassurance-item__title">Retour 14 jours</div><div class="reassurance-item__text">Satisfait ou remboursé</div></div></div>
+  <!-- ══ MINI PC ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-minipc">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);">
+      <div class="subcat-header__inner">
+        <h2>📦 Mini PC</h2>
+        <p>Mini PC compacts — puissants, silencieux, idéals pour le bureau ou le salon</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-minipc">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('minipc', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid" id="grid-minipc" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+      </div>
     </div>
   </div>
 
+  <!-- Footer -->
   <footer class="footer">
-    <div class="footer__inner" style="grid-template-columns:1fr 1fr 1fr">
-      <div><div class="footer-brand">Alkamar<span>Info</span></div><p class="footer-desc">Votre boutique informatique — neuf &amp; reconditionné.</p></div>
-      <div><div class="footer-col__title">Ordinateurs</div><div class="footer-col__links"><a href="#">PC Portables</a><a href="#">PC de Bureau</a><a href="#">PC Gaming</a><a href="#">Tout-en-un</a><a href="#">Reconditionnés</a><a href="#">Mini PC</a></div></div>
-      <div><div class="footer-col__title">Contact</div><div class="footer-col__links"><a href="tel:+269331272">+269 331 27 22</a><a href="mailto:contact@alkamar-info.com">contact@alkamar-info.com</a><a href="index.html">Retour à l'accueil</a></div></div>
+    <div class="footer__inner">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo__icon">A</div>
+          <span class="logo__text">Alkamar<span>Info</span></span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7">Votre boutique informatique aux Comores.<br>Matériel neuf et reconditionné, service local.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Catégories</div>
+        <ul class="footer-links">
+          <li><a href="ordinateurs.html?tab=portables">PC Portables</a></li>
+          <li><a href="ordinateurs.html?tab=bureau">PC de Bureau</a></li>
+          <li><a href="ordinateurs.html?tab=gaming">PC Gaming</a></li>
+          <li><a href="ordinateurs.html?tab=reconditiones">Reconditionnés</a></li>
+          <li><a href="ordinateurs.html?tab=minipc">Mini PC</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Contact</div>
+        <ul class="footer-links">
+          <li>📞 +269 331 27 22</li>
+          <li>✉️ contact@alkamar-info.com</li>
+          <li>📍 Moroni, Comores</li>
+          <li>⏰ Lun–Sam 8h–19h</li>
+        </ul>
+      </div>
     </div>
-    <div class="footer__bottom"><span>© 2026 Alkamar Info</span></div>
+    <div class="footer__bottom">© 2025 Alkamar Info — Tous droits réservés</div>
   </footer>
 
   <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">
     ✅ Produit ajouté au panier
   </div>
 
+  <script src="js/products.js"></script>
   <script>
-    // Ouvrir l'onglet depuis l'URL (?tab=gaming)
-    const urlTab = new URLSearchParams(window.location.search).get('tab');
-    if (urlTab) {
-      document.querySelectorAll('.subcat-section').forEach(s => s.classList.remove('active'));
-      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
-      const sec = document.getElementById('tab-' + urlTab);
-      if (sec) {
-        sec.classList.add('active');
-        const tabs = document.querySelectorAll('.cat-tab');
-        const map = { portables:0, bureau:1, gaming:2, toutunun:3, reconditiones:4, minipc:5 };
-        if (map[urlTab] !== undefined) tabs[map[urlTab]].classList.add('active');
-      }
+    /* ── Rendu des cartes produits ─────────────────────── */
+    function stars(n) {
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
     }
 
-    function showTab(id) {
+    function productCard(p) {
+      const badge = p.badge
+        ? `<div class="card-badges"><span class="badge ${p.badgeClass}">${p.badge}</span></div>`
+        : '<div class="card-badges"></div>';
+      const oldPrice = p.priceOld
+        ? `<span class="price-old">${p.priceOld},00 €</span>`
+        : '';
+      return `
+        <div class="product-card">
+          ${badge}
+          <button class="card-wishlist" onclick="toggleWish(this)">♡</button>
+          <div class="card-img">
+            <img src="${p.image}" alt="${p.name}" width="220" height="170" loading="lazy">
+          </div>
+          <div class="card-body">
+            <div class="card-brand">${p.brand}</div>
+            <div class="card-title">${p.name} — ${p.subtitle}</div>
+            <div class="card-rating">
+              <span class="stars">${stars(p.rating)}</span>
+              <span class="rating-count">(${p.ratingCount})</span>
+            </div>
+            <div class="card-price-block">
+              ${oldPrice}
+              <span class="price-main">${p.price}<span class="price-cents">,00 €</span></span>
+              <div class="price-kmf">≈ ${p.priceKmf.toLocaleString('fr-FR')} KMF</div>
+              <div class="price-ttc">Prix TTC</div>
+            </div>
+            <div class="card-stock ${p.stockClass}">${p.stock}</div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-cart" onclick="addToCart(this, '${p.id}')">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              Ajouter au panier
+            </button>
+            <a href="produit.html?id=${p.id}" class="btn-detail">Voir le détail</a>
+          </div>
+        </div>`;
+    }
+
+    /* État des grilles (pour tri) */
+    const gridsState = {};
+
+    function renderGrid(subcategory) {
+      const list = gridsState[subcategory] || PRODUCTS.filter(p => p.subcategory === subcategory);
+      gridsState[subcategory] = list;
+      const grid = document.getElementById('grid-' + subcategory);
+      const count = document.getElementById('count-' + subcategory);
+      if (!grid) return;
+      grid.innerHTML = list.map(productCard).join('');
+      if (count) count.innerHTML = `<strong>${list.length}</strong> produit${list.length > 1 ? 's' : ''} disponible${list.length > 1 ? 's' : ''}`;
+    }
+
+    function sortGrid(subcategory, mode) {
+      let list = PRODUCTS.filter(p => p.subcategory === subcategory);
+      if (mode === 'price-asc')  list.sort((a,b) => a.price - b.price);
+      if (mode === 'price-desc') list.sort((a,b) => b.price - a.price);
+      if (mode === 'rating')     list.sort((a,b) => b.rating - a.rating || b.ratingCount - a.ratingCount);
+      gridsState[subcategory] = list;
+      renderGrid(subcategory);
+    }
+
+    /* Initialisation : rendre tous les onglets */
+    ['portables','bureau','gaming','toutunun','reconditiones','minipc'].forEach(renderGrid);
+
+    /* ── Navigation onglets ────────────────────────────── */
+    function showTab(id, btn) {
       document.querySelectorAll('.subcat-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
       document.getElementById('tab-' + id).classList.add('active');
-      event.currentTarget.classList.add('active');
+      btn.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    /* Ouvrir l'onglet depuis l'URL (?tab=gaming) */
+    const urlTab = new URLSearchParams(window.location.search).get('tab');
+    if (urlTab) {
+      const tabs = document.querySelectorAll('.cat-tab');
+      const map = { portables:0, bureau:1, gaming:2, toutunun:3, reconditiones:4, minipc:5 };
+      document.querySelectorAll('.subcat-section').forEach(s => s.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
+      const sec = document.getElementById('tab-' + urlTab);
+      if (sec) sec.classList.add('active');
+      if (map[urlTab] !== undefined) tabs[map[urlTab]].classList.add('active');
+    }
+
+    /* ── Panier ──────────────────────────────────────── */
     let cartCount = 0;
-    function addToCart(btn) {
+    function addToCart(btn, id) {
       cartCount++;
       document.querySelector('.cart-badge').textContent = cartCount;
       const n = document.getElementById('cart-notif');
@@ -908,12 +427,22 @@
       setTimeout(() => n.style.display = 'none', 2500);
     }
 
-    document.querySelectorAll('.card-wishlist').forEach(btn => {
-      btn.addEventListener('click', function() {
-        this.textContent = this.textContent === '♡' ? '♥' : '♡';
-        this.style.color = this.textContent === '♥' ? '#ef4444' : '';
-        this.style.borderColor = this.textContent === '♥' ? '#ef4444' : '';
-      });
+    /* ── Wishlist ────────────────────────────────────── */
+    function toggleWish(btn) {
+      const liked = btn.textContent === '♥';
+      btn.textContent = liked ? '♡' : '♥';
+      btn.style.color = liked ? '' : '#ef4444';
+      btn.style.borderColor = liked ? '' : '#ef4444';
+    }
+
+    /* ── Recherche ───────────────────────────────────── */
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!q) return;
+      window.location.href = 'index.html?q=' + encodeURIComponent(q);
+    }
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
     });
   </script>
 
