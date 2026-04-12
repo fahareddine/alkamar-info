@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Commandes — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header"><h1>Commandes</h1></div>
+      <div class="filters-bar">
+        <select id="filter-status" class="form-control">
+          <option value="">Tous les statuts</option>
+          <option value="pending">En attente</option>
+          <option value="confirmed">Confirmée</option>
+          <option value="shipped">Expédiée</option>
+          <option value="delivered">Livrée</option>
+          <option value="cancelled">Annulée</option>
+        </select>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>N° commande</th><th>Client</th><th>Total EUR</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="orders-body"><tr><td colspan="6" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/orders-list.js"></script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clients — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header"><h1>Clients</h1></div>
+      <div class="filters-bar">
+        <input type="text" id="search" class="form-control" placeholder="Nom, email, téléphone...">
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Ville</th><th>Inscrit le</th></tr></thead>
+          <tbody id="customers-body"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/customers.js"></script>
+</body>
+</html>
