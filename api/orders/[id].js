@@ -30,27 +30,31 @@ module.exports = async function handler(req, res) {
       .select('status')
       .eq('id', id)
       .single();
-    if (fetchError) return res.status(404).json({ error: 'Commande introuvable' });
+    if (fetchError) {
+      if (fetchError.code === 'PGRST116') return res.status(404).json({ error: 'Commande introuvable' });
+      return res.status(500).json({ error: fetchError.message });
+    }
     const previousStatus = existing.status;
 
     const { data, error } = await supabase
       .from('orders')
       .update({ ...req.body, updated_at: new Date().toISOString() })
       .eq('id', id)
-      .select()
+      .select('*, customer_id, total_eur, total_kmf, discount_eur, discount_kmf')
       .single();
     if (error) return res.status(500).json({ error: error.message });
 
     // Auto-actions on confirmation
     if (req.body.status === 'confirmed' && previousStatus !== 'confirmed') {
       // Décrémenter le stock pour chaque article
-      const { data: items } = await supabase
+      const { data: items, error: itemsError } = await supabase
         .from('order_items')
         .select('product_id, quantity')
         .eq('order_id', id);
+      if (itemsError) console.error('[order_items] fetch failed:', itemsError.message);
 
       for (const item of (items || [])) {
-        await supabase.from('stock_movements').insert({
+        const { error: smError } = await supabase.from('stock_movements').insert({
           product_id: item.product_id,
           type: 'out',
           quantity: item.quantity,
@@ -58,24 +62,22 @@ module.exports = async function handler(req, res) {
           reference_id: id,
           note: `Commande confirmée #${id.slice(0, 8)}`
         });
+        if (smError) console.error('[stock_movements] insert failed for product', item.product_id, smError.message);
       }
 
       // Créer la facture automatiquement
-      const { data: freshOrder } = await supabase
-        .from('orders')
-        .select('customer_id, total_eur, total_kmf, discount_eur, discount_kmf')
-        .eq('id', id)
-        .single();
-
-      if (freshOrder) {
+      if (data && data.customer_id) {
         const { error: invError } = await supabase.from('invoices').insert({
           order_id: id,
-          customer_id: freshOrder.customer_id,
-          total_eur: freshOrder.total_eur,
-          total_kmf: freshOrder.total_kmf,
-          discount_eur: freshOrder.discount_eur || 0
+          customer_id: data.customer_id,
+          total_eur: data.total_eur,
+          total_kmf: data.total_kmf,
+          discount_eur: data.discount_eur || 0,
+          discount_kmf: data.discount_kmf || 0
         });
         if (invError) console.error('[invoices] auto-create failed:', invError.message);
+      } else {
+        console.error('[invoices] skipped: missing customer_id for order', id);
       }
 
       // Log admin
