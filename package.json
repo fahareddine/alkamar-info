@@ -1,0 +1,10 @@
+{
+  "name": "alkamar-info",
+  "version": "1.0.0",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
+  },
+  "devDependencies": {
+    "dotenv": "^16.0.0"
+  }
+}
