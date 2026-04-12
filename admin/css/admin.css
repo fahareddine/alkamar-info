@@ -96,3 +96,87 @@ a:hover { text-decoration: underline; }
 .filters-bar .form-control { width: auto; flex: 1; min-width: 180px; }
 
 .prod-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 6px; background: #334155; }
+
+/* =====================
+   PRODUCT LAYOUT 2-COL
+   ===================== */
+.product-layout { display: grid; grid-template-columns: 1fr 340px; gap: 24px; align-items: start; }
+.product-col-side { display: flex; flex-direction: column; gap: 16px; }
+@media (max-width: 900px) { .product-layout { grid-template-columns: 1fr; } }
+
+/* =====================
+   GALLERY
+   ===================== */
+.gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.gallery-item { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; background: var(--admin-bg); border: 1px solid var(--admin-border); }
+.gallery-item img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.gallery-item__remove { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,.7); color: #fff; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 12px; line-height: 20px; text-align: center; cursor: pointer; padding: 0; }
+.gallery-item__remove:hover { background: var(--admin-danger); }
+.gallery-add { display: flex; gap: 8px; }
+.img-preview { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--admin-border); display: none; }
+
+/* =====================
+   TAGS / PILLS
+   ===================== */
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 6px; min-height: 36px; padding: 6px; background: var(--admin-bg); border: 1px solid var(--admin-border); border-radius: 7px; cursor: text; }
+.tags-wrap:focus-within { border-color: var(--admin-accent); }
+.tag-pill { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: rgba(59,130,246,.15); color: var(--admin-accent); border-radius: 999px; font-size: 12px; font-weight: 500; }
+.tag-pill__remove { cursor: pointer; opacity: .7; font-size: 14px; line-height: 1; border: none; background: none; color: inherit; padding: 0; }
+.tag-pill__remove:hover { opacity: 1; }
+.tag-input { border: none; background: transparent; color: var(--admin-text); font-size: 13px; outline: none; flex: 1; min-width: 80px; padding: 2px 4px; }
+.tags-suggestions { position: absolute; z-index: 20; background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: 8px; max-height: 160px; overflow-y: auto; width: 100%; }
+.tags-suggestions li { padding: 8px 12px; font-size: 13px; cursor: pointer; list-style: none; }
+.tags-suggestions li:hover { background: rgba(59,130,246,.1); color: var(--admin-accent); }
+.tags-container { position: relative; }
+
+/* =====================
+   BULK ACTIONS BAR
+   ===================== */
+.bulk-bar { position: sticky; bottom: 0; background: var(--admin-surface); border-top: 1px solid var(--admin-border); padding: 12px 24px; display: flex; align-items: center; gap: 16px; z-index: 5; }
+.bulk-bar__count { font-size: 13px; font-weight: 600; color: var(--admin-accent); }
+.bulk-bar--hidden { display: none; }
+
+/* =====================
+   SORTABLE TABLE HEADERS
+   ===================== */
+.th-sort { cursor: pointer; user-select: none; white-space: nowrap; }
+.th-sort:hover { color: var(--admin-text); }
+.sort-icon { display: inline-block; margin-left: 4px; opacity: .4; }
+.th-sort.asc .sort-icon::after { content: '↑'; opacity: 1; }
+.th-sort.desc .sort-icon::after { content: '↓'; opacity: 1; }
+.th-sort:not(.asc):not(.desc) .sort-icon::after { content: '↕'; }
+
+/* =====================
+   PAGINATION
+   ===================== */
+.pagination { display: flex; align-items: center; gap: 8px; padding: 16px 20px; border-top: 1px solid var(--admin-border); font-size: 13px; color: var(--admin-muted); }
+.pagination__info { flex: 1; }
+
+/* =====================
+   SLUG INPUT
+   ===================== */
+.slug-wrap { display: flex; align-items: center; gap: 0; }
+.slug-prefix { padding: 9px 10px; background: rgba(255,255,255,.04); border: 1px solid var(--admin-border); border-right: none; border-radius: 7px 0 0 7px; font-size: 12px; color: var(--admin-muted); white-space: nowrap; }
+.slug-wrap .form-control { border-radius: 0 7px 7px 0; }
+
+/* =====================
+   PRODUCT STATS BAR
+   ===================== */
+.product-stats { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
+.product-stat { background: var(--admin-surface); border: 1px solid var(--admin-border); border-radius: 8px; padding: 12px 20px; font-size: 13px; }
+.product-stat strong { font-size: 20px; font-weight: 700; display: block; margin-bottom: 2px; }
+
+/* =====================
+   CHECKBOX COL
+   ===================== */
+.admin-table td.check-col, .admin-table th.check-col { width: 36px; padding: 12px 8px 12px 16px; }
+input[type=checkbox].row-check { width: 15px; height: 15px; cursor: pointer; accent-color: var(--admin-accent); }
+
+/* =====================
+   FORM CARD ACTIONS (side panel buttons)
+   ===================== */
+.btn--success { background: rgba(34,197,94,.15); color: var(--admin-success); }
+.btn--success:hover { background: rgba(34,197,94,.25); }
+.btn--warning { background: rgba(245,158,11,.15); color: var(--admin-warning); }
+.btn--warning:hover { background: rgba(245,158,11,.25); }
+.form-actions-sticky { display: flex; flex-direction: column; gap: 8px; }
