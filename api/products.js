@@ -30,8 +30,14 @@ module.exports = async function handler(req, res) {
 
     if (category) query = query.eq('category_id', category);
     if (subcategory) {
-      // Join via categories.slug
-      query = query.eq('categories.slug', subcategory);
+      // Résoudre le slug en category_id
+      const { data: cat } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('slug', subcategory)
+        .single();
+      if (cat) query = query.eq('category_id', cat.id);
+      else return res.status(200).json([]);
     }
     if (search) query = query.ilike('name', `%${search}%`);
 
