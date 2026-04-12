@@ -52,7 +52,7 @@ async function bulkAction(action) {
     } catch (e) { alert(e.message); return; }
   } else if (action === 'archive') {
     try {
-      await Promise.all(ids.map(id => api.delete('/api/products/' + id)));
+      await Promise.all(ids.map(id => api.put('/api/products/' + id, { status: 'archived' })));
     } catch (e) { alert(e.message); return; }
   }
 
