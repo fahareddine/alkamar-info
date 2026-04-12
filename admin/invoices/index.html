@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Factures — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header"><h1>Factures</h1></div>
+      <div class="filters-bar">
+        <select id="status-filter" class="form-control">
+          <option value="">Tous les statuts</option>
+          <option value="issued">Émise</option>
+          <option value="paid">Payée</option>
+          <option value="cancelled">Annulée</option>
+        </select>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>N° Facture</th><th>Client</th><th>Total EUR</th><th>Total KMF</th><th>Remise</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="invoices-body"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/invoices-list.js"></script>
+</body>
+</html>
