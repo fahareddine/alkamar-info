@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Connexion — Alkamar Info Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+  <style>
+    body { display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+    .login-box { width: 100%; max-width: 380px; }
+    .login-box h1 { font-size: 22px; margin-bottom: 8px; }
+    .login-box p { color: var(--admin-muted); font-size: 14px; margin-bottom: 28px; }
+    .login-logo { font-size: 24px; font-weight: 800; color: var(--admin-accent); margin-bottom: 32px; }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <div class="login-logo">Alkamar <span style="color:var(--admin-muted);font-weight:300">Admin</span></div>
+    <h1>Connexion</h1>
+    <p>Accès réservé aux administrateurs.</p>
+    <div id="alert" class="alert alert--error" style="display:none"></div>
+    <form id="login-form">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" class="form-control" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" class="form-control" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn--primary" style="width:100%">Se connecter</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script>
+    adminAuth.getSession().then(s => { if (s) window.location.href = '/admin/'; });
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      const alert = document.getElementById('alert');
+      btn.disabled = true; btn.textContent = 'Connexion...';
+      alert.style.display = 'none';
+      try {
+        await adminAuth.login(
+          document.getElementById('email').value,
+          document.getElementById('password').value
+        );
+        window.location.href = '/admin/';
+      } catch (err) {
+        alert.textContent = err.message; alert.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Se connecter';
+      }
+    });
+  </script>
+</body>
+</html>
