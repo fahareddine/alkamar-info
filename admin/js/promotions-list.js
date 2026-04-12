@@ -1,5 +1,11 @@
 // admin/js/promotions-list.js
 
+function esc(str) {
+  const d = document.createElement('div');
+  d.textContent = str ?? '';
+  return d.innerHTML;
+}
+
 const TYPE_LABELS = {
   percentage: '% remise',
   fixed_eur: '€ fixe',
@@ -48,11 +54,11 @@ async function loadPromotions() {
     const end = new Date(p.ends_at).toLocaleDateString('fr-FR');
     return `
     <tr>
-      <td style="font-weight:600">${p.name}</td>
-      <td style="color:var(--admin-muted)">${TYPE_LABELS[p.type] || p.type}</td>
-      <td>${formatValue(p.type, p.value)}</td>
-      <td style="color:var(--admin-muted)">${formatTarget(p.target_type)}</td>
-      <td style="font-size:13px;color:var(--admin-muted)">${start} → ${end}</td>
+      <td style="font-weight:600">${esc(p.name)}</td>
+      <td style="color:var(--admin-muted)">${esc(TYPE_LABELS[p.type] || p.type)}</td>
+      <td>${esc(formatValue(p.type, p.value))}</td>
+      <td style="color:var(--admin-muted)">${esc(formatTarget(p.target_type))}</td>
+      <td style="font-size:13px;color:var(--admin-muted)">${esc(start)} → ${esc(end)}</td>
       <td>${getStatusBadge(p)}</td>
       <td>
         ${p.is_active
@@ -77,7 +83,9 @@ async function disablePromotion(id) {
 async function handleCreate(e) {
   e.preventDefault();
   const alertEl = document.getElementById('form-alert');
-  alertEl.innerHTML = '';
+  alertEl.textContent = '';
+  alertEl.className = '';
+  alertEl.style.display = 'none';
 
   const name = document.getElementById('f-name').value.trim();
   const type = document.getElementById('f-type').value;
@@ -87,11 +95,15 @@ async function handleCreate(e) {
   const ends_at = document.getElementById('f-ends').value;
 
   if (!name || isNaN(value) || value < 0 || !starts_at || !ends_at) {
-    alertEl.innerHTML = '<div class="alert alert--error">Veuillez remplir tous les champs correctement.</div>';
+    alertEl.textContent = 'Veuillez remplir tous les champs correctement.';
+    alertEl.className = 'alert alert--error';
+    alertEl.style.display = 'block';
     return;
   }
   if (new Date(ends_at) <= new Date(starts_at)) {
-    alertEl.innerHTML = '<div class="alert alert--error">La date de fin doit être postérieure à la date de début.</div>';
+    alertEl.textContent = 'La date de fin doit être postérieure à la date de début.';
+    alertEl.className = 'alert alert--error';
+    alertEl.style.display = 'block';
     return;
   }
 
@@ -110,7 +122,9 @@ async function handleCreate(e) {
     document.getElementById('btn-toggle-form').textContent = '＋ Nouvelle promotion';
     await loadPromotions();
   } catch (e) {
-    alertEl.innerHTML = `<div class="alert alert--error">${e.message || 'Erreur lors de la création.'}</div>`;
+    alertEl.textContent = e.message || 'Erreur lors de la création.';
+    alertEl.className = 'alert alert--error';
+    alertEl.style.display = 'block';
   }
 }
 
@@ -129,7 +143,10 @@ async function init() {
     document.getElementById('create-form-wrap').style.display = 'none';
     document.getElementById('btn-toggle-form').textContent = '＋ Nouvelle promotion';
     document.getElementById('create-form').reset();
-    document.getElementById('form-alert').innerHTML = '';
+    const alertEl = document.getElementById('form-alert');
+    alertEl.textContent = '';
+    alertEl.className = '';
+    alertEl.style.display = 'none';
   });
 
   document.getElementById('create-form').addEventListener('submit', handleCreate);
