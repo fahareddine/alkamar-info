@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    { "source": "/api/tags", "destination": "/api/categories?_route=tags" },
+    { "source": "/api/coupons/validate", "destination": "/api/coupons?_route=validate" },
+    { "source": "/api/logs", "destination": "/api/stats?_route=logs" },
+    { "source": "/api/stock/movements", "destination": "/api/products?_route=stock" },
+    { "source": "/api/invoices/:id", "destination": "/api/invoices?id=:id" }
+  ]
+}
