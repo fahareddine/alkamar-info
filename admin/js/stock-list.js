@@ -56,7 +56,7 @@ async function handleCreate(e) {
   const quantity = parseInt(document.getElementById('quantity').value, 10);
   const note = document.getElementById('note').value.trim();
 
-  if (!productId || !type || !quantity || quantity === 0) {
+  if (!productId || !type || isNaN(quantity) || quantity === 0) {
     alert('Veuillez remplir tous les champs requis');
     return;
   }
@@ -84,7 +84,7 @@ async function handleCreate(e) {
     await loadMovements();
   } catch (error) {
     console.error('Erreur:', error);
-    alert('Erreur : ' + error.message);
+    alert('Erreur : ' + String(error.message || 'Erreur inconnue'));
   }
 }
 
