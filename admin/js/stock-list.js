@@ -16,35 +16,31 @@ function getTypeLabel(type) {
 
 async function loadMovements() {
   try {
-    const response = await fetch('/api/stock/movements?limit=100');
-    if (!response.ok) throw new Error('Erreur lors du chargement des mouvements');
-
-    const movements = await response.json();
+    const movements = await api.get('/api/stock/movements?limit=100');
     const tbody = document.getElementById('movements-tbody');
-    tbody.innerHTML = '';
 
-    movements.forEach(m => {
-      const row = document.createElement('tr');
+    if (!movements || movements.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--admin-muted)">Aucun mouvement</td></tr>';
+      return;
+    }
 
-      const quantityColor = (m.quantity || 0) > 0 ? 'green' : (m.quantity || 0) < 0 ? 'red' : 'black';
-      const dateObj = new Date(m.created_at);
-      const dateStr = dateObj.toLocaleDateString('fr-FR');
-
-      row.innerHTML = `
+    tbody.innerHTML = movements.map(m => {
+      const quantityColor = (m.quantity || 0) > 0 ? 'var(--admin-success, #22c55e)' : (m.quantity || 0) < 0 ? 'var(--admin-danger, #ef4444)' : '';
+      const dateStr = new Date(m.created_at).toLocaleDateString('fr-FR');
+      return `<tr>
         <td>${esc(m.products?.name || m.products?.id || '—')}</td>
         <td>${getTypeLabel(m.type)}</td>
-        <td style="color: ${quantityColor};">${m.quantity || '0'}</td>
+        <td style="font-weight:600;color:${quantityColor}">${m.quantity > 0 ? '+' : ''}${m.quantity || '0'}</td>
         <td>${esc(m.reference_type || '—')}</td>
         <td>${esc(m.note || '—')}</td>
         <td>${esc(m.user_profiles?.full_name || '—')}</td>
-        <td>${dateStr}</td>
-      `;
-      tbody.appendChild(row);
-    });
+        <td style="color:var(--admin-muted);font-size:13px">${dateStr}</td>
+      </tr>`;
+    }).join('');
   } catch (error) {
     console.error('Erreur:', error);
     const tbody = document.getElementById('movements-tbody');
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: red;">Erreur : ${esc(error.message)}</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--admin-danger,red)">Erreur : ${esc(error.message)}</td></tr>`;
   }
 }
 
@@ -62,21 +58,12 @@ async function handleCreate(e) {
   }
 
   try {
-    const response = await fetch('/api/stock/movements', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        product_id: productId,
-        type,
-        quantity,
-        note: note || null
-      })
+    await api.post('/api/stock/movements', {
+      product_id: productId,
+      type,
+      quantity,
+      note: note || null
     });
-
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.message || 'Erreur lors de l\'ajustement');
-    }
 
     alert('Ajustement enregistré');
     document.getElementById('create-form').reset();
