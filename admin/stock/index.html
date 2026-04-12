@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mouvements de stock — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>Mouvements de stock</h1>
+        <button id="create-btn" class="btn btn-primary">＋ Ajustement manuel</button>
+      </div>
+
+      <div id="create-form-wrap" class="form-wrap" style="display: none;">
+        <form id="create-form" class="admin-form">
+          <div class="form-group">
+            <label for="product-id">ID Produit</label>
+            <input type="text" id="product-id" name="product_id" placeholder="UUID du produit" required>
+          </div>
+
+          <div class="form-group">
+            <label for="type">Type</label>
+            <select id="type" name="type" required>
+              <option value="">-- Sélectionnez --</option>
+              <option value="in">Entrée</option>
+              <option value="out">Sortie</option>
+              <option value="adjustment">Ajustement</option>
+              <option value="return">Retour</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quantity">Quantité</label>
+            <input type="number" id="quantity" name="quantity" required>
+          </div>
+
+          <div class="form-group">
+            <label for="note">Note (optionnel)</label>
+            <input type="text" id="note" name="note" placeholder="Motif de l'ajustement">
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success">Enregistrer</button>
+            <button type="button" id="cancel-btn" class="btn btn-secondary">Annuler</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Produit</th>
+              <th>Type</th>
+              <th>Quantité</th>
+              <th>Référence</th>
+              <th>Note</th>
+              <th>Par</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody id="movements-tbody">
+            <!-- rempli par JS -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/stock-list.js"></script>
+</body>
+</html>
