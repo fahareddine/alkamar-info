@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Promotions — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>Promotions</h1>
+        <button id="btn-toggle-form" class="btn btn--primary">＋ Nouvelle promotion</button>
+      </div>
+
+      <div id="create-form-wrap" class="form-card" style="display:none;margin-bottom:24px">
+        <h2>Nouvelle promotion</h2>
+        <div id="form-alert"></div>
+        <form id="create-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="f-name">Nom</label>
+              <input type="text" id="f-name" class="form-control" placeholder="Ex : Promo été" required>
+            </div>
+            <div class="form-group">
+              <label for="f-type">Type</label>
+              <select id="f-type" class="form-control" required>
+                <option value="percentage">% remise</option>
+                <option value="fixed_eur">€ fixe</option>
+                <option value="fixed_kmf">KMF fixe</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-value">Valeur</label>
+              <input type="number" id="f-value" class="form-control" placeholder="Ex : 10" min="0" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="f-target">Cible</label>
+              <select id="f-target" class="form-control" required>
+                <option value="all">Tous les produits</option>
+                <option value="category">Catégorie</option>
+                <option value="product">Produit</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-starts">Date début</label>
+              <input type="datetime-local" id="f-starts" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="f-ends">Date fin</label>
+              <input type="datetime-local" id="f-ends" class="form-control" required>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button type="submit" class="btn btn--primary">Créer</button>
+            <button type="button" id="btn-cancel-form" class="btn btn--ghost">Annuler</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Type</th>
+              <th>Valeur</th>
+              <th>Cible</th>
+              <th>Dates</th>
+              <th>Statut</th>
+              <th style="width:120px">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="promotions-body">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/promotions-list.js"></script>
+</body>
+</html>
