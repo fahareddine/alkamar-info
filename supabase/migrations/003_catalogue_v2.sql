@@ -11,7 +11,8 @@ DO $$
 BEGIN
   IF EXISTS (
     SELECT 1 FROM information_schema.columns
-    WHERE table_name = 'products' AND column_name = 'rating'
+    WHERE table_schema = 'public'
+    AND table_name = 'products' AND column_name = 'rating'
     AND data_type = 'smallint'
   ) THEN
     ALTER TABLE products ALTER COLUMN rating TYPE NUMERIC(3,1);
@@ -46,3 +47,4 @@ CREATE TABLE IF NOT EXISTS product_tags (
   tag_id      UUID REFERENCES tags(id) ON DELETE CASCADE,
   PRIMARY KEY (product_id, tag_id)
 );
+CREATE INDEX IF NOT EXISTS product_tags_tag_id_idx ON product_tags(tag_id);
