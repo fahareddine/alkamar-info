@@ -14,9 +14,10 @@ module.exports = async function handler(req, res) {
     const auth = await requireRole(req, 'admin');
     if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
+    const { name, type, value, target_type, target_id, starts_at, ends_at, is_active } = req.body;
     const { data, error } = await supabase
       .from('promotions')
-      .update(req.body)
+      .update({ name, type, value, target_type, target_id, starts_at, ends_at, is_active })
       .eq('id', id)
       .select()
       .single();

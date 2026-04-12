@@ -21,8 +21,10 @@ module.exports = async function handler(req, res) {
       old_value, new_value, ip_address, created_at,
       user_profiles(id, full_name)
     `)
-    .order('created_at', { ascending: false })
-    .range(Number(offset), Number(offset) + Number(limit) - 1);
+    .order('created_at', { ascending: false });
+
+  const safeLimit = Math.min(Number(limit), 200);
+  query = query.range(Number(offset), Number(offset) + safeLimit - 1);
 
   if (entity_type) query = query.eq('entity_type', entity_type);
   if (entity_id) query = query.eq('entity_id', entity_id);

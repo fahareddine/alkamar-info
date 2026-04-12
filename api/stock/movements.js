@@ -21,8 +21,10 @@ module.exports = async function handler(req, res) {
         products(id, name, sku),
         user_profiles(id, full_name)
       `)
-      .order('created_at', { ascending: false })
-      .range(Number(offset), Number(offset) + Number(limit) - 1);
+      .order('created_at', { ascending: false });
+
+    const safeLimit = Math.min(Number(limit), 200);
+    query = query.range(Number(offset), Number(offset) + safeLimit - 1);
 
     if (product_id) query = query.eq('product_id', product_id);
 
@@ -37,8 +39,9 @@ module.exports = async function handler(req, res) {
     if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
     const { product_id, type, quantity, note } = req.body;
-    if (!product_id || !type || quantity === undefined) {
-      return res.status(400).json({ error: 'product_id, type, quantity requis' });
+    const qty = Number(quantity);
+    if (!product_id || !type || !Number.isInteger(qty) || qty === 0) {
+      return res.status(400).json({ error: 'product_id, type et quantity (entier non nul) requis' });
     }
     if (!['in','out','adjustment','return'].includes(type)) {
       return res.status(400).json({ error: 'type invalide : in|out|adjustment|return' });
@@ -56,7 +59,7 @@ module.exports = async function handler(req, res) {
       .insert({
         product_id,
         type,
-        quantity,
+        quantity: qty,
         reference_type: 'manual',
         note,
         created_by: auth.user?.id
@@ -67,14 +70,15 @@ module.exports = async function handler(req, res) {
     if (error) return res.status(500).json({ error: error.message });
 
     // Log admin
-    await supabase.from('admin_logs').insert({
+    const { error: logError } = await supabase.from('admin_logs').insert({
       user_id: auth.user?.id,
       action: 'stock.adjusted',
       entity_type: 'product',
       entity_id: product_id,
       old_value: { stock: product?.stock },
-      new_value: { type, quantity, note }
+      new_value: { type, quantity: qty, note }
     });
+    if (logError) console.error('[admin_logs] insert failed:', logError.message);
 
     return res.status(201).json(data);
   }

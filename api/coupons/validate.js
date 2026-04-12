@@ -15,6 +15,11 @@ module.exports = async function handler(req, res) {
   const { code, order_total_eur } = req.body;
   if (!code) return res.status(400).json({ error: 'code requis' });
 
+  const total = Number(order_total_eur);
+  if (isNaN(total) || total < 0) {
+    return res.status(400).json({ error: 'order_total_eur doit être un nombre positif' });
+  }
+
   const { data: coupon, error } = await supabase
     .from('coupon_codes')
     .select('*')
@@ -31,7 +36,7 @@ module.exports = async function handler(req, res) {
   if (coupon.max_uses !== null && coupon.uses_count >= coupon.max_uses) {
     return res.status(400).json({ error: 'Code promo épuisé' });
   }
-  if (coupon.min_order_eur && order_total_eur < coupon.min_order_eur) {
+  if (coupon.min_order_eur && total < coupon.min_order_eur) {
     return res.status(400).json({
       error: `Commande minimum requise : ${coupon.min_order_eur} €`
     });
@@ -43,10 +48,10 @@ module.exports = async function handler(req, res) {
   const EUR_TO_KMF = 491;
 
   if (coupon.type === 'percentage') {
-    discount_eur = Math.round((order_total_eur * coupon.value / 100) * 100) / 100;
+    discount_eur = Math.round((total * coupon.value / 100) * 100) / 100;
     discount_kmf = Math.round(discount_eur * EUR_TO_KMF);
   } else if (coupon.type === 'fixed_eur') {
-    discount_eur = Math.min(coupon.value, order_total_eur);
+    discount_eur = Math.min(coupon.value, total);
     discount_kmf = Math.round(discount_eur * EUR_TO_KMF);
   } else if (coupon.type === 'fixed_kmf') {
     discount_kmf = coupon.value;

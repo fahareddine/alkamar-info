@@ -27,6 +27,9 @@ module.exports = async function handler(req, res) {
     .eq('id', id)
     .single();
 
-  if (error) return res.status(404).json({ error: 'Facture introuvable' });
+  if (error) {
+    if (error.code === 'PGRST116') return res.status(404).json({ error: 'Facture introuvable' });
+    return res.status(500).json({ error: error.message });
+  }
   return res.status(200).json(data);
 };

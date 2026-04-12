@@ -22,8 +22,10 @@ module.exports = async function handler(req, res) {
       orders(id, status),
       customers(id, name, email, phone)
     `)
-    .order('issued_at', { ascending: false })
-    .range(Number(offset), Number(offset) + Number(limit) - 1);
+    .order('issued_at', { ascending: false });
+
+  const safeLimit = Math.min(Number(limit), 200);
+  query = query.range(Number(offset), Number(offset) + safeLimit - 1);
 
   if (status) query = query.eq('status', status);
   if (customer_id) query = query.eq('customer_id', customer_id);

@@ -38,13 +38,14 @@ module.exports = async function handler(req, res) {
     if (error) return res.status(500).json({ error: error.message });
 
     // Log
-    await supabase.from('admin_logs').insert({
+    const { error: logError } = await supabase.from('admin_logs').insert({
       user_id: auth.user?.id,
       action: 'coupon.created',
       entity_type: 'coupon',
       entity_id: data.id,
       new_value: { code: data.code, type: data.type, value: data.value }
     });
+    if (logError) console.error('[admin_logs] insert failed:', logError.message);
 
     return res.status(201).json(data);
   }

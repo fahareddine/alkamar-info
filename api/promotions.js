@@ -10,6 +10,12 @@ module.exports = async function handler(req, res) {
   // GET — promotions actives (public) ou toutes (admin)
   if (req.method === 'GET') {
     const { all } = req.query;
+
+    if (all === 'true') {
+      const authCheck = await requireRole(req, 'admin');
+      if (authCheck.error) return res.status(authCheck.status).json({ error: authCheck.error });
+    }
+
     let query = supabase
       .from('promotions')
       .select('*')
