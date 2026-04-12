@@ -16,6 +16,14 @@ function injectSidebar() {
       <div class="section">Ventes</div>
       <a href="/admin/orders/" data-path="/admin/orders/">🛒 Commandes</a>
       <a href="/admin/customers/" data-path="/admin/customers/">👥 Clients</a>
+      <a href="/admin/invoices/" data-path="/admin/invoices/">🧾 Factures</a>
+
+      <div class="section">Marketing</div>
+      <a href="/admin/promotions/" data-path="/admin/promotions/">🏷️ Promotions</a>
+      <a href="/admin/coupons/" data-path="/admin/coupons/">🎫 Codes promo</a>
+
+      <div class="section">Inventaire</div>
+      <a href="/admin/stock/" data-path="/admin/stock/">📦 Stock</a>
 
       <div class="section">Paramètres</div>
       <a href="/admin/users/" data-path="/admin/users/">🔑 Utilisateurs</a>
