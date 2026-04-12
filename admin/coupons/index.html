@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Codes promo — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>Codes promo</h1>
+        <button id="btn-toggle-form" class="btn btn--primary">＋ Nouveau code</button>
+      </div>
+
+      <div id="create-form-wrap" class="form-card" style="display:none;margin-bottom:24px">
+        <h2>Nouveau code promo</h2>
+        <div id="form-alert"></div>
+        <form id="create-form">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="f-code">Code</label>
+              <input type="text" id="f-code" class="form-control" placeholder="Ex : SUMMER10" required
+                style="text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+            </div>
+            <div class="form-group">
+              <label for="f-type">Type</label>
+              <select id="f-type" class="form-control" required>
+                <option value="percentage">% remise</option>
+                <option value="fixed_eur">€ fixe</option>
+                <option value="fixed_kmf">KMF fixe</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="f-value">Valeur</label>
+              <input type="number" id="f-value" class="form-control" placeholder="Ex : 10" min="0.01" step="0.01" required>
+            </div>
+            <div class="form-group">
+              <label for="f-min-order">Min commande EUR <span style="color:var(--admin-muted);font-weight:400">(optionnel)</span></label>
+              <input type="number" id="f-min-order" class="form-control" placeholder="Ex : 50" min="0" step="0.01">
+            </div>
+            <div class="form-group">
+              <label for="f-max-uses">Max utilisations <span style="color:var(--admin-muted);font-weight:400">(optionnel)</span></label>
+              <input type="number" id="f-max-uses" class="form-control" placeholder="Illimité si vide" min="1" step="1">
+            </div>
+            <div class="form-group">
+              <label for="f-expires">Date d'expiration <span style="color:var(--admin-muted);font-weight:400">(optionnel)</span></label>
+              <input type="datetime-local" id="f-expires" class="form-control">
+            </div>
+            <div class="form-group" style="display:flex;align-items:center;gap:10px;padding-top:24px">
+              <input type="checkbox" id="f-active" checked style="width:18px;height:18px;cursor:pointer">
+              <label for="f-active" style="margin:0;cursor:pointer">Actif</label>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;margin-top:4px">
+            <button type="submit" class="btn btn--primary">Créer</button>
+            <button type="button" id="btn-cancel-form" class="btn btn--ghost">Annuler</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Type</th>
+              <th>Valeur</th>
+              <th>Utilisations</th>
+              <th>Min EUR</th>
+              <th>Expiration</th>
+              <th>Statut</th>
+            </tr>
+          </thead>
+          <tbody id="coupons-body">
+            <tr><td colspan="7" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/coupons-list.js"></script>
+</body>
+</html>
