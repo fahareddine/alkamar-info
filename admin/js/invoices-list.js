@@ -34,31 +34,36 @@ function formatDate(dateStr) {
 }
 
 async function loadInvoices() {
-  const statusFilter = document.getElementById('status-filter').value;
-  const url = statusFilter
-    ? `/api/invoices?limit=50&status=${encodeURIComponent(statusFilter)}`
-    : '/api/invoices?limit=50';
+  try {
+    const statusFilter = document.getElementById('status-filter').value;
+    const url = statusFilter
+      ? `/api/invoices?limit=50&status=${encodeURIComponent(statusFilter)}`
+      : '/api/invoices?limit=50';
 
-  const data = await api.get(url);
-  const tbody = document.getElementById('invoices-body');
+    const data = await api.get(url);
+    const tbody = document.getElementById('invoices-body');
 
-  if (!data || data.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--admin-muted)">Aucune facture</td></tr>';
-    return;
+    if (!data || data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--admin-muted)">Aucune facture</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.map(invoice => `
+      <tr>
+        <td style="font-weight:600;letter-spacing:.05em">${esc(invoice.invoice_number)}</td>
+        <td>${esc(invoice.customers?.name || '—')}</td>
+        <td>${formatCurrency(invoice.total_eur)}</td>
+        <td>${formatKmf(invoice.total_kmf)}</td>
+        <td>${formatCurrency(invoice.discount_eur)}</td>
+        <td>${getStatusBadge(invoice.status)}</td>
+        <td style="font-size:13px;color:var(--admin-muted)">${formatDate(invoice.issued_at)}</td>
+        <td><a href="/admin/orders/detail.html?id=${esc(invoice.order_id)}" style="color:var(--primary)">Voir commande</a></td>
+      </tr>`
+    ).join('');
+  } catch (e) {
+    const tbody = document.getElementById('invoices-body');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--admin-danger)">Erreur de chargement</td></tr>`;
   }
-
-  tbody.innerHTML = data.map(invoice => `
-    <tr>
-      <td style="font-weight:600;letter-spacing:.05em">${esc(invoice.invoice_number)}</td>
-      <td>${esc(invoice.customers?.name || '—')}</td>
-      <td>${formatCurrency(invoice.total_eur)}</td>
-      <td>${formatKmf(invoice.total_kmf)}</td>
-      <td>${formatCurrency(invoice.discount_eur)}</td>
-      <td>${getStatusBadge(invoice.status)}</td>
-      <td style="font-size:13px;color:var(--admin-muted)">${formatDate(invoice.issued_at)}</td>
-      <td><a href="/admin/orders/detail.html?id=${esc(invoice.order_id)}" style="color:var(--primary)">Voir commande</a></td>
-    </tr>`
-  ).join('');
 }
 
 async function init() {
