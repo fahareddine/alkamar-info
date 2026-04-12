@@ -5,73 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ordinateurs — Alkamar Info</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    /* Onglets sous-catégories */
-    .cat-tabs {
-      background: #fff;
-      border-bottom: 2px solid var(--border);
-      padding: 0 20px;
-      position: sticky;
-      top: 70px;
-      z-index: 90;
-    }
-    .cat-tabs__inner {
-      max-width: 1320px;
-      margin: 0 auto;
-      display: flex;
-      overflow-x: auto;
-      scrollbar-width: none;
-      gap: 0;
-    }
-    .cat-tabs__inner::-webkit-scrollbar { display: none; }
-    .cat-tab {
-      padding: 13px 20px;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--text-muted);
-      white-space: nowrap;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
-      cursor: pointer;
-      background: none;
-      border-top: none;
-      border-left: none;
-      border-right: none;
-      font-family: inherit;
-      transition: color .15s, border-color .15s;
-    }
-    .cat-tab:hover { color: var(--primary); }
-    .cat-tab.active { color: var(--primary); border-bottom-color: var(--accent); font-weight: 700; }
-
-    /* Section sous-cat */
-    .subcat-section { display: none; }
-    .subcat-section.active { display: block; }
-
-    .subcat-header {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
-      padding: 28px 20px 24px;
-      color: #fff;
-    }
-    .subcat-header__inner { max-width: 1320px; margin: 0 auto; }
-    .subcat-header h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
-    .subcat-header p { font-size: 13px; color: #93c5fd; }
-
-    /* Price KMF */
-    .price-kmf {
-      font-size: 11px;
-      color: #059669;
-      font-weight: 600;
-      margin-top: 2px;
-    }
-
-    /* Card specs */
-    .card-specs {
-      font-size: 11px;
-      color: var(--text-muted);
-      margin-bottom: 6px;
-      line-height: 1.5;
-    }
-  </style>
 </head>
 <body>
 
@@ -81,7 +14,7 @@
       <div class="topbar__links">
         <a href="#">Mon compte</a>
         <a href="#">Mes commandes</a>
-        <a href="#">+269 331 27 22</a>
+        <a href="tel:+26933127222">+269 331 27 22</a>
       </div>
     </div>
   </div>
@@ -104,11 +37,16 @@
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
           <span>Accueil</span>
         </a>
+        <a href="ordinateurs.html?tab=reconditiones" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+          <span>Reconditionnés</span>
+        </a>
         <a href="#" class="header__action">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           <span>Panier</span>
           <span class="cart-badge">0</span>
         </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
       </div>
     </div>
   </header>
@@ -153,7 +91,7 @@
             </select>
           </div>
         </div>
-        <div class="products-grid" id="grid-portables" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+        <div class="products-grid products-grid--5" id="grid-portables"></div>
       </div>
     </div>
   </div>
@@ -179,7 +117,7 @@
             </select>
           </div>
         </div>
-        <div class="products-grid" id="grid-bureau" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+        <div class="products-grid products-grid--5" id="grid-bureau"></div>
       </div>
     </div>
   </div>
@@ -205,7 +143,7 @@
             </select>
           </div>
         </div>
-        <div class="products-grid" id="grid-gaming" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+        <div class="products-grid products-grid--5" id="grid-gaming"></div>
       </div>
     </div>
   </div>
@@ -231,7 +169,7 @@
             </select>
           </div>
         </div>
-        <div class="products-grid" id="grid-toutunun" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+        <div class="products-grid products-grid--5" id="grid-toutunun"></div>
       </div>
     </div>
   </div>
@@ -257,7 +195,7 @@
             </select>
           </div>
         </div>
-        <div class="products-grid" id="grid-reconditiones" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+        <div class="products-grid products-grid--5" id="grid-reconditiones"></div>
       </div>
     </div>
   </div>
@@ -283,14 +221,14 @@
             </select>
           </div>
         </div>
-        <div class="products-grid" id="grid-minipc" style="grid-template-columns:repeat(auto-fill,minmax(220px,1fr))"></div>
+        <div class="products-grid products-grid--5" id="grid-minipc"></div>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="footer__inner">
+    <div class="footer__inner footer__inner--3col">
       <div class="footer-col">
         <div class="logo" style="margin-bottom:12px">
           <div class="logo__icon">A</div>
@@ -325,7 +263,7 @@
     ✅ Produit ajouté au panier
   </div>
 
-  <script src="js/products.js"></script>
+  <script src="js/nav.js"></script>
   <script>
     /* ── Rendu des cartes produits ─────────────────────── */
     function stars(n) {
@@ -334,10 +272,10 @@
 
     function productCard(p) {
       const badge = p.badge
-        ? `<div class="card-badges"><span class="badge ${p.badgeClass}">${p.badge}</span></div>`
+        ? `<div class="card-badges"><span class="badge ${p.badge_class}">${p.badge}</span></div>`
         : '<div class="card-badges"></div>';
-      const oldPrice = p.priceOld
-        ? `<span class="price-old">${p.priceOld},00 €</span>`
+      const oldPrice = p.price_old
+        ? `<span class="price-old">${p.price_old},00 €</span>`
         : '';
       return `
         <div class="product-card">
@@ -351,15 +289,15 @@
             <div class="card-title">${p.name} — ${p.subtitle}</div>
             <div class="card-rating">
               <span class="stars">${stars(p.rating)}</span>
-              <span class="rating-count">(${p.ratingCount})</span>
+              <span class="rating-count">(${p.rating_count})</span>
             </div>
             <div class="card-price-block">
               ${oldPrice}
-              <span class="price-main">${p.price}<span class="price-cents">,00 €</span></span>
-              <div class="price-kmf">≈ ${p.priceKmf.toLocaleString('fr-FR')} KMF</div>
+              <span class="price-main">${p.price_eur}<span class="price-cents">,00 €</span></span>
+              <div class="price-kmf">≈ ${Number(p.price_kmf).toLocaleString('fr-FR')} KMF</div>
               <div class="price-ttc">Prix TTC</div>
             </div>
-            <div class="card-stock ${p.stockClass}">${p.stock}</div>
+            <div class="card-stock ${p.stock_class}">${p.stock_label}</div>
           </div>
           <div class="card-footer">
             <button class="btn-cart" onclick="addToCart(this, '${p.id}')">
@@ -371,25 +309,71 @@
         </div>`;
     }
 
-    /* État des grilles (pour tri) */
-    const gridsState = {};
+    const MAX_VISIBLE = 5;
 
-    function renderGrid(subcategory) {
-      const list = gridsState[subcategory] || PRODUCTS.filter(p => p.subcategory === subcategory);
-      gridsState[subcategory] = list;
+    /* État des grilles (pour tri et "voir tout") */
+    const gridsState = {};
+    const gridsExpanded = {};
+
+    async function loadProducts(subcategory) {
+      const res = await fetch(`/api/products?subcategory=${subcategory}&status=active&limit=100`);
+      if (!res.ok) {
+        console.error('Erreur API', res.status);
+        return [];
+      }
+      return res.json();
+    }
+
+    async function renderGrid(subcategory) {
       const grid = document.getElementById('grid-' + subcategory);
       const count = document.getElementById('count-' + subcategory);
       if (!grid) return;
-      grid.innerHTML = list.map(productCard).join('');
-      if (count) count.innerHTML = `<strong>${list.length}</strong> produit${list.length > 1 ? 's' : ''} disponible${list.length > 1 ? 's' : ''}`;
+
+      const allList = gridsState[subcategory] || await loadProducts(subcategory);
+      if (!gridsState[subcategory]) gridsState[subcategory] = allList;
+
+      const expanded = gridsExpanded[subcategory] || false;
+      const visible = expanded ? allList : allList.slice(0, MAX_VISIBLE);
+
+      grid.innerHTML = visible.map(productCard).join('');
+
+      if (count) count.innerHTML = `<strong>${allList.length}</strong> produit${allList.length > 1 ? 's' : ''} disponible${allList.length > 1 ? 's' : ''}`;
+
+      /* Bouton "Voir tout" */
+      const btnId = 'voir-tout-' + subcategory;
+      let wrap = document.getElementById(btnId);
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.id = btnId;
+        wrap.className = 'voir-tout-wrap';
+        grid.after(wrap);
+      }
+      if (allList.length > MAX_VISIBLE) {
+        const reste = allList.length - MAX_VISIBLE;
+        wrap.innerHTML = expanded
+          ? `<button class="btn-voir-tout" onclick="toggleExpand('${subcategory}')">
+               Afficher moins ↑
+             </button>`
+          : `<button class="btn-voir-tout" onclick="toggleExpand('${subcategory}')">
+               Voir les ${reste} autre${reste > 1 ? 's' : ''} produit${reste > 1 ? 's' : ''} →
+             </button>`;
+      } else {
+        wrap.innerHTML = '';
+      }
     }
 
-    function sortGrid(subcategory, mode) {
-      let list = PRODUCTS.filter(p => p.subcategory === subcategory);
-      if (mode === 'price-asc')  list.sort((a,b) => a.price - b.price);
-      if (mode === 'price-desc') list.sort((a,b) => b.price - a.price);
-      if (mode === 'rating')     list.sort((a,b) => b.rating - a.rating || b.ratingCount - a.ratingCount);
+    function toggleExpand(subcategory) {
+      gridsExpanded[subcategory] = !gridsExpanded[subcategory];
+      renderGrid(subcategory);
+    }
+
+    async function sortGrid(subcategory, mode) {
+      let list = gridsState[subcategory] || await loadProducts(subcategory);
+      if (mode === 'price-asc')  list.sort((a,b) => a.price_eur - b.price_eur);
+      if (mode === 'price-desc') list.sort((a,b) => b.price_eur - a.price_eur);
+      if (mode === 'rating')     list.sort((a,b) => b.rating - a.rating || b.rating_count - a.rating_count);
       gridsState[subcategory] = list;
+      gridsExpanded[subcategory] = false;
       renderGrid(subcategory);
     }
 

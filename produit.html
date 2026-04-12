@@ -295,7 +295,7 @@
       <div class="topbar__links">
         <a href="#">Mon compte</a>
         <a href="#">Mes commandes</a>
-        <a href="#">+269 331 27 22</a>
+        <a href="tel:+26933127222">+269 331 27 22</a>
       </div>
     </div>
   </div>
@@ -318,11 +318,16 @@
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
           <span>Accueil</span>
         </a>
+        <a href="ordinateurs.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span>Ordinateurs</span>
+        </a>
         <a href="#" class="header__action">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           <span>Panier</span>
           <span class="cart-badge">0</span>
         </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
       </div>
     </div>
   </header>
@@ -343,7 +348,7 @@
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="footer__inner">
+    <div class="footer__inner footer__inner--3col">
       <div class="footer-col">
         <div class="logo" style="margin-bottom:12px">
           <div class="logo__icon">A</div>
@@ -377,52 +382,62 @@
     ✅ Produit ajouté au panier
   </div>
 
-  <script src="js/products.js"></script>
   <script>
-    const id = new URLSearchParams(window.location.search).get('id');
-    const p = id && PRODUCTS_BY_ID[id];
+    (async () => {
+      const id = new URLSearchParams(window.location.search).get('id');
+      if (!id) {
+        document.getElementById('product-content').innerHTML = `
+          <div class="not-found">
+            <h1>Produit introuvable</h1>
+            <p>Aucun identifiant de produit fourni.</p>
+            <a href="/" style="display:inline-flex;margin-top:24px;text-decoration:none">Retour</a>
+          </div>`;
+        return;
+      }
 
-    function stars(n) {
-      return '★'.repeat(n) + '☆'.repeat(5 - n);
-    }
+      const res = await fetch(`/api/products/${id}`);
+      if (!res.ok) {
+        document.body.innerHTML = '<div style="padding:40px;text-align:center"><h2>Produit introuvable</h2><a href="/">Retour</a></div>';
+        return;
+      }
+      const p = await res.json();
 
-    const CAT_LABELS = {
-      portables: 'PC Portables', bureau: 'PC de Bureau', gaming: 'PC Gaming',
-      toutunun: 'Tout-en-un', reconditiones: 'Reconditionnés', minipc: 'Mini PC'
-    };
+      function stars(n) {
+        return '★'.repeat(n) + '☆'.repeat(5 - n);
+      }
 
-    if (!p) {
-      document.getElementById('product-content').innerHTML = `
-        <div class="not-found">
-          <h1>Produit introuvable</h1>
-          <p>Ce produit n'existe pas ou a été retiré de la boutique.</p>
-          <a href="ordinateurs.html" class="btn-add-cart" style="display:inline-flex;margin-top:24px;text-decoration:none">← Retour aux ordinateurs</a>
-        </div>`;
-    } else {
+      const CAT_LABELS = {
+        portables: 'PC Portables', bureau: 'PC de Bureau', gaming: 'PC Gaming',
+        toutunun: 'Tout-en-un', reconditiones: 'Reconditionnés', minipc: 'Mini PC'
+      };
+
       // Breadcrumb
       document.title = p.name + ' — Alkamar Info';
       document.getElementById('bc-cat').innerHTML = `<a href="ordinateurs.html?tab=${p.subcategory}">${CAT_LABELS[p.subcategory] || 'Ordinateurs'}</a>`;
       document.getElementById('bc-product').textContent = p.name;
 
-      // Galerie
-      const thumbsHTML = (p.gallery || [p.image]).map((src, i) =>
-        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${src}', this)">
-          <img src="${src}" alt="" loading="lazy">
+      // Galerie — gallery items can be strings or {src, alt} objects
+      const galleryItems = (p.gallery || [p.image]).map(item =>
+        typeof item === 'string' ? { src: item, alt: '' } : item
+      );
+      const thumbsHTML = galleryItems.map((item, i) =>
+        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${item.src}', this)">
+          <img src="${item.src}" alt="${item.alt}" loading="lazy">
         </div>`
       ).join('');
 
       // Prix barré
-      const oldPriceHTML = p.priceOld
-        ? `<div class="prod-price-old">${p.priceOld},00 €</div>`
+      const oldPriceHTML = p.price_old
+        ? `<div class="prod-price-old">${p.price_old},00 €</div>`
         : '';
 
       // Badge
       const badgeHTML = p.badge
-        ? `<span class="badge ${p.badgeClass}" style="font-size:13px;padding:4px 12px">${p.badge}</span>`
+        ? `<span class="badge ${p.badge_class}" style="font-size:13px;padding:4px 12px">${p.badge}</span>`
         : '';
 
-      // Stock class map
-      const stockMap = { 'in-stock': 'in-stock', 'low-stock': 'low-stock', 'out-stock': 'out-stock' };
+      // Stock class dérivé depuis stock_label
+      const stockClass = p.stock_label === 'En stock' ? 'in-stock' : 'out-of-stock';
 
       // Features
       const featuresHTML = (p.features || []).map(f => `<li>${f}</li>`).join('');
@@ -433,7 +448,7 @@
       ).join('');
 
       // Message WhatsApp
-      const waMsg = encodeURIComponent(`Bonjour, je suis intéressé par le produit : ${p.name} (${p.price} €). Pouvez-vous me donner plus d'informations ?`);
+      const waMsg = encodeURIComponent(`Bonjour, je suis intéressé par le produit : ${p.name} (${p.price_eur} €). Pouvez-vous me donner plus d'informations ?`);
 
       document.getElementById('product-content').innerHTML = `
         <!-- Vue principale -->
@@ -441,9 +456,9 @@
           <!-- Galerie images -->
           <div class="gallery">
             <div class="gallery__main">
-              <img src="${p.image}" alt="${p.name}" id="main-img">
+              <img src="${galleryItems[0].src}" alt="${galleryItems[0].alt || p.name}" id="main-img">
             </div>
-            ${(p.gallery && p.gallery.length > 1) ? `<div class="gallery__thumbs">${thumbsHTML}</div>` : ''}
+            ${(galleryItems.length > 1) ? `<div class="gallery__thumbs">${thumbsHTML}</div>` : ''}
           </div>
 
           <!-- Informations produit -->
@@ -455,17 +470,17 @@
 
             <div class="prod-rating">
               <span class="stars">${stars(p.rating)}</span>
-              <span class="count">${p.ratingCount} avis clients</span>
+              <span class="count">${p.rating_count} avis clients</span>
             </div>
 
             <div class="prod-price-block">
               ${oldPriceHTML}
-              <div class="prod-price-main">${p.price}<span>,00 €</span></div>
-              <div class="prod-price-kmf">≈ ${p.priceKmf.toLocaleString('fr-FR')} KMF</div>
+              <div class="prod-price-main">${p.price_eur}<span>,00 €</span></div>
+              <div class="prod-price-kmf">≈ ${p.price_kmf.toLocaleString('fr-FR')} KMF</div>
               <div class="prod-price-ttc">Toutes taxes comprises · Livraison selon zone</div>
             </div>
 
-            <div class="prod-stock ${p.stockClass}">${p.stock}</div>
+            <div class="prod-stock ${stockClass}">${p.stock_label}</div>
 
             <div class="prod-actions">
               <button class="btn-add-cart" onclick="addToCart()">
@@ -509,35 +524,7 @@
             <div class="prod-description">${p.description || 'Aucune description disponible.'}</div>
           </div>
         </div>`;
-
-      // Produits similaires
-      const similar = PRODUCTS.filter(x => x.subcategory === p.subcategory && x.id !== p.id).slice(0, 4);
-      if (similar.length) {
-        const simCards = similar.map(s => `
-          <a href="produit.html?id=${s.id}" style="text-decoration:none">
-            <div class="product-card" style="cursor:pointer">
-              ${s.badge ? `<div class="card-badges"><span class="badge ${s.badgeClass}">${s.badge}</span></div>` : '<div class="card-badges"></div>'}
-              <div class="card-img">
-                <img src="${s.image}" alt="${s.name}" width="220" height="170" loading="lazy">
-              </div>
-              <div class="card-body">
-                <div class="card-brand">${s.brand}</div>
-                <div class="card-title">${s.name}</div>
-                <div class="card-price-block">
-                  <span class="price-main">${s.price}<span class="price-cents">,00 €</span></span>
-                  <div style="font-size:11px;color:#059669;font-weight:600">≈ ${s.priceKmf.toLocaleString('fr-FR')} KMF</div>
-                </div>
-              </div>
-            </div>
-          </a>`).join('');
-
-        document.getElementById('product-content').insertAdjacentHTML('beforeend', `
-          <div class="similar-section">
-            <h3>Produits similaires</h3>
-            <div class="similar-grid">${simCards}</div>
-          </div>`);
-      }
-    }
+    })();
 
     /* ── Galerie ─────────────────────────────────────── */
     function switchImg(src, thumb) {
@@ -573,6 +560,6 @@
       if (e.key === 'Enter') doSearch();
     });
   </script>
-
+  <script src="js/nav.js"></script>
 </body>
 </html>

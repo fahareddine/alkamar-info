@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>Dashboard</h1>
+        <span id="month-label" style="color:var(--admin-muted);font-size:14px"></span>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-card__label">CA du mois (EUR)</div><div class="stat-card__value" id="ca-eur">—</div></div>
+        <div class="stat-card"><div class="stat-card__label">CA du mois (KMF)</div><div class="stat-card__value" id="ca-kmf">—</div></div>
+        <div class="stat-card"><div class="stat-card__label">Commandes totales</div><div class="stat-card__value" id="orders-total">—</div><div class="stat-card__sub" id="orders-pending"></div></div>
+        <div class="stat-card"><div class="stat-card__label">Alertes stock faible</div><div class="stat-card__value" id="stock-alerts">—</div><div class="stat-card__sub">produits &lt; 3 unités</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+        <div>
+          <h2 style="margin-bottom:12px;font-size:16px">Dernières commandes</h2>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Client</th><th>Montant</th><th>Statut</th><th>Date</th></tr></thead>
+              <tbody id="recent-orders-body"><tr><td colspan="4" style="text-align:center;color:var(--admin-muted);padding:20px">Chargement...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h2 style="margin-bottom:12px;font-size:16px">Stocks faibles</h2>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Produit</th><th>Stock</th></tr></thead>
+              <tbody id="stock-body"><tr><td colspan="2" style="text-align:center;color:var(--admin-muted);padding:20px">Chargement...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/dashboard.js"></script>
+</body>
+</html>

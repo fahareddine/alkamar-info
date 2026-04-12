@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Produits — Alkamar Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>Produits</h1>
+        <a href="/admin/products/edit.html" class="btn btn--primary">+ Nouveau produit</a>
+      </div>
+      <div class="filters-bar">
+        <input type="text" id="search" class="form-control" placeholder="Rechercher un produit...">
+        <select id="filter-status" class="form-control">
+          <option value="all">Tous les statuts</option>
+          <option value="active" selected>Actifs</option>
+          <option value="draft">Brouillons</option>
+          <option value="archived">Archivés</option>
+        </select>
+        <select id="filter-cat" class="form-control">
+          <option value="">Toutes catégories</option>
+        </select>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th style="width:50px"></th><th>Nom</th><th>Catégorie</th><th>Prix EUR</th><th>Stock</th><th>Statut</th><th style="width:120px">Actions</th></tr></thead>
+          <tbody id="products-body"><tr><td colspan="7" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/products-list.js"></script>
+</body>
+</html>
