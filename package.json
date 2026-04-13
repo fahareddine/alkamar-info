@@ -2,7 +2,10 @@
   "name": "alkamar-info",
   "version": "1.0.0",
   "dependencies": {
-    "@supabase/supabase-js": "^2.45.0"
+    "@supabase/supabase-js": "^2.45.0",
+    "cheerio": "^1.2.0",
+    "replicate": "^1.4.0",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "dotenv": "^16.0.0"
