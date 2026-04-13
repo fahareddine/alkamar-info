@@ -384,23 +384,41 @@
 
   <script>
     (async () => {
+      const content = document.getElementById('product-content');
       const id = new URLSearchParams(window.location.search).get('id');
       if (!id) {
-        document.getElementById('product-content').innerHTML = `
+        content.innerHTML = `
           <div class="not-found">
             <h1>Produit introuvable</h1>
             <p>Aucun identifiant de produit fourni.</p>
-            <a href="/" style="display:inline-flex;margin-top:24px;text-decoration:none">Retour</a>
+            <a href="index.html" style="display:inline-flex;margin-top:24px;text-decoration:none">Retour à l'accueil</a>
           </div>`;
         return;
       }
 
-      const res = await fetch(`/api/products/${id}`);
-      if (!res.ok) {
-        document.body.innerHTML = '<div style="padding:40px;text-align:center"><h2>Produit introuvable</h2><a href="/">Retour</a></div>';
+      let p;
+      try {
+        const res = await fetch(`/api/products/${id}`);
+        if (!res.ok) {
+          content.innerHTML = `
+            <div class="not-found">
+              <h1>Produit introuvable</h1>
+              <p>Ce produit n'existe pas ou n'est plus disponible.</p>
+              <a href="index.html" style="display:inline-flex;margin-top:24px;text-decoration:none">Retour à l'accueil</a>
+            </div>`;
+          return;
+        }
+        p = await res.json();
+      } catch (e) {
+        console.error('Erreur chargement produit', e);
+        content.innerHTML = `
+          <div class="not-found">
+            <h1>Erreur de chargement</h1>
+            <p>Impossible de charger ce produit. Vérifiez votre connexion et réessayez.</p>
+            <a href="index.html" style="display:inline-flex;margin-top:24px;text-decoration:none">Retour à l'accueil</a>
+          </div>`;
         return;
       }
-      const p = await res.json();
 
       function stars(n) {
         return '★'.repeat(n) + '☆'.repeat(5 - n);
@@ -411,9 +429,10 @@
         toutunun: 'Tout-en-un', reconditiones: 'Reconditionnés', minipc: 'Mini PC'
       };
 
-      // Breadcrumb
+      // Breadcrumb — utilise categories.slug renvoyé par l'API
+      const catSlug = p.categories?.slug || '';
       document.title = p.name + ' — Alkamar Info';
-      document.getElementById('bc-cat').innerHTML = `<a href="ordinateurs.html?tab=${p.subcategory}">${CAT_LABELS[p.subcategory] || 'Ordinateurs'}</a>`;
+      document.getElementById('bc-cat').innerHTML = `<a href="ordinateurs.html?tab=${catSlug}">${CAT_LABELS[catSlug] || (p.categories?.name || 'Produits')}</a>`;
       document.getElementById('bc-product').textContent = p.name;
 
       // Galerie — gallery items can be strings or {src, alt} objects
@@ -436,8 +455,11 @@
         ? `<span class="badge ${p.badge_class}" style="font-size:13px;padding:4px 12px">${p.badge}</span>`
         : '';
 
-      // Stock class dérivé depuis stock_label
-      const stockClass = p.stock_label === 'En stock' ? 'in-stock' : 'out-of-stock';
+      // Stock class dérivé depuis stock_class DB ou stock_label
+      const stockClass = p.stock_class || (
+        p.stock_label === 'En stock' ? 'in-stock' :
+        (p.stock_label && p.stock_label.toLowerCase().includes('limité') ? 'low-stock' : 'out-stock')
+      );
 
       // Features
       const featuresHTML = (p.features || []).map(f => `<li>${f}</li>`).join('');
@@ -476,7 +498,7 @@
             <div class="prod-price-block">
               ${oldPriceHTML}
               <div class="prod-price-main">${p.price_eur}<span>,00 €</span></div>
-              <div class="prod-price-kmf">≈ ${p.price_kmf.toLocaleString('fr-FR')} KMF</div>
+              <div class="prod-price-kmf">≈ ${Number(p.price_kmf || 0).toLocaleString('fr-FR')} KMF</div>
               <div class="prod-price-ttc">Toutes taxes comprises · Livraison selon zone</div>
             </div>
 

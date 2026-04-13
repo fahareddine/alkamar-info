@@ -316,12 +316,18 @@
     const gridsExpanded = {};
 
     async function loadProducts(subcategory) {
-      const res = await fetch(`/api/products?subcategory=${subcategory}&status=active&limit=100`);
-      if (!res.ok) {
-        console.error('Erreur API', res.status);
+      try {
+        const res = await fetch(`/api/products?subcategory=${subcategory}&status=active&limit=100`);
+        if (!res.ok) {
+          console.error('Erreur API', res.status, subcategory);
+          return [];
+        }
+        const data = await res.json();
+        return Array.isArray(data) ? data : [];
+      } catch (e) {
+        console.error('Fetch échoué pour', subcategory, e);
         return [];
       }
-      return res.json();
     }
 
     async function renderGrid(subcategory) {
@@ -329,11 +335,30 @@
       const count = document.getElementById('count-' + subcategory);
       if (!grid) return;
 
-      const allList = gridsState[subcategory] || await loadProducts(subcategory);
-      if (!gridsState[subcategory]) gridsState[subcategory] = allList;
+      let allList;
+      try {
+        allList = gridsState[subcategory] !== undefined
+          ? gridsState[subcategory]
+          : await loadProducts(subcategory);
+        if (!gridsState[subcategory]) gridsState[subcategory] = allList;
+      } catch (e) {
+        console.error('renderGrid échoué', subcategory, e);
+        if (count) count.innerHTML = '<span style="color:#ef4444">Erreur de chargement</span>';
+        grid.innerHTML = '<p style="padding:32px;text-align:center;color:#94a3b8">Impossible de charger les produits. Veuillez réessayer.</p>';
+        return;
+      }
 
       const expanded = gridsExpanded[subcategory] || false;
       const visible = expanded ? allList : allList.slice(0, MAX_VISIBLE);
+
+      if (allList.length === 0) {
+        grid.innerHTML = '<p style="padding:32px;text-align:center;color:#94a3b8;grid-column:1/-1">Aucun produit disponible dans cette catégorie pour le moment.</p>';
+        if (count) count.innerHTML = '<strong>0</strong> produit disponible';
+        const btnId = 'voir-tout-' + subcategory;
+        const wrap = document.getElementById(btnId);
+        if (wrap) wrap.innerHTML = '';
+        return;
+      }
 
       grid.innerHTML = visible.map(productCard).join('');
 
