@@ -5,6 +5,9 @@
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* Bloque tout débordement horizontal sans casser position:sticky */
+html { overflow-x: hidden; }
+
 :root {
   --primary:      #1a3a8f;
   --primary-dark: #0f2460;
@@ -45,6 +48,7 @@ ul { list-style: none; }
   color: #9ca3af;
   font-size: 12px;
   padding: 6px 0;
+  overflow: hidden; /* empêche le wrap de pousser le header sticky */
 }
 .topbar__inner {
   max-width: 1320px;
@@ -54,7 +58,9 @@ ul { list-style: none; }
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap; /* pas de saut de ligne = hauteur constante */
+  white-space: nowrap;
+  overflow: hidden;
 }
 .topbar a { color: #9ca3af; transition: color .15s; }
 .topbar a:hover { color: #fff; }
@@ -72,11 +78,11 @@ ul { list-style: none; }
   max-width: 1320px;
   margin: 0 auto;
   padding: 0 20px;
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+  display: flex;
   align-items: center;
   gap: 24px;
-  height: 70px;
+  min-height: 64px;
+  height: 64px; /* flex laisse respirer le contenu */
 }
 
 /* Logo */
@@ -109,20 +115,23 @@ ul { list-style: none; }
 /* Search */
 .search-bar {
   display: flex;
-  width: 100%;
+  flex: 1; /* prend tout l'espace disponible entre logo et actions */
+  min-width: 0; /* autorise la réduction en flex */
   max-width: 680px;
   margin: 0 auto;
 }
 .search-bar__select {
   border: none;
   background: #e5e7eb;
-  padding: 0 12px;
+  padding: 0 8px;
   font-size: 12px;
   font-weight: 600;
   color: var(--dark);
   border-radius: var(--radius) 0 0 var(--radius);
   cursor: pointer;
-  flex-shrink: 0;
+  flex-shrink: 1; /* peut rétrécir si viewport étroit */
+  min-width: 60px;
+  max-width: 130px;
   outline: none;
 }
 .search-bar__input {
@@ -187,6 +196,8 @@ ul { list-style: none; }
 .nav-bar {
   background: var(--dark-2);
   border-bottom: 1px solid rgba(255,255,255,.06);
+  /* Pas de overflow-x sur le nav-bar : les dropdowns position:absolute
+     seraient clippés par le scroll container */
 }
 .nav-bar__inner {
   max-width: 1320px;
@@ -195,7 +206,10 @@ ul { list-style: none; }
   display: flex;
   align-items: stretch;
   gap: 0;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
+.nav-bar__inner::-webkit-scrollbar { display: none; }
 .nav-item {
   position: relative;
   flex-shrink: 0;
@@ -470,16 +484,14 @@ ul { list-style: none; }
 
 .card-img {
   height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   background: #f8fafc;
-  padding: 12px;
   overflow: hidden;
 }
 .card-img img {
-  max-height: 136px;
-  object-fit: contain;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
   transition: transform .3s;
 }
 .product-card:hover .card-img img { transform: scale(1.05); }
@@ -607,6 +619,19 @@ ul { list-style: none; }
   transition: all .15s;
 }
 .btn-detail:hover { background: var(--primary); color: #fff; }
+
+/* Stretched link — toute la carte est cliquable */
+.btn-detail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: var(--radius);
+}
+/* Boutons interactifs au-dessus de l'overlay */
+.btn-cart,
+.card-wishlist,
+.card-badges { position: relative; z-index: 2; }
 
 /* ── BREADCRUMB ──────────────────────────────────────── */
 .breadcrumb {
@@ -750,6 +775,95 @@ ul { list-style: none; }
 .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
 .page-btn.prev, .page-btn.next { width: auto; padding: 0 12px; gap: 4px; font-size: 12px; }
 
+/* ── CAT TABS (pages catégories) ────────────────────── */
+.cat-tabs {
+  background: #fff;
+  border-bottom: 2px solid var(--border);
+  padding: 0 20px;
+  position: sticky;
+  top: 64px;
+  z-index: 90;
+}
+.cat-tabs__inner {
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  gap: 0;
+}
+.cat-tabs__inner::-webkit-scrollbar { display: none; }
+.cat-tab {
+  padding: 13px 20px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  background: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  font-family: inherit;
+  transition: color .15s, border-color .15s;
+}
+.cat-tab:hover { color: var(--primary); }
+.cat-tab.active { color: var(--primary); border-bottom-color: var(--accent); font-weight: 700; }
+
+/* ── SECTIONS SOUS-CAT ───────────────────────────────── */
+.subcat-section { display: none; }
+.subcat-section.active { display: block; }
+
+.subcat-header {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  padding: 28px 20px 24px;
+  color: #fff;
+}
+.subcat-header__inner { max-width: 1320px; margin: 0 auto; }
+.subcat-header h2 { font-size: 1.4rem; font-weight: 800; margin-bottom: 4px; }
+.subcat-header p { font-size: 13px; color: #93c5fd; }
+
+/* ── GRILLES PRODUITS VARIANTES ──────────────────────── */
+.products-grid--5 {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+}
+.products-grid--4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+/* ── EXTRAS CARD ─────────────────────────────────────── */
+.card-specs { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; line-height: 1.5; }
+.price-kmf  { font-size: 11px; color: #059669; font-weight: 600; margin-top: 2px; }
+
+/* ── VOIR TOUT ───────────────────────────────────────── */
+.voir-tout-wrap { text-align: center; margin-top: 20px; }
+.btn-voir-tout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
+  border: 2px solid var(--primary);
+  border-radius: var(--radius);
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 700;
+  background: #fff;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all .15s;
+}
+.btn-voir-tout:hover { background: var(--primary); color: #fff; }
+
+/* ── FOOTER VARIANTE 3 COLONNES ──────────────────────── */
+.footer__inner--3col { grid-template-columns: 2fr 1fr 1fr; }
+
 /* ── RÉASSURANCE ─────────────────────────────────────── */
 .reassurance {
   background: var(--dark);
@@ -813,6 +927,24 @@ ul { list-style: none; }
   transition: color .15s;
 }
 .footer-col__links a:hover { color: #fff; }
+
+/* Alias utilisé dans ordinateurs.html et produit.html */
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.footer-links li,
+.footer-links a {
+  font-size: 12.5px;
+  color: #6b7280;
+  transition: color .15s;
+}
+.footer-links a:hover { color: #fff; }
+.footer-links li { color: #6b7280; }
 .footer-brand { font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 8px; }
 .footer-brand span { color: var(--accent); }
 .footer-desc { font-size: 12px; line-height: 1.6; margin-bottom: 16px; }
@@ -856,26 +988,115 @@ ul { list-style: none; }
   color: #fff;
   font-size: 24px;
   padding: 4px;
+  cursor: pointer;
+  line-height: 1;
+  min-width: 32px;
+  min-height: 32px;
+  align-items: center;
+  justify-content: center;
 }
 
 /* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 1200px) {
+  .products-grid--5 { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 1100px) {
+  .products-grid--4 { grid-template-columns: repeat(3, 1fr); }
+}
+
 @media (max-width: 1024px) {
   .page-layout { grid-template-columns: 1fr; }
   .sidebar { display: none; }
   .products-grid { grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); }
+  .nav-item__btn { padding: 0 12px; font-size: 13px; }
+}
+
+@media (max-width: 900px) {
+  .products-grid--5 { grid-template-columns: repeat(3, 1fr); }
 }
 
 @media (max-width: 768px) {
-  .header__inner { grid-template-columns: auto 1fr auto; gap: 12px; }
+  /* Header */
+  .header__inner { flex-direction: row; justify-content: space-between; gap: 12px; height: 56px; }
   .search-bar { display: none; }
   .menu-toggle { display: flex; }
   .topbar__links { display: none; }
   .footer__inner { grid-template-columns: 1fr 1fr; }
+  .footer__inner--3col { grid-template-columns: 1fr 1fr; }
   .products-grid { grid-template-columns: repeat(2, 1fr); }
+  .products-grid--4 { grid-template-columns: repeat(2, 1fr); }
+
+  /* Sur mobile : masque toutes les actions sauf la dernière (Panier) */
+  .header__actions .header__action { display: none; }
+  .header__actions .header__action:last-of-type { display: flex; }
+
+  /* cat-tabs offset corrigé (header = 56px sur mobile) */
+  .cat-tabs { top: 56px; }
+
+  /* Nav masquée par défaut sur mobile — ouverte via .is-open */
+  .nav-bar { display: none; }
+  .nav-bar.is-open {
+    display: block;
+    position: fixed;
+    top: 56px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 200;
+    max-height: calc(100vh - 56px);
+    overflow-y: auto;
+    background: var(--dark-2);
+  }
+  .nav-bar.is-open .nav-bar__inner {
+    flex-direction: column;
+    overflow-x: visible;
+    gap: 0;
+  }
+  .nav-bar.is-open .nav-item { width: 100%; }
+  .nav-bar.is-open .nav-item__btn { width: 100%; justify-content: space-between; padding: 12px 20px; }
+
+  /* Dropdowns accessibles au clic sur mobile */
+  .nav-item.open .nav-dropdown {
+    display: block;
+    position: static;
+    box-shadow: none;
+    border: none;
+    border-radius: 0;
+    background: #f8fafc;
+    border-left: 3px solid var(--accent);
+    margin-left: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .products-grid--5 { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 480px) {
   .products-grid { grid-template-columns: 1fr; }
   .footer__inner { grid-template-columns: 1fr; }
-  .header__actions .header__action:not(:last-child) { display: none; }
+  .footer__inner--3col { grid-template-columns: 1fr; }
+  .products-grid--4 { grid-template-columns: 1fr; }
+  /* Topbar : texte tronqué si nécessaire */
+  .topbar > .topbar__inner > span { font-size: 11px; }
+}
+
+@media (max-width: 420px) {
+  .products-grid--5 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 360px) {
+  /* Logo réduit sur très petits écrans (320px) */
+  .logo__icon { width: 32px; height: 32px; font-size: 16px; }
+  .logo__text { font-size: 16px; }
+
+  /* Topbar : texte tronqué pour éviter le débordement */
+  .topbar > .topbar__inner > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: calc(100vw - 40px);
+    display: block;
+  }
 }

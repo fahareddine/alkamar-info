@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services Informatiques — Alkamar Info</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .services-hero { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); padding: 36px 20px; color: #fff; }
+    .services-hero__inner { max-width: 1320px; margin: 0 auto; }
+    .services-hero h1 { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+    .services-hero p { font-size: 14px; color: #93c5fd; margin-bottom: 20px; }
+    .services-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+    .services-badge { background: rgba(255,255,255,.12); border-radius: 8px; padding: 10px 16px; font-size: 12px; }
+    .services-badge strong { display: block; font-size: 14px; margin-bottom: 2px; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar__inner">
+      <span>🛠️ Techniciens certifiés · Intervention en boutique sur rendez-vous · +269 331 27 22</span>
+      <div class="topbar__links">
+        <a href="#">Mon compte</a>
+        <a href="#">Mes commandes</a>
+        <a href="tel:+26933127222">+269 331 27 22</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">A</div>
+        <span class="logo__text">Alkamar<span>Info</span></span>
+      </a>
+      <div class="search-bar">
+        <select class="search-bar__select"><option selected>Toutes catégories</option><option>Services</option></select>
+        <input class="search-bar__input" type="text" placeholder="Rechercher un service…" id="searchInput">
+        <button class="search-bar__btn" onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__actions">
+        <a href="index.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Accueil</span>
+        </a>
+        <a href="ordinateurs.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span>Ordinateurs</span>
+        </a>
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Panier</span>
+          <span class="cart-badge">0</span>
+        </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb">
+    <a href="index.html">Accueil</a>
+    <span class="sep">›</span>
+    <span>🛠️ Services Informatiques</span>
+  </nav>
+
+  <div class="services-hero">
+    <div class="services-hero__inner">
+      <h1>🛠️ Services Informatiques</h1>
+      <p>Intervention rapide par nos techniciens · Résultats garantis 30 jours · Sur rendez-vous en boutique</p>
+      <div class="services-badges">
+        <div class="services-badge"><strong>🔧 Techniciens</strong>Certifiés et expérimentés</div>
+        <div class="services-badge"><strong>📅 Rendez-vous</strong>Disponible 6j/7 en boutique</div>
+        <div class="services-badge"><strong>🛡️ Garantie</strong>30 jours sur toute intervention</div>
+        <div class="services-badge"><strong>📞 Contact</strong>+269 331 27 22</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SERVICES ══════════════════════════════════════ -->
+  <div class="subcat-section active" id="tab-service">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);">
+      <div class="subcat-header__inner">
+        <h2>🛠️ Nos Services Informatiques</h2>
+        <p>Installation, réparation, optimisation — nos techniciens s'occupent de tout</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-service">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('service', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-service"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer__inner footer__inner--3col">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo__icon">A</div>
+          <span class="logo__text">Alkamar<span>Info</span></span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7">Votre boutique informatique aux Comores.<br>Matériel neuf et reconditionné, service local.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Services</div>
+        <ul class="footer-links">
+          <li><a href="services.html">Installation Windows</a></li>
+          <li><a href="services.html">Nettoyage PC</a></li>
+          <li><a href="services.html">Remplacement SSD</a></li>
+          <li><a href="services.html">Suppression virus</a></li>
+          <li><a href="services.html">Récupération données</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Contact</div>
+        <ul class="footer-links">
+          <li>📞 +269 331 27 22</li>
+          <li>✉️ contact@alkamar-info.com</li>
+          <li>📍 Moroni, Comores</li>
+          <li>⏰ Lun–Sam 8h–19h</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2025 Alkamar Info — Tous droits réservés</div>
+  </footer>
+
+  <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">✅ Service ajouté au panier</div>
+
+  <script src="js/products.js"></script>
+  <script>
+    const KMF = 492;
+
+    function stars(n) {
+      const f = Math.round(n);
+      return '★'.repeat(f) + '☆'.repeat(5 - f);
+    }
+
+    function productCard(p) {
+      const badge = p.badge ? `<div class="card-badges"><span class="badge ${p.badgeClass || ''}">${p.badge}</span></div>` : '<div class="card-badges"></div>';
+      const kmf = (p.priceKmf || Math.round(p.price * KMF)).toLocaleString('fr-FR');
+      const stockClass = p.stockClass || 'in-stock';
+      const stock = p.stock || 'Disponible';
+      return `
+        <div class="product-card">
+          ${badge}
+          <div class="card-img"><img src="${p.image}" alt="${p.name}" width="220" height="170" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-brand">${p.brand || ''}</div>
+            <div class="card-title">${p.name}</div>
+            <div class="card-subtitle" style="font-size:12px;color:#64748b;margin:4px 0">${p.subtitle || ''}</div>
+            <div class="card-rating"><span class="stars">${stars(p.rating)}</span> <span class="rating-count">(${p.ratingCount || 0} avis)</span></div>
+            <div class="card-price-block">
+              <span class="price-main">${p.price} €</span>
+              <div class="price-kmf">≈ ${kmf} KMF</div>
+            </div>
+            <div class="card-stock ${stockClass}">📅 ${stock}</div>
+          </div>
+          <div class="card-footer">
+            <a href="tel:+26933127222" class="btn-cart" style="text-decoration:none;text-align:center">
+              📞 Prendre rendez-vous
+            </a>
+            <a href="produit.html?id=${p.id}" class="btn-detail">Voir le détail</a>
+          </div>
+        </div>`;
+    }
+
+    const MAX_VISIBLE = 10;
+    const gridsState = {};
+    const gridsExpanded = {};
+
+    function renderGrid(subcategory) {
+      const allList = PRODUCTS.filter(p => p.subcategory === subcategory);
+      const sortedList = gridsState[subcategory] || allList;
+      gridsState[subcategory] = sortedList;
+      const expanded = gridsExpanded[subcategory] || false;
+      const visible = expanded ? sortedList : sortedList.slice(0, MAX_VISIBLE);
+      const grid = document.getElementById('grid-' + subcategory);
+      const count = document.getElementById('count-' + subcategory);
+      if (!grid) return;
+      grid.innerHTML = visible.map(productCard).join('');
+      if (count) count.innerHTML = `<strong>${allList.length}</strong> service${allList.length > 1 ? 's' : ''} disponible${allList.length > 1 ? 's' : ''}`;
+    }
+
+    function sortGrid(subcategory, mode) {
+      let list = PRODUCTS.filter(p => p.subcategory === subcategory);
+      if (mode === 'price-asc') list.sort((a, b) => a.price - b.price);
+      if (mode === 'price-desc') list.sort((a, b) => b.price - a.price);
+      if (mode === 'rating') list.sort((a, b) => b.rating - a.rating);
+      gridsState[subcategory] = list;
+      gridsExpanded[subcategory] = false;
+      renderGrid(subcategory);
+    }
+
+    renderGrid('service');
+
+    let cartCount = 0;
+    function addToCart(btn, id) {
+      cartCount++;
+      document.querySelector('.cart-badge').textContent = cartCount;
+      const n = document.getElementById('cart-notif');
+      n.style.display = 'flex';
+      setTimeout(() => n.style.display = 'none', 2500);
+    }
+
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!q) return;
+      window.location.href = 'index.html?q=' + encodeURIComponent(q);
+    }
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+  </script>
+  <script src="js/nav.js"></script>
+</body>
+</html>

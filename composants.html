@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Composants PC — Alkamar Info</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar__inner">
+      <span>📦 Livraison gratuite dès 150 € · Paiement mobile money accepté</span>
+      <div class="topbar__links">
+        <a href="#">Mon compte</a>
+        <a href="#">Mes commandes</a>
+        <a href="tel:+26933127222">+269 331 27 22</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">A</div>
+        <span class="logo__text">Alkamar<span>Info</span></span>
+      </a>
+      <div class="search-bar">
+        <select class="search-bar__select"><option>Toutes catégories</option><option selected>Composants</option></select>
+        <input class="search-bar__input" type="text" placeholder="Rechercher un composant…" id="searchInput">
+        <button class="search-bar__btn" onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__actions">
+        <a href="index.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Accueil</span>
+        </a>
+        <a href="ordinateurs.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span>Ordinateurs</span>
+        </a>
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Panier</span>
+          <span class="cart-badge">0</span>
+        </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb">
+    <a href="index.html">Accueil</a>
+    <span class="sep">›</span>
+    <span>Composants PC</span>
+  </nav>
+
+  <!-- Onglets sous-catégories -->
+  <div class="cat-tabs">
+    <div class="cat-tabs__inner">
+      <button class="cat-tab active"   onclick="showTab('cpu', this)">🔲 Processeurs CPU</button>
+      <button class="cat-tab"          onclick="showTab('cartemere', this)">🖥️ Cartes mères</button>
+      <button class="cat-tab"          onclick="showTab('ram', this)">💾 RAM / Mémoire</button>
+      <button class="cat-tab"          onclick="showTab('gpu', this)">🎮 Cartes graphiques</button>
+      <button class="cat-tab"          onclick="showTab('alimentation', this)">⚡ Alimentations</button>
+      <button class="cat-tab"          onclick="showTab('boitier', this)">📦 Boîtiers PC</button>
+      <button class="cat-tab"          onclick="showTab('refroidissement', this)">❄️ Refroidissement</button>
+      <button class="cat-tab"          onclick="showTab('essentiel', this)">🛠️ Essentiels</button>
+    </div>
+  </div>
+
+  <!-- ══ PROCESSEURS CPU ══════════════════════════════════════ -->
+  <div class="subcat-section active" id="tab-cpu">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);">
+      <div class="subcat-header__inner">
+        <h2>🔲 Processeurs CPU</h2>
+        <p>Intel Core et AMD Ryzen — du gaming d'entrée de gamme aux workstations professionnelles</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-cpu">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('cpu', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-cpu"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CARTES MÈRES ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-cartemere">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);">
+      <div class="subcat-header__inner">
+        <h2>🖥️ Cartes mères</h2>
+        <p>Intel LGA1700 et AMD AM4/AM5 — la base de votre build, choisissez bien</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-cartemere">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('cartemere', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-cartemere"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ RAM / MÉMOIRE ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-ram">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #065f46 100%);">
+      <div class="subcat-header__inner">
+        <h2>💾 RAM / Mémoire</h2>
+        <p>DDR4 et DDR5 — les kits dual channel pour des performances optimales</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-ram">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('ram', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-ram"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CARTES GRAPHIQUES GPU ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-gpu">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #7f1d1d 100%);">
+      <div class="subcat-header__inner">
+        <h2>🎮 Cartes graphiques GPU</h2>
+        <p>NVIDIA RTX et AMD Radeon — du 1080p au 4K, trouvez votre carte idéale</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-gpu">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('gpu', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-gpu"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ALIMENTATIONS ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-alimentation">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #78350f 100%);">
+      <div class="subcat-header__inner">
+        <h2>⚡ Alimentations PC</h2>
+        <p>80+ Bronze à Titanium — la base d'une build stable et efficiente</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-alimentation">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('alimentation', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-alimentation"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BOÎTIERS PC ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-boitier">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 70%);">
+      <div class="subcat-header__inner">
+        <h2>📦 Boîtiers PC</h2>
+        <p>ATX, mATX, Mini-ITX — de l'entrée de gamme au showcase premium</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-boitier">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('boitier', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-boitier"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ REFROIDISSEMENT ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-refroidissement">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #0c4a6e 100%);">
+      <div class="subcat-header__inner">
+        <h2>❄️ Refroidissement</h2>
+        <p>Ventirads et AIO — gardez vos composants au frais en silence</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-refroidissement">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('refroidissement', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-refroidissement"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ COMPOSANTS ESSENTIELS ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-essentiel">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #065f46 100%);">
+      <div class="subcat-header__inner">
+        <h2>🛠️ Essentiels</h2>
+        <p>SSD, RAM, disque externe, alimentation, Wi-Fi — les composants indispensables à petit prix</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-essentiel">Chargement…</div>
+          <div class="toolbar-sort">
+            <label>Trier :</label>
+            <select onchange="sortGrid('essentiel', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-essentiel"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner footer__inner--3col">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo__icon">A</div>
+          <span class="logo__text">Alkamar<span>Info</span></span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7">Votre boutique informatique aux Comores.<br>Matériel neuf et reconditionné, service local.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Composants</div>
+        <ul class="footer-links">
+          <li><a href="composants.html?tab=cpu">Processeurs CPU</a></li>
+          <li><a href="composants.html?tab=cartemere">Cartes mères</a></li>
+          <li><a href="composants.html?tab=ram">RAM / Mémoire</a></li>
+          <li><a href="composants.html?tab=gpu">Cartes graphiques</a></li>
+          <li><a href="composants.html?tab=alimentation">Alimentations</a></li>
+          <li><a href="composants.html?tab=boitier">Boîtiers PC</a></li>
+          <li><a href="composants.html?tab=refroidissement">Refroidissement</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Contact</div>
+        <ul class="footer-links">
+          <li>📞 +269 331 27 22</li>
+          <li>✉️ contact@alkamar-info.com</li>
+          <li>📍 Moroni, Comores</li>
+          <li>⏰ Lun–Sam 8h–19h</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2025 Alkamar Info — Tous droits réservés</div>
+  </footer>
+
+  <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">
+    ✅ Produit ajouté au panier
+  </div>
+
+  <script src="js/products.js"></script>
+  <script>
+    function stars(n) {
+      return '★'.repeat(n) + '☆'.repeat(5 - n);
+    }
+
+    function productCard(p) {
+      const badge = p.badge
+        ? `<div class="card-badges"><span class="badge ${p.badgeClass}">${p.badge}</span></div>`
+        : '<div class="card-badges"></div>';
+      const oldPrice = p.priceOld
+        ? `<span class="price-old">${p.priceOld},00 €</span>`
+        : '';
+      return `
+        <div class="product-card">
+          ${badge}
+          <button class="card-wishlist" onclick="toggleWish(this)">♡</button>
+          <div class="card-img">
+            <img src="${p.image}" alt="${p.name}" width="220" height="170" loading="lazy">
+          </div>
+          <div class="card-body">
+            <div class="card-brand">${p.brand}</div>
+            <div class="card-title">${p.name} — ${p.subtitle}</div>
+            <div class="card-rating">
+              <span class="stars">${stars(p.rating)}</span>
+              <span class="rating-count">(${p.ratingCount})</span>
+            </div>
+            <div class="card-price-block">
+              ${oldPrice}
+              <span class="price-main">${p.price}<span class="price-cents">,00 €</span></span>
+              <div class="price-kmf">≈ ${p.priceKmf.toLocaleString('fr-FR')} KMF</div>
+              <div class="price-ttc">Prix TTC</div>
+            </div>
+            <div class="card-stock ${p.stockClass}">${p.stock}</div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-cart" onclick="addToCart(this, '${p.id}')">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              Ajouter au panier
+            </button>
+            <a href="produit.html?id=${p.id}" class="btn-detail">Voir le détail</a>
+          </div>
+        </div>`;
+    }
+
+    const MAX_VISIBLE = 5;
+    const gridsState = {};
+    const gridsExpanded = {};
+
+    function renderGrid(subcategory) {
+      const allList = PRODUCTS.filter(p => p.subcategory === subcategory);
+      const sortedList = gridsState[subcategory] || allList;
+      gridsState[subcategory] = sortedList;
+
+      const expanded = gridsExpanded[subcategory] || false;
+      const visible = expanded ? sortedList : sortedList.slice(0, MAX_VISIBLE);
+
+      const grid = document.getElementById('grid-' + subcategory);
+      const count = document.getElementById('count-' + subcategory);
+      if (!grid) return;
+
+      grid.innerHTML = visible.map(productCard).join('');
+      if (count) count.innerHTML = `<strong>${allList.length}</strong> produit${allList.length > 1 ? 's' : ''} disponible${allList.length > 1 ? 's' : ''}`;
+
+      const btnId = 'voir-tout-' + subcategory;
+      let wrap = document.getElementById(btnId);
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.id = btnId;
+        wrap.className = 'voir-tout-wrap';
+        grid.after(wrap);
+      }
+      if (allList.length > MAX_VISIBLE) {
+        const reste = allList.length - MAX_VISIBLE;
+        wrap.innerHTML = expanded
+          ? `<button class="btn-voir-tout" onclick="toggleExpand('${subcategory}')">Afficher moins ↑</button>`
+          : `<button class="btn-voir-tout" onclick="toggleExpand('${subcategory}')">Voir les ${reste} autre${reste > 1 ? 's' : ''} produit${reste > 1 ? 's' : ''} →</button>`;
+      } else {
+        wrap.innerHTML = '';
+      }
+    }
+
+    function toggleExpand(subcategory) {
+      gridsExpanded[subcategory] = !gridsExpanded[subcategory];
+      renderGrid(subcategory);
+    }
+
+    function sortGrid(subcategory, mode) {
+      let list = PRODUCTS.filter(p => p.subcategory === subcategory);
+      if (mode === 'price-asc')  list.sort((a,b) => a.price - b.price);
+      if (mode === 'price-desc') list.sort((a,b) => b.price - a.price);
+      if (mode === 'rating')     list.sort((a,b) => b.rating - a.rating || b.ratingCount - a.ratingCount);
+      gridsState[subcategory] = list;
+      gridsExpanded[subcategory] = false;
+      renderGrid(subcategory);
+    }
+
+    ['cpu','cartemere','ram','gpu','alimentation','boitier','refroidissement','essentiel'].forEach(renderGrid);
+
+    function showTab(id, btn) {
+      document.querySelectorAll('.subcat-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const urlTab = new URLSearchParams(window.location.search).get('tab');
+    if (urlTab) {
+      const tabs = document.querySelectorAll('.cat-tab');
+      const map = { cpu:0, cartemere:1, ram:2, gpu:3, alimentation:4, boitier:5, refroidissement:6, essentiel:7 };
+      document.querySelectorAll('.subcat-section').forEach(s => s.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
+      const sec = document.getElementById('tab-' + urlTab);
+      if (sec) sec.classList.add('active');
+      if (map[urlTab] !== undefined) tabs[map[urlTab]].classList.add('active');
+    }
+
+    let cartCount = 0;
+    function addToCart(btn, id) {
+      cartCount++;
+      document.querySelector('.cart-badge').textContent = cartCount;
+      const n = document.getElementById('cart-notif');
+      n.style.display = 'flex';
+      setTimeout(() => n.style.display = 'none', 2500);
+    }
+
+    function toggleWish(btn) {
+      const liked = btn.textContent === '♥';
+      btn.textContent = liked ? '♡' : '♥';
+      btn.style.color = liked ? '' : '#ef4444';
+      btn.style.borderColor = liked ? '' : '#ef4444';
+    }
+
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!q) return;
+      window.location.href = 'index.html?q=' + encodeURIComponent(q);
+    }
+    document.getElementById('searchInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+  </script>  <script src="js/nav.js"></script>
+</body>
+</html>

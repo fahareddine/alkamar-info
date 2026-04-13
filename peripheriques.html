@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Périphériques — Alkamar Info</title>
+  <link rel="stylesheet" href="style.css">
+  </head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar__inner">
+      <span>📦 Livraison gratuite dès 150 € · Paiement mobile money accepté</span>
+      <div class="topbar__links">
+        <a href="#">Mon compte</a>
+        <a href="#">Mes commandes</a>
+        <a href="tel:+26933127222">+269 331 27 22</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">A</div>
+        <span class="logo__text">Alkamar<span>Info</span></span>
+      </a>
+      <div class="search-bar">
+        <select class="search-bar__select"><option>Toutes catégories</option><option selected>Périphériques</option></select>
+        <input class="search-bar__input" type="text" placeholder="Rechercher un périphérique…" id="searchInput">
+        <button class="search-bar__btn" onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__actions">
+        <a href="index.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Accueil</span>
+        </a>
+        <a href="ordinateurs.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          <span>Ordinateurs</span>
+        </a>
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Panier</span>
+          <span class="cart-badge">0</span>
+        </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb">
+    <a href="index.html">Accueil</a>
+    <span class="sep">›</span>
+    <span>Périphériques</span>
+  </nav>
+
+  <!-- Onglets -->
+  <div class="cat-tabs">
+    <div class="cat-tabs__inner">
+      <button class="cat-tab active" onclick="showTab('clavier', this)">⌨️ Claviers</button>
+      <button class="cat-tab"        onclick="showTab('souris', this)">🖱️ Souris</button>
+      <button class="cat-tab"        onclick="showTab('casque', this)">🎧 Casques / Enceintes</button>
+      <button class="cat-tab"        onclick="showTab('webcam', this)">📷 Webcams</button>
+      <button class="cat-tab"        onclick="showTab('imprimante', this)">🖨️ Imprimantes</button>
+      <button class="cat-tab"        onclick="showTab('onduleur', this)">🔋 Onduleurs</button>
+      <button class="cat-tab"        onclick="showTab('essentiel-periph', this)">🖥️ Essentiels</button>
+    </div>
+  </div>
+
+  <!-- ══ CLAVIERS ══ -->
+  <div class="subcat-section active" id="tab-clavier">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);">
+      <div class="subcat-header__inner">
+        <h2>⌨️ Claviers</h2>
+        <p>Membranes bureautiques, mécaniques gaming, ergonomiques — le clavier pour chaque usage</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-clavier">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label>
+            <select onchange="sortGrid('clavier', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-clavier"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ SOURIS ══ -->
+  <div class="subcat-section" id="tab-souris">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #312e81 100%);">
+      <div class="subcat-header__inner">
+        <h2>🖱️ Souris</h2>
+        <p>Bureautiques sans fil, gaming haute précision, ergonomiques premium</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-souris">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label>
+            <select onchange="sortGrid('souris', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-souris"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ CASQUES / ENCEINTES ══ -->
+  <div class="subcat-section" id="tab-casque">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #7f1d1d 100%);">
+      <div class="subcat-header__inner">
+        <h2>🎧 Casques &amp; Enceintes</h2>
+        <p>Audio bureau, gaming, Bluetooth — pour les calls, la musique et le gaming</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-casque">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label>
+            <select onchange="sortGrid('casque', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-casque"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ WEBCAMS ══ -->
+  <div class="subcat-section" id="tab-webcam">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #065f46 100%);">
+      <div class="subcat-header__inner">
+        <h2>📷 Webcams</h2>
+        <p>720p à 1080p 60fps — pour les visioconférences, le streaming et la création de contenu</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-webcam">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label>
+            <select onchange="sortGrid('webcam', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-webcam"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ IMPRIMANTES ══ -->
+  <div class="subcat-section" id="tab-imprimante">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #78350f 100%);">
+      <div class="subcat-header__inner">
+        <h2>🖨️ Imprimantes</h2>
+        <p>Jet d'encre, laser, EcoTank — imprimez plus vite et moins cher</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-imprimante">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label>
+            <select onchange="sortGrid('imprimante', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-imprimante"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ ONDULEURS ══ -->
+  <div class="subcat-section" id="tab-onduleur">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #064e3b 100%);">
+      <div class="subcat-header__inner">
+        <h2>🔋 Onduleurs</h2>
+        <p>APC, Eaton, CyberPower — protégez votre matériel contre les coupures et surtensions</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-onduleur">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label>
+            <select onchange="sortGrid('onduleur', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-onduleur"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ PÉRIPHÉRIQUES ESSENTIELS ══════════════════════════════════ -->
+  <div class="subcat-section" id="tab-essentiel-periph">
+    <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);">
+      <div class="subcat-header__inner">
+        <h2>🖥️ Essentiels</h2>
+        <p>Écran, clavier, souris, webcam, casque — tout pour équiper un poste complet</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-essentiel-periph">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label>
+            <select onchange="sortGrid('essentiel-periph', this.value)">
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="rating">Meilleures notes</option>
+            </select>
+          </div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-essentiel-periph"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer__inner footer__inner--3col">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo__icon">A</div>
+          <span class="logo__text">Alkamar<span>Info</span></span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7">Votre boutique informatique aux Comores.<br>Matériel neuf et reconditionné, service local.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Périphériques</div>
+        <ul class="footer-links">
+          <li><a href="peripheriques.html?tab=clavier">Claviers</a></li>
+          <li><a href="peripheriques.html?tab=souris">Souris</a></li>
+          <li><a href="peripheriques.html?tab=casque">Casques / Enceintes</a></li>
+          <li><a href="peripheriques.html?tab=webcam">Webcams</a></li>
+          <li><a href="peripheriques.html?tab=imprimante">Imprimantes</a></li>
+          <li><a href="peripheriques.html?tab=onduleur">Onduleurs</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Contact</div>
+        <ul class="footer-links">
+          <li>📞 +269 331 27 22</li>
+          <li>✉️ contact@alkamar-info.com</li>
+          <li>📍 Moroni, Comores</li>
+          <li>⏰ Lun–Sam 8h–19h</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2025 Alkamar Info — Tous droits réservés</div>
+  </footer>
+
+  <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">
+    ✅ Produit ajouté au panier
+  </div>
+
+  <script src="js/products.js"></script>
+  <script>
+    function stars(n) { return '★'.repeat(n) + '☆'.repeat(5 - n); }
+
+    function productCard(p) {
+      const badge = p.badge ? `<div class="card-badges"><span class="badge ${p.badgeClass}">${p.badge}</span></div>` : '<div class="card-badges"></div>';
+      const oldPrice = p.priceOld ? `<span class="price-old">${p.priceOld},00 €</span>` : '';
+      return `
+        <div class="product-card">
+          ${badge}
+          <button class="card-wishlist" onclick="toggleWish(this)">♡</button>
+          <div class="card-img"><img src="${p.image}" alt="${p.name}" width="220" height="170" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-brand">${p.brand}</div>
+            <div class="card-title">${p.name} — ${p.subtitle}</div>
+            <div class="card-rating"><span class="stars">${stars(p.rating)}</span><span class="rating-count">(${p.ratingCount})</span></div>
+            <div class="card-price-block">
+              ${oldPrice}
+              <span class="price-main">${p.price}<span class="price-cents">,00 €</span></span>
+              <div class="price-kmf">≈ ${p.priceKmf.toLocaleString('fr-FR')} KMF</div>
+              <div class="price-ttc">Prix TTC</div>
+            </div>
+            <div class="card-stock ${p.stockClass}">${p.stock}</div>
+          </div>
+          <div class="card-footer">
+            <button class="btn-cart" onclick="addToCart(this, '${p.id}')">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              Ajouter au panier
+            </button>
+            <a href="produit.html?id=${p.id}" class="btn-detail">Voir le détail</a>
+          </div>
+        </div>`;
+    }
+
+    const MAX_VISIBLE = 5;
+    const gridsState = {};
+    const gridsExpanded = {};
+
+    function renderGrid(subcategory) {
+      const allList = PRODUCTS.filter(p => p.subcategory === subcategory);
+      const sortedList = gridsState[subcategory] || allList;
+      gridsState[subcategory] = sortedList;
+      const expanded = gridsExpanded[subcategory] || false;
+      const visible = expanded ? sortedList : sortedList.slice(0, MAX_VISIBLE);
+      const grid = document.getElementById('grid-' + subcategory);
+      const count = document.getElementById('count-' + subcategory);
+      if (!grid) return;
+      grid.innerHTML = visible.map(productCard).join('');
+      if (count) count.innerHTML = `<strong>${allList.length}</strong> produit${allList.length > 1 ? 's' : ''} disponible${allList.length > 1 ? 's' : ''}`;
+      const btnId = 'voir-tout-' + subcategory;
+      let wrap = document.getElementById(btnId);
+      if (!wrap) { wrap = document.createElement('div'); wrap.id = btnId; wrap.className = 'voir-tout-wrap'; grid.after(wrap); }
+      if (allList.length > MAX_VISIBLE) {
+        const reste = allList.length - MAX_VISIBLE;
+        wrap.innerHTML = expanded
+          ? `<button class="btn-voir-tout" onclick="toggleExpand('${subcategory}')">Afficher moins ↑</button>`
+          : `<button class="btn-voir-tout" onclick="toggleExpand('${subcategory}')">Voir les ${reste} autre${reste > 1 ? 's' : ''} produit${reste > 1 ? 's' : ''} →</button>`;
+      } else { wrap.innerHTML = ''; }
+    }
+
+    function toggleExpand(s) { gridsExpanded[s] = !gridsExpanded[s]; renderGrid(s); }
+
+    function sortGrid(s, mode) {
+      let list = PRODUCTS.filter(p => p.subcategory === s);
+      if (mode === 'price-asc')  list.sort((a,b) => a.price - b.price);
+      if (mode === 'price-desc') list.sort((a,b) => b.price - a.price);
+      if (mode === 'rating')     list.sort((a,b) => b.rating - a.rating || b.ratingCount - a.ratingCount);
+      gridsState[s] = list; gridsExpanded[s] = false; renderGrid(s);
+    }
+
+    ['clavier','souris','casque','webcam','imprimante','onduleur','essentiel-periph'].forEach(renderGrid);
+
+    function showTab(id, btn) {
+      document.querySelectorAll('.subcat-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.cat-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + id).classList.add('active');
+      btn.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    const urlTab = new URLSearchParams(window.location.search).get('tab');
+    if (urlTab) {
+      const tabs = document.querySelectorAll('.cat-tab');
+      const map = { clavier:0, souris:1, casque:2, webcam:3, imprimante:4, onduleur:5, 'essentiel-periph':6 };
+      document.querySelectorAll('.subcat-section').forEach(s => s.classList.remove('active'));
+      tabs.forEach(t => t.classList.remove('active'));
+      const sec = document.getElementById('tab-' + urlTab);
+      if (sec) sec.classList.add('active');
+      if (map[urlTab] !== undefined) tabs[map[urlTab]].classList.add('active');
+    }
+
+    let cartCount = 0;
+    function addToCart(btn, id) {
+      cartCount++;
+      document.querySelector('.cart-badge').textContent = cartCount;
+      const n = document.getElementById('cart-notif');
+      n.style.display = 'flex';
+      setTimeout(() => n.style.display = 'none', 2500);
+    }
+
+    function toggleWish(btn) {
+      const liked = btn.textContent === '♥';
+      btn.textContent = liked ? '♡' : '♥';
+      btn.style.color = liked ? '' : '#ef4444';
+      btn.style.borderColor = liked ? '' : '#ef4444';
+    }
+
+    function doSearch() {
+      const q = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!q) return;
+      window.location.href = 'index.html?q=' + encodeURIComponent(q);
+    }
+    document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+  </script>  <script src="js/nav.js"></script>
+</body>
+</html>
