@@ -105,6 +105,8 @@ module.exports = async function handler(req, res) {
     try {
       const product = await scrapeProduct(url);
       if (!product.name) return res.status(422).json({ error: 'Impossible d\'extraire le nom du produit depuis cette page' });
+      if (!product.price_eur) product.price_eur = 0;
+      if (!product.price_kmf) product.price_kmf = 0;
 
       // Slug unique
       const { data: existing } = await supabase.from('products').select('id').eq('slug', product.slug).maybeSingle();
