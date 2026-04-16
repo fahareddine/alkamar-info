@@ -190,3 +190,8 @@ input[type=checkbox].row-check { width: 15px; height: 15px; cursor: pointer; acc
 .ia-badge--processed   { background: #dcfce7; color: #166534; }
 .ia-badge--partial     { background: #fed7aa; color: #9a3412; }
 .ia-badge--failed      { background: #fee2e2; color: #991b1b; }
+
+/* ── Import URL bar ─────────────────── */
+.import-bar { display: flex; gap: 8px; margin-bottom: 20px; }
+.import-bar .form-control { flex: 1; }
+@media (max-width: 600px) { .import-bar { flex-direction: column; } }

@@ -14,6 +14,12 @@
         <a href="/admin/products/edit.html" class="btn btn--primary">+ Nouveau produit</a>
       </div>
 
+      <!-- Import URL -->
+      <div class="import-bar">
+        <input type="url" id="import-url" class="form-control" placeholder="Coller une URL produit (ldlc.com, amazon.fr, materiel.net...)">
+        <button type="button" id="btn-import" class="btn btn--primary">↓ Importer</button>
+      </div>
+
       <div class="product-stats">
         <div class="product-stat">
           <span>Total</span>
@@ -94,5 +100,23 @@
   <script src="/admin/js/api.js"></script>
   <script src="/admin/js/layout.js"></script>
   <script src="/admin/js/products-list.js"></script>
+  <script>
+    document.getElementById('btn-import')?.addEventListener('click', async () => {
+      const url = document.getElementById('import-url').value.trim();
+      if (!url.startsWith('http')) { alert('Entrez une URL valide (commençant par https://)'); return; }
+      const btn = document.getElementById('btn-import');
+      btn.disabled = true; btn.textContent = '⏳ Import en cours...';
+      try {
+        const product = await api.post('/api/products?action=import', { url });
+        window.location.href = `/admin/products/edit.html?id=${product.id}`;
+      } catch (err) {
+        alert('Erreur import : ' + (err.message || err));
+        btn.disabled = false; btn.textContent = '↓ Importer';
+      }
+    });
+    document.getElementById('import-url')?.addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('btn-import').click();
+    });
+  </script>
 </body>
 </html>

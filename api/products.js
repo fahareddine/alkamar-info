@@ -93,6 +93,32 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(data);
   }
 
+  // POST ?action=import — scraper une URL produit et créer le produit
+  if (req.method === 'POST' && req.query.action === 'import') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+
+    const { url } = req.body || {};
+    if (!url || !url.startsWith('http')) return res.status(400).json({ error: 'url valide requise' });
+
+    const { scrapeProduct } = require('./_lib/scraper');
+    try {
+      const product = await scrapeProduct(url);
+      if (!product.name) return res.status(422).json({ error: 'Impossible d\'extraire le nom du produit depuis cette page' });
+
+      // Slug unique
+      const { data: existing } = await supabase.from('products').select('id').eq('slug', product.slug).maybeSingle();
+      if (existing) product.slug = product.slug + '-' + Date.now().toString(36);
+
+      const { data, error } = await supabase.from('products').insert(product).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(201).json(data);
+    } catch (err) {
+      console.error('[import-product]', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
   // POST — créer un produit (admin ou editor)
   if (req.method === 'POST') {
     const auth = await requireRole(req, 'admin', 'editor');
