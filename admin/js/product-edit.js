@@ -360,7 +360,7 @@ function setupIAPhotos() {
     document.getElementById('btn-fetch-images').disabled = true;
 
     try {
-      const data = await api.post('/api/products/fetch-images', { productId, slug, mode, payload });
+      const data = await api.post(`/api/products/${productId}/images?action=fetch`, { slug, mode, payload });
       setIAStatus(data.status === 'partial' ? 'partial' : 'ready_for_processing', data.status);
 
       if (data.sourceUrls?.length) {
@@ -394,7 +394,7 @@ function setupIAPhotos() {
     document.getElementById('btn-process-images').disabled = true;
 
     try {
-      const data = await api.post('/api/products/process-images', { productId, slug });
+      const data = await api.post(`/api/products/${productId}/images?action=process`, { slug });
 
       if (data.status === 'processing') {
         setIAStatus('processing', 'en cours...');

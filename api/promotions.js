@@ -52,5 +52,36 @@ module.exports = async function handler(req, res) {
     return res.status(201).json(data);
   }
 
+  // PUT /api/promotions?id=xxx — modifier
+  if (req.method === 'PUT') {
+    const auth = await requireRole(req, 'admin');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    const { id } = req.query;
+    if (!id) return res.status(400).json({ error: 'id requis' });
+    const { name, type, value, target_type, target_id, starts_at, ends_at, is_active } = req.body;
+    const { data, error } = await supabase
+      .from('promotions')
+      .update({ name, type, value, target_type, target_id, starts_at, ends_at, is_active })
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
+
+  // DELETE /api/promotions?id=xxx — désactiver
+  if (req.method === 'DELETE') {
+    const auth = await requireRole(req, 'admin');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    const { id } = req.query;
+    if (!id) return res.status(400).json({ error: 'id requis' });
+    const { error } = await supabase
+      .from('promotions')
+      .update({ is_active: false })
+      .eq('id', id);
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json({ success: true });
+  }
+
   return res.status(405).json({ error: 'Method not allowed' });
 };

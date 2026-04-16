@@ -1,0 +1,138 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]: Alkamar Admin
+    - navigation [ref=e5]:
+      - generic [ref=e6]: Vue d'ensemble
+      - link "📊 Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: /admin/
+      - generic [ref=e8]: Catalogue
+      - link "📦 Produits" [ref=e9] [cursor=pointer]:
+        - /url: /admin/products/
+      - link "🗂️ Catégories" [ref=e10] [cursor=pointer]:
+        - /url: /admin/categories/
+      - generic [ref=e11]: Ventes
+      - link "🛒 Commandes" [ref=e12] [cursor=pointer]:
+        - /url: /admin/orders/
+      - link "👥 Clients" [ref=e13] [cursor=pointer]:
+        - /url: /admin/customers/
+      - link "🧾 Factures" [ref=e14] [cursor=pointer]:
+        - /url: /admin/invoices/
+      - generic [ref=e15]: Marketing
+      - link "🏷️ Promotions" [ref=e16] [cursor=pointer]:
+        - /url: /admin/promotions/
+      - link "🎫 Codes promo" [ref=e17] [cursor=pointer]:
+        - /url: /admin/coupons/
+      - generic [ref=e18]: Inventaire
+      - link "📦 Stock" [ref=e19] [cursor=pointer]:
+        - /url: /admin/stock/
+      - generic [ref=e20]: Paramètres
+      - link "🔑 Utilisateurs" [ref=e21] [cursor=pointer]:
+        - /url: /admin/users/
+      - link "🚪 Déconnexion" [ref=e22] [cursor=pointer]:
+        - /url: "#"
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - generic [ref=e25]:
+        - link "← Produits" [ref=e26] [cursor=pointer]:
+          - /url: /admin/products/
+        - heading "Nouveau produit" [level=1] [ref=e27]
+      - generic [ref=e28]:
+        - button "👁 Aperçu" [ref=e29] [cursor=pointer]
+        - button "Brouillon" [ref=e30] [cursor=pointer]
+        - button "Enregistrer" [ref=e31] [cursor=pointer]
+    - generic [ref=e33]:
+      - generic [ref=e34]:
+        - generic [ref=e35]:
+          - heading "Informations générales" [level=2] [ref=e36]
+          - generic [ref=e37]:
+            - generic [ref=e38]: Nom *
+            - textbox "Nom du produit" [ref=e39]
+          - generic [ref=e40]:
+            - generic [ref=e41]: Slug
+            - generic [ref=e42]:
+              - generic [ref=e43]: /produit/
+              - textbox "mon-produit" [ref=e44]
+              - button "↺ Regénérer" [ref=e45] [cursor=pointer]
+          - generic [ref=e46]:
+            - generic [ref=e47]:
+              - generic [ref=e48]: Marque
+              - textbox "Apple, Samsung..." [ref=e49]
+            - generic [ref=e50]:
+              - generic [ref=e51]: Sous-titre
+              - textbox "Courte accroche" [ref=e52]
+          - generic [ref=e53]:
+            - generic [ref=e54]: Description
+            - textbox "Description complète du produit..." [ref=e55]
+        - generic [ref=e56]:
+          - heading "Médias" [level=2] [ref=e57]
+          - generic [ref=e58]:
+            - generic [ref=e59]: Image principale
+            - textbox "https://..." [ref=e60]
+          - generic [ref=e61]:
+            - generic [ref=e62]: Galerie
+            - generic [ref=e63]:
+              - textbox "URL image à ajouter..." [ref=e64]
+              - button "Ajouter" [ref=e65] [cursor=pointer]
+        - generic [ref=e66]:
+          - heading "Caractéristiques (specs)" [level=2] [ref=e67]
+          - button "+ Ajouter" [ref=e68] [cursor=pointer]
+        - generic [ref=e69]:
+          - heading "Référencement SEO" [level=2] [ref=e70]
+          - generic [ref=e71]:
+            - generic [ref=e72]: SEO Title
+            - textbox "Titre pour Google..." [ref=e73]
+          - generic [ref=e74]:
+            - generic [ref=e75]: SEO Description
+            - textbox "Description pour les moteurs de recherche..." [ref=e76]
+            - text: 0/160
+      - generic [ref=e77]:
+        - generic [ref=e78]:
+          - heading "Publication" [level=2] [ref=e79]
+          - generic [ref=e80]:
+            - generic [ref=e81]: Statut
+            - combobox [ref=e82]:
+              - option "Actif" [selected]
+              - option "Brouillon"
+              - option "Archivé"
+          - generic [ref=e83]:
+            - button "Enregistrer" [ref=e84] [cursor=pointer]
+            - button "Brouillon" [ref=e85] [cursor=pointer]
+        - generic [ref=e86]:
+          - heading "Catégorie & Tags" [level=2] [ref=e87]
+          - generic [ref=e88]:
+            - generic [ref=e89]: Catégorie
+            - combobox [ref=e90]:
+              - option "— Sélectionner —" [selected]
+          - generic [ref=e91]:
+            - generic [ref=e92]: Tags
+            - textbox "Ajouter un tag..." [ref=e95]
+        - generic [ref=e96]:
+          - heading "Tarification" [level=2] [ref=e97]
+          - generic [ref=e98]:
+            - generic [ref=e99]: Prix EUR *
+            - spinbutton [ref=e100]
+          - generic [ref=e101]:
+            - generic [ref=e102]: Prix KMF
+            - spinbutton [ref=e103]
+          - generic [ref=e104]:
+            - generic [ref=e105]: Prix barré EUR
+            - spinbutton [ref=e106]
+        - generic [ref=e107]:
+          - heading "Inventaire" [level=2] [ref=e108]
+          - generic [ref=e109]:
+            - generic [ref=e110]: SKU
+            - textbox "Référence interne" [ref=e111]
+          - generic [ref=e112]:
+            - generic [ref=e113]: Stock
+            - spinbutton [ref=e114]: "0"
+          - generic [ref=e115]:
+            - generic [ref=e116]: Libellé stock
+            - textbox "En stock" [ref=e117]
+        - generic [ref=e118]:
+          - heading "Badge" [level=2] [ref=e119]
+          - generic [ref=e120]:
+            - generic [ref=e121]: Texte badge
+            - 'textbox "ex: Nouveau, Promo..." [ref=e122]'
+          - generic [ref=e123]:
+            - generic [ref=e124]: Classe CSS
+            - 'textbox "ex: badge--new" [ref=e125]'

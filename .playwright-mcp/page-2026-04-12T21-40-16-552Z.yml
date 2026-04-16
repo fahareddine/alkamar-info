@@ -1,0 +1,36 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]: Alkamar Admin
+    - navigation [ref=e5]:
+      - generic [ref=e6]: Vue d'ensemble
+      - link "📊 Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: /admin/
+      - generic [ref=e8]: Catalogue
+      - link "📦 Produits" [ref=e9] [cursor=pointer]:
+        - /url: /admin/products/
+      - link "🗂️ Catégories" [ref=e10] [cursor=pointer]:
+        - /url: /admin/categories/
+      - generic [ref=e11]: Ventes
+      - link "🛒 Commandes" [ref=e12] [cursor=pointer]:
+        - /url: /admin/orders/
+      - link "👥 Clients" [ref=e13] [cursor=pointer]:
+        - /url: /admin/customers/
+      - generic [ref=e14]: Paramètres
+      - link "🔑 Utilisateurs" [ref=e15] [cursor=pointer]:
+        - /url: /admin/users/
+      - link "🚪 Déconnexion" [ref=e16] [cursor=pointer]:
+        - /url: "#"
+  - main [ref=e17]:
+    - heading "Clients" [level=1] [ref=e19]
+    - textbox "Nom, email, téléphone..." [ref=e21]
+    - table [ref=e23]:
+      - rowgroup [ref=e24]:
+        - row "Nom Email Téléphone Ville Inscrit le" [ref=e25]:
+          - columnheader "Nom" [ref=e26]
+          - columnheader "Email" [ref=e27]
+          - columnheader "Téléphone" [ref=e28]
+          - columnheader "Ville" [ref=e29]
+          - columnheader "Inscrit le" [ref=e30]
+      - rowgroup [ref=e31]:
+        - row "Chargement..." [ref=e32]:
+          - cell "Chargement..." [ref=e33]

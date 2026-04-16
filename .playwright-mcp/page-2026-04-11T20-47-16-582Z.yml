@@ -1,0 +1,294 @@
+- generic [active] [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e4]:
+      - link "InfoExperts" [ref=e5] [cursor=pointer]:
+        - /url: index.html
+        - img [ref=e6]
+        - generic [ref=e8]: InfoExperts
+      - navigation "Navigation principale" [ref=e9]:
+        - link "Accueil" [ref=e10] [cursor=pointer]:
+          - /url: index.html
+        - link "À propos" [ref=e11] [cursor=pointer]:
+          - /url: a-propos.html
+        - link "Nos Services" [ref=e12] [cursor=pointer]:
+          - /url: services.html
+        - link "Boutique" [ref=e13] [cursor=pointer]:
+          - /url: boutique.html
+        - link "Pas Cher" [ref=e14] [cursor=pointer]:
+          - /url: informatique-pas-cher-comores.html
+        - link "Blog" [ref=e15] [cursor=pointer]:
+          - /url: blog/index.html
+        - link "Rendez-vous" [ref=e16] [cursor=pointer]:
+          - /url: booking.html
+        - link "Contact" [ref=e17] [cursor=pointer]:
+          - /url: "#formulaire"
+  - main [ref=e18]:
+    - region "Présentation des services Info Experts" [ref=e19]:
+      - generic [ref=e20]:
+        - group "1 sur 4 — Vente de matériel informatique" [ref=e21]:
+          - img "Matériel informatique disponible chez Info Experts à Moroni, Comores" [ref=e23]
+          - generic [ref=e25]:
+            - generic [ref=e26]: Boutique Informatique
+            - heading "Matériel informatique en stock à Moroni" [level=1] [ref=e27]:
+              - text: Matériel informatique
+              - text: en stock à Moroni
+            - paragraph [ref=e28]: PC, laptops, accessoires réseau et composants — sélectionnés pour tenir dans le temps. Disponibles en stock, retrait à Moroni ou livraison dans tout l'archipel.
+            - generic [ref=e29]:
+              - link "Voir la Boutique" [ref=e30] [cursor=pointer]:
+                - /url: boutique.html
+              - link "Nous contacter" [ref=e31] [cursor=pointer]:
+                - /url: "#formulaire"
+        - group [ref=e32]:
+          - img [ref=e34]
+          - generic [ref=e36]:
+            - generic [ref=e37]: Maintenance & Réparation
+            - paragraph [ref=e38]: Dépannage et réparation sous 24 h
+            - paragraph [ref=e39]: Votre ordinateur est en panne ? Nous diagnostiquons, réparons et rendons votre matériel opérationnel. Sans jargon, sans mauvaises surprises.
+            - generic [ref=e40]:
+              - link [ref=e41] [cursor=pointer]:
+                - /url: services.html
+                - text: Nos Services
+              - link [ref=e42] [cursor=pointer]:
+                - /url: tel:+2693312722
+                - text: Appeler maintenant
+        - group [ref=e43]:
+          - img [ref=e45]
+          - generic [ref=e47]:
+            - generic [ref=e48]: Création Web
+            - paragraph [ref=e49]: Votre site web visible et professionnel
+            - paragraph [ref=e50]: Votre entreprise mérite une présence en ligne sérieuse. Nous concevons des sites clairs, rapides et trouvables sur Google — de A à Z, sans vous imposer la technique.
+            - generic [ref=e51]:
+              - link [ref=e52] [cursor=pointer]:
+                - /url: services.html
+                - text: Découvrir nos offres
+              - link [ref=e53] [cursor=pointer]:
+                - /url: "#formulaire"
+                - text: Demander un devis
+        - group [ref=e54]:
+          - img [ref=e56]
+          - generic [ref=e58]:
+            - generic [ref=e59]: Conseil Informatique
+            - paragraph [ref=e60]: Un partenaire de confiance
+            - paragraph [ref=e61]: Vous avez un projet ou un parc informatique à structurer ? Nous vous aidons à faire les bons choix, adaptés à votre budget et à votre réalité locale.
+            - generic [ref=e62]:
+              - link [ref=e63] [cursor=pointer]:
+                - /url: services.html
+                - text: Nos Services
+              - link [ref=e64] [cursor=pointer]:
+                - /url: booking.html
+                - text: Prendre rendez-vous
+      - button "Diapositive précédente" [ref=e65] [cursor=pointer]:
+        - img [ref=e66]
+      - button "Diapositive suivante" [ref=e68] [cursor=pointer]:
+        - img [ref=e69]
+      - tablist "Sélectionner une diapositive" [ref=e71]:
+        - tab "Diapositive 1 sur 4" [selected] [ref=e72] [cursor=pointer]
+        - tab "Diapositive 2 sur 4" [ref=e73] [cursor=pointer]
+        - tab "Diapositive 3 sur 4" [ref=e74] [cursor=pointer]
+        - tab "Diapositive 4 sur 4" [ref=e75] [cursor=pointer]
+    - generic [ref=e78]:
+      - generic [ref=e79]:
+        - heading "Nos services" [level=2] [ref=e80]
+        - paragraph [ref=e81]: Vente, réparation, maintenance et création web — tout ce qu'il vous faut en un seul endroit.
+      - generic [ref=e82]:
+        - generic [ref=e83]:
+          - img [ref=e86]
+          - heading "Vente de Matériel Informatique" [level=3] [ref=e88]
+          - paragraph [ref=e89]: PC, laptops, composants et accessoires — sélectionnés pour tenir dans le temps. Conseil inclus à l'achat.
+        - generic [ref=e90]:
+          - img [ref=e93]
+          - heading "Réparation & Maintenance Informatique" [level=3] [ref=e96]
+          - paragraph [ref=e97]: Diagnostic gratuit, réparation express, maintenance régulière. Votre matériel entre de bonnes mains.
+        - generic [ref=e98]:
+          - img [ref=e101]
+          - heading "Création de Sites Web aux Comores" [level=3] [ref=e103]
+          - paragraph [ref=e104]: Sites vitrines clairs, adaptés au mobile et visibles sur Google. Conçus pour les entreprises locales.
+    - generic [ref=e106]:
+      - paragraph [ref=e107]: Les marques que nous maîtrisons
+      - generic [ref=e109]:
+        - generic [ref=e110]: HP
+        - generic [ref=e111]: DELL
+        - generic [ref=e112]: Lenovo
+        - generic [ref=e113]: ASUS
+        - generic [ref=e114]: CISCO
+        - generic [ref=e115]: Toshiba
+        - generic [ref=e116]: Canon
+        - generic [ref=e117]: Ricoh
+        - generic [ref=e118]: HP
+        - generic [ref=e119]: DELL
+        - generic [ref=e120]: Lenovo
+        - generic [ref=e121]: ASUS
+        - generic [ref=e122]: CISCO
+        - generic [ref=e123]: Toshiba
+        - generic [ref=e124]: Canon
+        - generic [ref=e125]: Ricoh
+    - generic [ref=e127]:
+      - generic [ref=e128]:
+        - heading "Matériel disponible en stock" [level=2] [ref=e129]
+        - paragraph [ref=e130]: Sélection de produits testés, disponibles à Moroni. Livraison dans tout l'archipel.
+      - generic [ref=e131]:
+        - generic [ref=e132]:
+          - img "Vente laptops professionnels à Moroni Comores" [ref=e134]
+          - generic [ref=e135]:
+            - generic [ref=e136]: Populaire
+            - heading "Laptops Professionnels" [level=3] [ref=e137]
+            - paragraph [ref=e138]: Pour le travail, les études ou la maison — des laptops fiables à prix juste.
+          - link "Demander sur WhatsApp" [ref=e140] [cursor=pointer]:
+            - /url: https://wa.me/33667491345?text=Bonjour,%20je%20souhaite%20des%20informations%20sur%20vos%20Laptops%20Professionnels.
+        - generic [ref=e141]:
+          - img "Composants PC RAM SSD disponibles aux Comores" [ref=e143]
+          - generic [ref=e144]:
+            - heading "Composants PC" [level=3] [ref=e145]
+            - paragraph [ref=e146]: Donnez une seconde vie à votre ordinateur avec des composants de qualité.
+          - link "Demander un prix" [ref=e148] [cursor=pointer]:
+            - /url: https://wa.me/33667491345?text=Bonjour,%20je%20cherche%20des%20composants%20PC%20(RAM,%20Disque%20dur...)
+        - generic [ref=e149]:
+          - img "Solutions réseau routeurs et switchs à Moroni Comores" [ref=e151]
+          - generic [ref=e152]:
+            - heading "Solutions Réseau" [level=3] [ref=e153]
+            - paragraph [ref=e154]: Routeurs, switchs, câblage — pour un réseau qui tient, même en conditions difficiles.
+          - link "Voir le matériel" [ref=e156] [cursor=pointer]:
+            - /url: https://wa.me/33667491345?text=Bonjour,%20j'ai%20besoin%20d'informations%20sur%20vos%20solutions%20réseau.
+      - link "Voir toute la boutique →" [ref=e158] [cursor=pointer]:
+        - /url: boutique.html
+    - generic [ref=e161]:
+      - generic [ref=e162]:
+        - img [ref=e164]
+        - generic [ref=e166]: Garantie 6 mois
+      - generic [ref=e167]:
+        - img [ref=e169]
+        - generic [ref=e171]: Livraison Comores
+      - generic [ref=e172]:
+        - img [ref=e174]
+        - generic [ref=e176]: Paiement sécurisé
+      - generic [ref=e177]:
+        - img [ref=e179]
+        - generic [ref=e181]: Disponible 6j/7
+    - generic [ref=e183]:
+      - generic [ref=e184]:
+        - heading "Ce qui nous distingue" [level=2] [ref=e185]
+        - paragraph [ref=e186]: 10 ans d'expérience, des techniciens sérieux, des tarifs transparents.
+      - generic [ref=e187]:
+        - generic [ref=e188]:
+          - img [ref=e191]
+          - paragraph [ref=e193]: 10+
+          - paragraph [ref=e194]: Ans d'expérience
+          - paragraph [ref=e195]: en informatique aux Comores
+        - generic [ref=e196]:
+          - img [ref=e199]
+          - paragraph [ref=e201]: 18+
+          - paragraph [ref=e202]: Entreprises clientes
+          - paragraph [ref=e203]: PME, administrations, écoles
+        - generic [ref=e204]:
+          - img [ref=e207]
+          - paragraph [ref=e209]: "4"
+          - paragraph [ref=e210]: Îles desservies
+          - paragraph [ref=e211]: Grande Comore, Anjouan, Mohéli, Maoré
+        - generic [ref=e212]:
+          - img [ref=e215]
+          - paragraph [ref=e217]: 24h
+          - paragraph [ref=e218]: Délai de réponse
+          - paragraph [ref=e219]: pour toute urgence informatique
+    - generic [ref=e221]:
+      - generic [ref=e222]:
+        - heading "Questions fréquentes" [level=2] [ref=e223]
+        - paragraph [ref=e224]: Tout ce qu'on nous demande le plus souvent.
+      - generic [ref=e225]:
+        - group [ref=e226]:
+          - generic "Où se trouve la boutique Info Experts à Moroni ?" [ref=e227] [cursor=pointer]
+        - group [ref=e228]:
+          - generic "Quels matériels informatiques vendez-vous aux Comores ?" [ref=e229] [cursor=pointer]
+        - group [ref=e230]:
+          - generic "Proposez-vous la réparation d'ordinateurs à Moroni ?" [ref=e231] [cursor=pointer]
+        - group [ref=e232]:
+          - generic "Créez-vous des sites internet pour les entreprises comoriennes ?" [ref=e233] [cursor=pointer]
+        - group [ref=e234]:
+          - generic "Comment obtenir un devis pour du matériel ou un service informatique aux Comores ?" [ref=e235] [cursor=pointer]
+        - group [ref=e236]:
+          - generic "Quels sont les horaires d'ouverture d'Info Experts à Moroni ?" [ref=e237] [cursor=pointer]
+        - group [ref=e238]:
+          - generic "Livrez-vous du matériel informatique dans toutes les îles des Comores ?" [ref=e239] [cursor=pointer]
+        - group [ref=e240]:
+          - generic "Quel est le prix d'une réparation informatique à Moroni ?" [ref=e241] [cursor=pointer]
+        - group [ref=e242]:
+          - generic "Récupérez-vous des données perdues aux Comores ?" [ref=e243] [cursor=pointer]
+        - group [ref=e244]:
+          - generic "Proposez-vous des contrats de maintenance pour les entreprises comoriennes ?" [ref=e245] [cursor=pointer]
+    - generic [ref=e247]:
+      - generic [ref=e248]:
+        - heading "Ils travaillent avec nous" [level=2] [ref=e249]
+        - paragraph [ref=e250]: Quelques retours de clients, en leurs mots.
+      - generic [ref=e251]:
+        - generic [ref=e252]:
+          - img [ref=e253]
+          - paragraph [ref=e255]: "\"Réseau installé proprement, tout fonctionne depuis. L'équipe est venue rapidement et savait ce qu'elle faisait.\""
+          - paragraph [ref=e256]: "- Comores Hydrocarbures"
+        - generic [ref=e257]:
+          - img [ref=e258]
+          - paragraph [ref=e260]: "\"Site livré en moins de deux semaines. Le rendu est propre, visible sur mobile et déjà bien positionné sur Google.\""
+          - paragraph [ref=e261]: "- Comores Telecom"
+        - generic [ref=e262]:
+          - img [ref=e263]
+          - paragraph [ref=e265]: "\"PC rendu en 48 h, prix annoncé avant de commencer. Aucune mauvaise surprise.\""
+          - paragraph [ref=e266]: "- Amine K., Moroni"
+    - generic [ref=e268]:
+      - generic [ref=e269]:
+        - heading "Contactez Info Experts" [level=2] [ref=e270]
+        - paragraph [ref=e271]: Un devis, une panne, un projet web ? Décrivez votre besoin — on revient vers vous rapidement.
+      - generic [ref=e273]:
+        - generic [ref=e274]:
+          - generic [ref=e275]:
+            - generic [ref=e276]: Votre Nom
+            - textbox "Votre Nom" [ref=e277]
+          - generic [ref=e278]:
+            - generic [ref=e279]: Votre Email
+            - textbox "Votre Email" [ref=e280]
+        - generic [ref=e281]:
+          - generic [ref=e282]: Sujet de votre demande
+          - combobox "Sujet de votre demande" [ref=e283]:
+            - option "Achat de matériel informatique" [selected]
+            - option "Maintenance & Réparation"
+            - option "Création de site internet"
+            - option "Autre demande"
+        - generic [ref=e284]:
+          - generic [ref=e285]: Votre Message
+          - textbox "Votre Message" [ref=e286]
+        - button "Envoyer le message" [ref=e287] [cursor=pointer]
+    - generic [ref=e289]:
+      - generic [ref=e290]:
+        - heading "Nos engagements pour vous" [level=2] [ref=e291]
+        - paragraph [ref=e292]: Des engagements simples, tenus à chaque intervention.
+      - generic [ref=e293]:
+        - generic [ref=e294]:
+          - img [ref=e297]
+          - paragraph [ref=e299]: Intervention en 24h
+          - paragraph [ref=e300]: Déplacement à Moroni et ses environs sous 24 heures. Urgences traitées en priorité.
+        - generic [ref=e301]:
+          - img [ref=e304]
+          - paragraph [ref=e306]: Si ce n'est pas réparé, vous ne payez pas
+          - paragraph [ref=e307]: "Panne non résolue : vous ne devez rien. Pas de conditions, pas de discussion."
+        - generic [ref=e308]:
+          - img [ref=e311]
+          - paragraph [ref=e313]: Techniciens certifiés
+          - paragraph [ref=e314]: 10 ans d'expérience aux Comores. Formés hardware et software, toutes marques.
+        - generic [ref=e315]:
+          - img [ref=e318]
+          - paragraph [ref=e320]: Devis gratuit & clair
+          - paragraph [ref=e321]: Diagnostic offert. Devis détaillé avant toute intervention. Vous validez, sans engagement.
+  - contentinfo [ref=e322]:
+    - generic [ref=e323]:
+      - generic [ref=e324]:
+        - link "📞 +269 331 27 22" [ref=e325] [cursor=pointer]:
+          - /url: tel:002693312722
+        - link "💬 WhatsApp" [ref=e326] [cursor=pointer]:
+          - /url: https://wa.me/33667491345
+      - generic [ref=e327]:
+        - link "contact@info-experts.fr" [ref=e329] [cursor=pointer]:
+          - /url: mailto:contact@info-experts.fr
+          - img [ref=e330]
+          - text: contact@info-experts.fr
+        - paragraph [ref=e332]: "Enregistrée au RCCM de Grande Comore sous le n° : KM-HAH-01-2023-B13-10201"
+        - paragraph [ref=e333]: © 2026 Expert en Informatique – Moroni, Comores. Tous droits réservés.
+  - link "Contactez-nous sur WhatsApp (nouvelle fenêtre)" [ref=e334] [cursor=pointer]:
+    - /url: https://wa.me/33667491345
+    - img [ref=e335]

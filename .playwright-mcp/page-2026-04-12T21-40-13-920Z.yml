@@ -1,0 +1,35 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]: Alkamar Admin
+    - navigation [ref=e5]:
+      - generic [ref=e6]: Vue d'ensemble
+      - link "📊 Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: /admin/
+      - generic [ref=e8]: Catalogue
+      - link "📦 Produits" [ref=e9] [cursor=pointer]:
+        - /url: /admin/products/
+      - link "🗂️ Catégories" [ref=e10] [cursor=pointer]:
+        - /url: /admin/categories/
+      - generic [ref=e11]: Ventes
+      - link "🛒 Commandes" [ref=e12] [cursor=pointer]:
+        - /url: /admin/orders/
+      - link "👥 Clients" [ref=e13] [cursor=pointer]:
+        - /url: /admin/customers/
+      - generic [ref=e14]: Paramètres
+      - link "🔑 Utilisateurs" [ref=e15] [cursor=pointer]:
+        - /url: /admin/users/
+      - link "🚪 Déconnexion" [ref=e16] [cursor=pointer]:
+        - /url: "#"
+  - main [ref=e17]:
+    - heading "Catégories" [level=1] [ref=e19]
+    - table [ref=e21]:
+      - rowgroup [ref=e22]:
+        - row "Icône Nom Slug Parent Ordre" [ref=e23]:
+          - columnheader "Icône" [ref=e24]
+          - columnheader "Nom" [ref=e25]
+          - columnheader "Slug" [ref=e26]
+          - columnheader "Parent" [ref=e27]
+          - columnheader "Ordre" [ref=e28]
+      - rowgroup [ref=e29]:
+        - row "Chargement..." [ref=e30]:
+          - cell "Chargement..." [ref=e31]

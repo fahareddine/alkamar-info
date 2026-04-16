@@ -1,0 +1,59 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]: Alkamar Admin
+    - navigation [ref=e5]:
+      - generic [ref=e6]: Vue d'ensemble
+      - link "📊 Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: /admin/
+      - generic [ref=e8]: Catalogue
+      - link "📦 Produits" [ref=e9] [cursor=pointer]:
+        - /url: /admin/products/
+      - link "🗂️ Catégories" [ref=e10] [cursor=pointer]:
+        - /url: /admin/categories/
+      - generic [ref=e11]: Ventes
+      - link "🛒 Commandes" [ref=e12] [cursor=pointer]:
+        - /url: /admin/orders/
+      - link "👥 Clients" [ref=e13] [cursor=pointer]:
+        - /url: /admin/customers/
+      - link "🧾 Factures" [ref=e14] [cursor=pointer]:
+        - /url: /admin/invoices/
+      - generic [ref=e15]: Marketing
+      - link "🏷️ Promotions" [ref=e16] [cursor=pointer]:
+        - /url: /admin/promotions/
+      - link "🎫 Codes promo" [ref=e17] [cursor=pointer]:
+        - /url: /admin/coupons/
+      - generic [ref=e18]: Inventaire
+      - link "📦 Stock" [ref=e19] [cursor=pointer]:
+        - /url: /admin/stock/
+      - generic [ref=e20]: Paramètres
+      - link "🔑 Utilisateurs" [ref=e21] [cursor=pointer]:
+        - /url: /admin/users/
+      - link "🚪 Déconnexion" [ref=e22] [cursor=pointer]:
+        - /url: "#"
+  - main [ref=e23]:
+    - generic [ref=e24]:
+      - heading "Produits" [level=1] [ref=e25]
+      - link "+ Nouveau produit" [ref=e26] [cursor=pointer]:
+        - /url: /admin/products/edit.html
+    - generic [ref=e27]:
+      - textbox "Rechercher un produit..." [ref=e28]
+      - combobox [ref=e29]:
+        - option "Tous les statuts"
+        - option "Actifs" [selected]
+        - option "Brouillons"
+        - option "Archivés"
+      - combobox [ref=e30]:
+        - option "Toutes catégories" [selected]
+    - table [ref=e32]:
+      - rowgroup [ref=e33]:
+        - row "Nom Catégorie Prix EUR Stock Statut Actions" [ref=e34]:
+          - columnheader [ref=e35]
+          - columnheader "Nom" [ref=e36]
+          - columnheader "Catégorie" [ref=e37]
+          - columnheader "Prix EUR" [ref=e38]
+          - columnheader "Stock" [ref=e39]
+          - columnheader "Statut" [ref=e40]
+          - columnheader "Actions" [ref=e41]
+      - rowgroup [ref=e42]:
+        - row "Chargement..." [ref=e43]:
+          - cell "Chargement..." [ref=e44]

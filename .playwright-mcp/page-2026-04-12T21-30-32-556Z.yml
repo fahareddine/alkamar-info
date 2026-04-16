@@ -1,0 +1,123 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e4]: 📦 Livraison gratuite dès 150 € · Paiement mobile money accepté
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - link "A AlkamarInfo" [ref=e7] [cursor=pointer]:
+        - /url: index.html
+        - generic [ref=e8]: A
+        - generic [ref=e9]: AlkamarInfo
+      - generic [ref=e10]:
+        - link "Panier 0" [ref=e11] [cursor=pointer]:
+          - /url: "#"
+          - img [ref=e12]
+          - generic [ref=e14]: Panier
+          - generic [ref=e15]: "0"
+        - button "Menu" [ref=e16] [cursor=pointer]: ☰
+  - generic [ref=e18]:
+    - link "💻 PC Portables" [ref=e19] [cursor=pointer]:
+      - /url: ordinateurs.html?tab=portables
+      - generic [ref=e20]: 💻
+      - text: PC Portables
+    - link "🖥️ PC Bureau" [ref=e21] [cursor=pointer]:
+      - /url: ordinateurs.html?tab=bureau
+      - generic [ref=e22]: 🖥️
+      - text: PC Bureau
+    - link "🎮 Gaming" [ref=e23] [cursor=pointer]:
+      - /url: ordinateurs.html?tab=gaming
+      - generic [ref=e24]: 🎮
+      - text: Gaming
+    - link "⚡ Composants" [ref=e25] [cursor=pointer]:
+      - /url: composants.html
+      - generic [ref=e26]: ⚡
+      - text: Composants
+    - link "📡 Réseau" [ref=e27] [cursor=pointer]:
+      - /url: reseau.html
+      - generic [ref=e28]: 📡
+      - text: Réseau
+    - link "💾 Stockage" [ref=e29] [cursor=pointer]:
+      - /url: stockage.html
+      - generic [ref=e30]: 💾
+      - text: Stockage
+    - link "🖨️ Périphériques" [ref=e31] [cursor=pointer]:
+      - /url: peripheriques.html
+      - generic [ref=e32]: 🖨️
+      - text: Périphériques
+    - link "📺 Écrans" [ref=e33] [cursor=pointer]:
+      - /url: ecrans.html
+      - generic [ref=e34]: 📺
+      - text: Écrans
+    - link "🛡️ Protection" [ref=e35] [cursor=pointer]:
+      - /url: protection.html
+      - generic [ref=e36]: 🛡️
+      - text: Protection
+    - link "♻️ Reconditionnés" [ref=e37] [cursor=pointer]:
+      - /url: reconditionnes.html
+      - generic [ref=e38]: ♻️
+      - text: Reconditionnés
+    - link "🔥 Promotions" [ref=e39] [cursor=pointer]:
+      - /url: promotions.html
+      - generic [ref=e40]: 🔥
+      - text: Promotions
+    - link "🛠️ Services" [ref=e41] [cursor=pointer]:
+      - /url: services.html
+      - generic [ref=e42]: 🛠️
+      - text: Services
+  - navigation [ref=e43]:
+    - link "Accueil" [ref=e44] [cursor=pointer]:
+      - /url: index.html
+    - generic [ref=e45]: ›
+    - generic [ref=e46]: Ordinateurs
+  - generic [ref=e48]:
+    - button "💻 PC Portables" [ref=e49] [cursor=pointer]
+    - button "🖥️ PC de Bureau" [ref=e50] [cursor=pointer]
+    - button "🎮 PC Gaming" [ref=e51] [cursor=pointer]
+    - button "📺 Tout-en-un" [ref=e52] [cursor=pointer]
+    - button "♻️ Reconditionnés Grade A" [ref=e53] [cursor=pointer]
+    - button "📦 Mini PC" [ref=e54] [cursor=pointer]
+  - generic [ref=e55]:
+    - generic [ref=e57]:
+      - heading "💻 PC Portables" [level=2] [ref=e58]
+      - paragraph [ref=e59]: Ordinateurs portables neufs — du bureau à l'école, du travail au multimédia
+    - generic [ref=e62]:
+      - generic [ref=e63]: Chargement…
+      - generic [ref=e64]:
+        - generic [ref=e65]: "Trier :"
+        - combobox [ref=e66]:
+          - option "Prix croissant" [selected]
+          - option "Prix décroissant"
+          - option "Meilleures notes"
+  - contentinfo [ref=e67]:
+    - generic [ref=e68]:
+      - generic [ref=e69]:
+        - generic [ref=e70]:
+          - generic [ref=e71]: A
+          - generic [ref=e72]: AlkamarInfo
+        - paragraph [ref=e73]:
+          - text: Votre boutique informatique aux Comores.
+          - text: Matériel neuf et reconditionné, service local.
+      - generic [ref=e74]:
+        - generic [ref=e75]: Catégories
+        - list [ref=e76]:
+          - listitem [ref=e77]:
+            - link "PC Portables" [ref=e78] [cursor=pointer]:
+              - /url: ordinateurs.html?tab=portables
+          - listitem [ref=e79]:
+            - link "PC de Bureau" [ref=e80] [cursor=pointer]:
+              - /url: ordinateurs.html?tab=bureau
+          - listitem [ref=e81]:
+            - link "PC Gaming" [ref=e82] [cursor=pointer]:
+              - /url: ordinateurs.html?tab=gaming
+          - listitem [ref=e83]:
+            - link "Reconditionnés" [ref=e84] [cursor=pointer]:
+              - /url: ordinateurs.html?tab=reconditiones
+          - listitem [ref=e85]:
+            - link "Mini PC" [ref=e86] [cursor=pointer]:
+              - /url: ordinateurs.html?tab=minipc
+      - generic [ref=e87]:
+        - generic [ref=e88]: Contact
+        - list [ref=e89]:
+          - listitem [ref=e90]: 📞 +269 331 27 22
+          - listitem [ref=e91]: ✉️ contact@alkamar-info.com
+          - listitem [ref=e92]: 📍 Moroni, Comores
+          - listitem [ref=e93]: ⏰ Lun–Sam 8h–19h
+    - generic [ref=e94]: © 2025 Alkamar Info — Tous droits réservés

@@ -1,0 +1,43 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - generic [ref=e4]: Alkamar Admin
+    - navigation [ref=e5]:
+      - generic [ref=e6]: Vue d'ensemble
+      - link "📊 Dashboard" [ref=e7] [cursor=pointer]:
+        - /url: /admin/
+      - generic [ref=e8]: Catalogue
+      - link "📦 Produits" [ref=e9] [cursor=pointer]:
+        - /url: /admin/products/
+      - link "🗂️ Catégories" [ref=e10] [cursor=pointer]:
+        - /url: /admin/categories/
+      - generic [ref=e11]: Ventes
+      - link "🛒 Commandes" [ref=e12] [cursor=pointer]:
+        - /url: /admin/orders/
+      - link "👥 Clients" [ref=e13] [cursor=pointer]:
+        - /url: /admin/customers/
+      - generic [ref=e14]: Paramètres
+      - link "🔑 Utilisateurs" [ref=e15] [cursor=pointer]:
+        - /url: /admin/users/
+      - link "🚪 Déconnexion" [ref=e16] [cursor=pointer]:
+        - /url: "#"
+  - main [ref=e17]:
+    - heading "Commandes" [level=1] [ref=e19]
+    - combobox [ref=e21]:
+      - option "Tous les statuts" [selected]
+      - option "En attente"
+      - option "Confirmée"
+      - option "Expédiée"
+      - option "Livrée"
+      - option "Annulée"
+    - table [ref=e23]:
+      - rowgroup [ref=e24]:
+        - row "N° commande Client Total EUR Statut Date Actions" [ref=e25]:
+          - columnheader "N° commande" [ref=e26]
+          - columnheader "Client" [ref=e27]
+          - columnheader "Total EUR" [ref=e28]
+          - columnheader "Statut" [ref=e29]
+          - columnheader "Date" [ref=e30]
+          - columnheader "Actions" [ref=e31]
+      - rowgroup [ref=e32]:
+        - row "Chargement..." [ref=e33]:
+          - cell "Chargement..." [ref=e34]
