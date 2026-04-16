@@ -1,4 +1,0 @@
-[     250ms] [ERROR] Dashboard error: TypeError: Failed to fetch
-    at Object._fetch (https://alkamar-info.vercel.app/admin/js/api.js:8:23)
-    at Object.get (https://alkamar-info.vercel.app/admin/js/api.js:16:22)
-    at loadDashboard (https://alkamar-info.vercel.app/admin/js/dashboard.js:13:29) @ https://alkamar-info.vercel.app/admin/js/dashboard.js:41
