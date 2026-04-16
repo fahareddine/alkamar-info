@@ -319,7 +319,8 @@ init();
 // ── Reimport depuis URL ─────────────────────────────────────
 function setupReiimport() {
   document.getElementById('btn-reimport')?.addEventListener('click', async () => {
-    const url = document.getElementById('reimport-url').value.trim();
+    let url = document.getElementById('reimport-url').value.trim();
+    if (!url.startsWith('http')) url = 'https://' + url;
     if (!url.startsWith('http')) { alert('Entrez une URL valide'); return; }
     const btn = document.getElementById('btn-reimport');
     btn.disabled = true; btn.textContent = '⏳ Scraping...';

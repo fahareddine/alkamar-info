@@ -119,8 +119,9 @@
     loadImportCategories();
 
     document.getElementById('btn-import')?.addEventListener('click', async () => {
-      const url = document.getElementById('import-url').value.trim();
-      if (!url.startsWith('http')) { alert('Entrez une URL valide (commençant par https://)'); return; }
+      let url = document.getElementById('import-url').value.trim();
+      if (!url.startsWith('http')) url = 'https://' + url;
+      if (!url.startsWith('http')) { alert('Entrez une URL valide'); return; }
       const category_id = document.getElementById('import-cat').value || null;
       const btn = document.getElementById('btn-import');
       btn.disabled = true; btn.textContent = '⏳ Import en cours...';
