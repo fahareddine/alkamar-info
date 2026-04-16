@@ -483,14 +483,14 @@ ul { list-style: none; }
 .card-wishlist:hover { color: var(--red); border-color: var(--red); }
 
 .card-img {
-  height: 160px;
+  aspect-ratio: 4 / 3;
   background: #f8fafc;
   overflow: hidden;
 }
 .card-img img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
   transition: transform .3s;
 }
