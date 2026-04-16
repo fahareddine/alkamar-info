@@ -17,6 +17,9 @@
       <!-- Import URL -->
       <div class="import-bar">
         <input type="url" id="import-url" class="form-control" placeholder="Coller une URL produit (ldlc.com, amazon.fr, materiel.net...)">
+        <select id="import-cat" class="form-control" style="max-width:200px">
+          <option value="">— Catégorie —</option>
+        </select>
         <button type="button" id="btn-import" class="btn btn--primary">↓ Importer</button>
       </div>
 
@@ -101,13 +104,28 @@
   <script src="/admin/js/layout.js"></script>
   <script src="/admin/js/products-list.js"></script>
   <script>
+    // Charger les catégories dans le select d'import
+    async function loadImportCategories() {
+      try {
+        const cats = await api.get('/api/categories');
+        const sel = document.getElementById('import-cat');
+        (cats || []).forEach(c => {
+          const opt = document.createElement('option');
+          opt.value = c.id; opt.textContent = c.name;
+          sel.appendChild(opt);
+        });
+      } catch {}
+    }
+    loadImportCategories();
+
     document.getElementById('btn-import')?.addEventListener('click', async () => {
       const url = document.getElementById('import-url').value.trim();
       if (!url.startsWith('http')) { alert('Entrez une URL valide (commençant par https://)'); return; }
+      const category_id = document.getElementById('import-cat').value || null;
       const btn = document.getElementById('btn-import');
       btn.disabled = true; btn.textContent = '⏳ Import en cours...';
       try {
-        const product = await api.post('/api/products?action=import', { url });
+        const product = await api.post('/api/products?action=import', { url, category_id });
         window.location.href = `/admin/products/edit.html?id=${product.id}`;
       } catch (err) {
         alert('Erreur import : ' + (err.message || err));

@@ -312,8 +312,56 @@ async function init() {
   document.getElementById('btn-save').addEventListener('click', () => saveProduct());
   document.getElementById('btn-draft').addEventListener('click', () => saveProduct('draft'));
   setupIAPhotos();
+  setupReiimport();
 }
 init();
+
+// ── Reimport depuis URL ─────────────────────────────────────
+function setupReiimport() {
+  document.getElementById('btn-reimport')?.addEventListener('click', async () => {
+    const url = document.getElementById('reimport-url').value.trim();
+    if (!url.startsWith('http')) { alert('Entrez une URL valide'); return; }
+    const btn = document.getElementById('btn-reimport');
+    btn.disabled = true; btn.textContent = '⏳ Scraping...';
+    try {
+      const p = await api.post('/api/products?action=scrape', { url });
+      const form = document.getElementById('product-form');
+
+      if (p.name  && form.name)        form.name.value        = p.name;
+      if (p.brand && form.brand)       form.brand.value       = p.brand;
+      if (p.description && form.description) form.description.value = p.description;
+
+      // Image principale
+      if (p.image) {
+        if (form.image) form.image.value = p.image;
+        const prev = document.getElementById('img-preview');
+        if (prev) { prev.src = p.image; prev.style.display = 'block'; }
+      }
+
+      // Galerie
+      if (p.gallery && p.gallery.length > 0) {
+        galleryItems = p.gallery.map(src => typeof src === 'string' ? { src, alt: '' } : src);
+        renderGallery();
+      }
+
+      // Prix si non défini
+      if (p.price_eur && form.price_eur && !form.price_eur.value) form.price_eur.value = p.price_eur;
+
+      const alertEl = document.getElementById('alert');
+      alertEl.className = 'alert alert--success';
+      alertEl.textContent = 'Fiche pré-remplie — vérifiez et enregistrez.';
+      alertEl.style.display = 'block';
+      setTimeout(() => alertEl.style.display = 'none', 4000);
+    } catch (err) {
+      alert('Erreur scraping : ' + (err.message || err));
+    } finally {
+      btn.disabled = false; btn.textContent = '🔄 Pré-remplir';
+    }
+  });
+  document.getElementById('reimport-url')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btn-reimport').click(); }
+  });
+}
 
 // ── Photos IA ───────────────────────────────────────────────
 function setupIAPhotos() {

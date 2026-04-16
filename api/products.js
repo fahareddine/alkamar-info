@@ -93,12 +93,28 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(data);
   }
 
+  // POST ?action=scrape — scraper une URL sans créer de produit (pré-remplissage fiche)
+  if (req.method === 'POST' && req.query.action === 'scrape') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    const { url } = req.body || {};
+    if (!url || !url.startsWith('http')) return res.status(400).json({ error: 'url valide requise' });
+    const { scrapeProduct } = require('./_lib/scraper');
+    try {
+      const product = await scrapeProduct(url);
+      return res.status(200).json(product);
+    } catch (err) {
+      console.error('[scrape]', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
   // POST ?action=import — scraper une URL produit et créer le produit
   if (req.method === 'POST' && req.query.action === 'import') {
     const auth = await requireRole(req, 'admin', 'editor');
     if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
-    const { url } = req.body || {};
+    const { url, category_id } = req.body || {};
     if (!url || !url.startsWith('http')) return res.status(400).json({ error: 'url valide requise' });
 
     const { scrapeProduct } = require('./_lib/scraper');
@@ -107,6 +123,7 @@ module.exports = async function handler(req, res) {
       if (!product.name) return res.status(422).json({ error: 'Impossible d\'extraire le nom du produit depuis cette page' });
       if (!product.price_eur) product.price_eur = 0;
       if (!product.price_kmf) product.price_kmf = 0;
+      if (category_id) product.category_id = category_id;
 
       // Slug unique
       const { data: existing } = await supabase.from('products').select('id').eq('slug', product.slug).maybeSingle();

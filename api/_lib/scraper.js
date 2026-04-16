@@ -119,7 +119,7 @@ async function scrapeProduct(url) {
     if (gallery.length === 0) gallery = di.slice(image ? 1 : 2, 5);
   }
 
-  description = description.replace(/<[^>]+>/g, '').trim();
+  description = truncateDescription(description.replace(/<[^>]+>/g, '').trim());
   name = name.trim();
 
   const product = {
@@ -135,6 +135,15 @@ async function scrapeProduct(url) {
   if (priceEur !== null) product.price_eur = priceEur;
 
   return product;
+}
+
+function truncateDescription(text, maxLen = 600) {
+  if (!text || text.length <= maxLen) return text;
+  const cut = text.slice(0, maxLen);
+  const lastSentence = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  if (lastSentence > maxLen * 0.5) return cut.slice(0, lastSentence + 1).trim();
+  const lastSpace = cut.lastIndexOf(' ');
+  return (lastSpace > 0 ? cut.slice(0, lastSpace) : cut).trim() + '…';
 }
 
 module.exports = { scrapeProduct };
