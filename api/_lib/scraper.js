@@ -56,6 +56,40 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
+// Supprime les paramètres de taille Amazon dans les URLs d'images
+function cleanImageUrl(url) {
+  if (!url) return url;
+  // Ex: ._AC_SX300_SY300_. → .  ou  ._SL300_. → .
+  return url.replace(/\._[A-Z0-9_,]+_\./g, '.');
+}
+
+// Extrait les points forts (bullet list) — Amazon + générique
+function extractFeatures($) {
+  const features = [];
+
+  // Amazon : #feature-bullets
+  $('#feature-bullets li span.a-list-item').each((_, el) => {
+    const text = $(el).text().trim();
+    if (text && text.length > 5 && !/^A propos|^About this/i.test(text)) {
+      features.push(text);
+    }
+  });
+
+  // Générique si rien trouvé
+  if (features.length === 0) {
+    const selectors = ['.product-features li', '[class*="feature"] li', '[class*="highlight"] li', '.product-bullets li'];
+    for (const sel of selectors) {
+      $(sel).each((_, el) => {
+        const text = $(el).text().trim();
+        if (text && text.length > 5) features.push(text);
+      });
+      if (features.length > 0) break;
+    }
+  }
+
+  return features.slice(0, 8);
+}
+
 function domImages($, baseUrl) {
   const base = new URL(baseUrl);
   const BLOCKED = /logo|icon|banner|sprite|avatar|placeholder|pixel|tracking/i;
@@ -82,7 +116,7 @@ async function scrapeProduct(url) {
   const ld = extractJsonLd(html);
   const meta = extractMeta($);
 
-  let name = '', brand = '', description = '', priceEur = null, image = '', gallery = [];
+  let name = '', brand = '', description = '', priceEur = null, image = '', gallery = [], features = [];
 
   if (ld) {
     name        = ld.name || '';
@@ -98,8 +132,8 @@ async function scrapeProduct(url) {
     const ldImgs = ld.image;
     if (ldImgs) {
       const arr = Array.isArray(ldImgs) ? ldImgs : [ldImgs];
-      image   = typeof arr[0] === 'string' ? arr[0] : (arr[0]?.url || '');
-      gallery = arr.slice(1).map(i => typeof i === 'string' ? i : (i?.url || '')).filter(Boolean);
+      image   = cleanImageUrl(typeof arr[0] === 'string' ? arr[0] : (arr[0]?.url || ''));
+      gallery = arr.slice(1).map(i => cleanImageUrl(typeof i === 'string' ? i : (i?.url || ''))).filter(Boolean);
     }
   }
 
@@ -108,16 +142,19 @@ async function scrapeProduct(url) {
   if (!brand)       brand       = meta.brand;
   if (!description) description = meta.description;
   if (!priceEur)    priceEur    = toFloat(meta.price);
-  if (!image)       image       = meta.image;
+  if (!image)       image       = cleanImageUrl(meta.image);
 
   // Fallback DOM
   if (!name) name = $('h1').first().text().trim();
 
   if (!image || gallery.length === 0) {
-    const di = domImages($, url);
+    const di = domImages($, url).map(cleanImageUrl);
     if (!image && di.length > 0) image = di[0];
     if (gallery.length === 0) gallery = di.slice(image ? 1 : 2, 5);
   }
+
+  // Points forts
+  features = extractFeatures($);
 
   description = truncateDescription(description.replace(/<[^>]+>/g, '').trim());
   name = name.trim();
@@ -129,6 +166,7 @@ async function scrapeProduct(url) {
     slug:        slugify(name),
     image:       image || null,
     gallery:     gallery,
+    features:    features,
     status:      'draft',
     specs:       {},
   };

@@ -233,6 +233,12 @@ async function loadProduct(id) {
   galleryItems = (p.gallery || []).map(g => typeof g === 'string' ? {src:g, alt:''} : g);
   renderGallery();
 
+  // Features
+  if (p.features && p.features.length > 0) {
+    const hf = document.getElementById('hidden-features');
+    if (hf) hf.value = JSON.stringify(p.features);
+  }
+
   // Tags (depuis specs._tag_ids si dispo)
   const savedTagIds = p.specs?._tag_ids || [];
   savedTagIds.forEach(tagId => {
@@ -271,6 +277,9 @@ async function saveProduct(statusOverride = null) {
 
   // Galerie
   body.gallery = galleryItems;
+
+  // Features
+  try { body.features = JSON.parse(body.features || '[]'); } catch { body.features = []; }
 
   // Nettoyage — exclure champs vides et champs internes ia-*
   Object.keys(body).forEach(k => { if (body[k] === '' || k.startsWith('ia-')) delete body[k]; });
@@ -347,6 +356,12 @@ function setupReiimport() {
 
       // Prix si non défini
       if (p.price_eur && form.price_eur && !form.price_eur.value) form.price_eur.value = p.price_eur;
+
+      // Points forts (features) — stocker dans champ hidden
+      if (p.features && p.features.length > 0) {
+        const hf = document.getElementById('hidden-features');
+        if (hf) hf.value = JSON.stringify(p.features);
+      }
 
       const alertEl = document.getElementById('alert');
       alertEl.className = 'alert alert--success';
