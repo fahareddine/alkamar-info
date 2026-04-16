@@ -272,8 +272,8 @@ async function saveProduct(statusOverride = null) {
   // Galerie
   body.gallery = galleryItems;
 
-  // Nettoyage
-  Object.keys(body).forEach(k => { if (body[k] === '') delete body[k]; });
+  // Nettoyage — exclure champs vides et champs internes ia-*
+  Object.keys(body).forEach(k => { if (body[k] === '' || k.startsWith('ia-')) delete body[k]; });
 
   try {
     if (productId) {
