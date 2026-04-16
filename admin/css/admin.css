@@ -180,3 +180,13 @@ input[type=checkbox].row-check { width: 15px; height: 15px; cursor: pointer; acc
 .btn--warning { background: rgba(245,158,11,.15); color: var(--admin-warning); }
 .btn--warning:hover { background: rgba(245,158,11,.25); }
 .form-actions-sticky { display: flex; flex-direction: column; gap: 8px; }
+
+/* ── Photos IA ─────────────────── */
+.ia-badge { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 12px; letter-spacing: 0.3px; }
+.ia-badge--idle        { background: #f1f5f9; color: #64748b; }
+.ia-badge--downloading { background: #fef9c3; color: #a16207; }
+.ia-badge--ready_for_processing { background: #dbeafe; color: #1d4ed8; }
+.ia-badge--processing  { background: #fde68a; color: #92400e; }
+.ia-badge--processed   { background: #dcfce7; color: #166534; }
+.ia-badge--partial     { background: #fed7aa; color: #9a3412; }
+.ia-badge--failed      { background: #fee2e2; color: #991b1b; }

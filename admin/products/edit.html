@@ -76,6 +76,66 @@
               </div>
             </div>
 
+            <!-- Photos IA -->
+            <div class="form-card" id="ia-photos-card">
+              <h2 style="display:flex;align-items:center;gap:10px">
+                Photos IA
+                <span id="ia-status-badge" class="ia-badge ia-badge--idle">● idle</span>
+              </h2>
+
+              <div class="form-group">
+                <label>Source</label>
+                <div style="display:flex;flex-direction:column;gap:6px">
+                  <label style="font-weight:normal;display:flex;align-items:center;gap:8px">
+                    <input type="radio" name="ia-source" value="urls" checked> URLs directes (3 images)
+                  </label>
+                  <label style="font-weight:normal;display:flex;align-items:center;gap:8px">
+                    <input type="radio" name="ia-source" value="page"> Page fournisseur
+                  </label>
+                </div>
+              </div>
+
+              <div id="ia-urls-inputs">
+                <div class="form-group">
+                  <label>URL image 1</label>
+                  <input type="url" id="ia-url-1" class="form-control" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                  <label>URL image 2</label>
+                  <input type="url" id="ia-url-2" class="form-control" placeholder="https://...">
+                </div>
+                <div class="form-group">
+                  <label>URL image 3</label>
+                  <input type="url" id="ia-url-3" class="form-control" placeholder="https://...">
+                </div>
+              </div>
+
+              <div id="ia-page-input" style="display:none">
+                <div class="form-group">
+                  <label>URL de la page fournisseur</label>
+                  <input type="url" id="ia-page-url" class="form-control" placeholder="https://fournisseur.com/produit-xyz">
+                </div>
+              </div>
+
+              <button type="button" id="btn-fetch-images" class="btn btn--ghost">↓ Récupérer les images</button>
+
+              <div id="ia-sources-preview" style="display:none;margin-top:12px">
+                <label style="font-size:13px;color:var(--admin-muted)">Aperçu sources</label>
+                <div style="display:flex;gap:8px;margin-top:6px" id="ia-sources-thumbs"></div>
+                <p id="ia-partial-msg" style="display:none;color:var(--admin-warning);font-size:13px;margin-top:6px"></p>
+              </div>
+
+              <button type="button" id="btn-process-images" class="btn btn--primary" style="margin-top:12px;display:none">
+                ✨ Lancer traitement IA
+              </button>
+
+              <div id="ia-results" style="display:none;margin-top:16px">
+                <label style="font-size:13px;color:var(--admin-muted)">Résultats</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px" id="ia-results-grid"></div>
+              </div>
+            </div>
+            <!-- /Photos IA -->
+
             <!-- Caractéristiques -->
             <div class="form-card">
               <h2>Caractéristiques (specs)</h2>

@@ -311,5 +311,142 @@ async function init() {
   document.getElementById('gallery-url-input').addEventListener('keydown', e => { if(e.key==='Enter'){e.preventDefault();addGalleryItem();} });
   document.getElementById('btn-save').addEventListener('click', () => saveProduct());
   document.getElementById('btn-draft').addEventListener('click', () => saveProduct('draft'));
+  setupIAPhotos();
 }
 init();
+
+// ── Photos IA ───────────────────────────────────────────────
+function setupIAPhotos() {
+  const BADGES = {
+    idle: 'idle', downloading: 'downloading',
+    ready_for_processing: 'ready_for_processing',
+    processing: 'processing', processed: 'processed',
+    failed: 'failed', partial: 'partial',
+  };
+
+  function setIAStatus(status, label) {
+    const badge = document.getElementById('ia-status-badge');
+    if (!badge) return;
+    badge.textContent = '● ' + (label || status);
+    badge.className = 'ia-badge ia-badge--' + (BADGES[status] || 'idle');
+  }
+
+  document.querySelectorAll('input[name="ia-source"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const isPage = radio.value === 'page';
+      document.getElementById('ia-urls-inputs').style.display = isPage ? 'none' : '';
+      document.getElementById('ia-page-input').style.display  = isPage ? '' : 'none';
+    });
+  });
+
+  document.getElementById('btn-fetch-images')?.addEventListener('click', async () => {
+    const mode = document.querySelector('input[name="ia-source"]:checked').value;
+    const slug = document.querySelector('[name="slug"]')?.value;
+    if (!productId || !slug) { alert('Enregistrez le produit avant de lancer le pipeline'); return; }
+
+    let payload;
+    if (mode === 'urls') {
+      payload = [
+        document.getElementById('ia-url-1').value,
+        document.getElementById('ia-url-2').value,
+        document.getElementById('ia-url-3').value,
+      ].filter(u => u.trim());
+    } else {
+      payload = [document.getElementById('ia-page-url').value.trim()];
+    }
+    if (payload.length === 0) { alert('Entrez au moins une URL'); return; }
+
+    setIAStatus('downloading', 'téléchargement...');
+    document.getElementById('btn-fetch-images').disabled = true;
+
+    try {
+      const data = await api.post('/api/products/fetch-images', { productId, slug, mode, payload });
+      setIAStatus(data.status === 'partial' ? 'partial' : 'ready_for_processing', data.status);
+
+      if (data.sourceUrls?.length) {
+        const thumbs = document.getElementById('ia-sources-thumbs');
+        thumbs.innerHTML = data.sourceUrls.map(url =>
+          `<img src="${url}" style="width:80px;height:60px;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0">`
+        ).join('');
+        document.getElementById('ia-sources-preview').style.display = '';
+        const partialMsg = document.getElementById('ia-partial-msg');
+        if (data.status === 'partial') {
+          partialMsg.textContent = data.message;
+          partialMsg.style.display = '';
+        } else {
+          partialMsg.style.display = 'none';
+        }
+        document.getElementById('btn-process-images').style.display = '';
+      }
+    } catch (err) {
+      setIAStatus('failed', 'erreur');
+      alert('Erreur : ' + (err.message || err));
+    } finally {
+      document.getElementById('btn-fetch-images').disabled = false;
+    }
+  });
+
+  document.getElementById('btn-process-images')?.addEventListener('click', async () => {
+    const slug = document.querySelector('[name="slug"]')?.value;
+    if (!productId || !slug) return;
+
+    setIAStatus('processing', 'traitement IA...');
+    document.getElementById('btn-process-images').disabled = true;
+
+    try {
+      const data = await api.post('/api/products/process-images', { productId, slug });
+
+      if (data.status === 'processing') {
+        setIAStatus('processing', 'en cours...');
+        alert('Le traitement est en cours. Revenez dans quelques secondes et rechargez la page.');
+        return;
+      }
+
+      setIAStatus('processed', 'traité ✓');
+
+      const grid = document.getElementById('ia-results-grid');
+      const allUrls = [data.cardCover, ...(data.gallery || [])];
+      const labels = ['card-cover', 'detail-main', 'side-1', 'side-2'];
+      grid.innerHTML = allUrls.map((url, i) =>
+        `<div style="text-align:center">
+          <img src="${url}" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0">
+          <small style="color:var(--admin-muted)">${labels[i] || ''}</small>
+        </div>`
+      ).join('');
+      document.getElementById('ia-results').style.display = '';
+
+      const imgPreview = document.getElementById('img-preview');
+      const imgInput   = document.querySelector('[name="image"]');
+      if (imgPreview && data.cardCover) { imgPreview.src = data.cardCover; imgPreview.style.display = 'block'; }
+      if (imgInput   && data.cardCover) { imgInput.value = data.cardCover; }
+
+    } catch (err) {
+      setIAStatus('failed', 'erreur');
+      alert('Erreur traitement : ' + (err.message || err));
+    } finally {
+      document.getElementById('btn-process-images').disabled = false;
+    }
+  });
+
+  if (productId) {
+    fetch(`/api/products/${productId}/images`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.pipelineStatus || data.pipelineStatus === 'idle') return;
+        setIAStatus(data.pipelineStatus);
+        if (data.pipelineStatus === 'processed' && data.main) {
+          const grid = document.getElementById('ia-results-grid');
+          const allUrls = [data.main, ...(data.gallery || [])];
+          const labels = ['card-cover', 'detail-main', 'side-1', 'side-2'];
+          grid.innerHTML = allUrls.map((url, i) =>
+            `<div style="text-align:center">
+              <img src="${url}" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0">
+              <small style="color:var(--admin-muted)">${labels[i] || ''}</small>
+            </div>`
+          ).join('');
+          document.getElementById('ia-results').style.display = '';
+        }
+      })
+      .catch(() => {});
+  }
+}
