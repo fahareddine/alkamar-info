@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page introuvable — Alkamar Info</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .error-page { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; padding:40px 20px; }
+    .error-code { font-size:80px; font-weight:800; color:var(--primary,#2563eb); line-height:1; margin-bottom:16px; }
+    .error-title { font-size:24px; font-weight:700; margin-bottom:8px; }
+    .error-msg { color:#64748b; margin-bottom:32px; max-width:400px; }
+    .error-links { display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  </style>
+</head>
+<body>
+  <div class="error-page">
+    <div class="error-code">404</div>
+    <div class="error-title">Page introuvable</div>
+    <p class="error-msg">Cette page n'existe pas ou a été déplacée. Revenez à l'accueil ou explorez nos produits.</p>
+    <div class="error-links">
+      <a href="/" class="btn btn--primary" style="padding:10px 24px;background:#2563eb;color:#fff;border-radius:8px;text-decoration:none;font-weight:600">Accueil</a>
+      <a href="/ordinateurs.html" class="btn btn--ghost" style="padding:10px 24px;border:1px solid #e2e8f0;border-radius:8px;text-decoration:none;font-weight:600">Ordinateurs</a>
+      <a href="/composants.html" class="btn btn--ghost" style="padding:10px 24px;border:1px solid #e2e8f0;border-radius:8px;text-decoration:none;font-weight:600">Composants</a>
+    </div>
+  </div>
+</body>
+</html>
