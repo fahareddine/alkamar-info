@@ -59,8 +59,41 @@ function slugify(str) {
 // Supprime les paramètres de taille Amazon dans les URLs d'images
 function cleanImageUrl(url) {
   if (!url) return url;
-  // Ex: ._AC_SX300_SY300_. → .  ou  ._SL300_. → .
   return url.replace(/\._[A-Z0-9_,]+_\./g, '.');
+}
+
+// Extrait les images HD depuis une page Amazon via data-a-dynamic-image
+function extractAmazonImages($) {
+  const images = [];
+  const seen = new Set();
+
+  // data-a-dynamic-image : JSON { "url": [width, height], ... }
+  $('[data-a-dynamic-image]').each((_, el) => {
+    try {
+      const map = JSON.parse($(el).attr('data-a-dynamic-image'));
+      const sorted = Object.entries(map).sort((a, b) => (b[1][0] * b[1][1]) - (a[1][0] * a[1][1]));
+      sorted.forEach(([url]) => { const u = cleanImageUrl(url); if (!seen.has(u)) { seen.add(u); images.push(u); } });
+    } catch {}
+  });
+
+  // data-old-hires fallback
+  $('img[data-old-hires]').each((_, el) => {
+    const u = cleanImageUrl($(el).attr('data-old-hires'));
+    if (u && !seen.has(u)) { seen.add(u); images.push(u); }
+  });
+
+  return images.slice(0, 4);
+}
+
+// Extrait la meilleure URL depuis un attribut srcset
+function bestFromSrcset(srcset, base) {
+  if (!srcset) return null;
+  try {
+    const parts = srcset.split(',').map(s => s.trim().split(/\s+/));
+    parts.sort((a, b) => (parseInt(b[1]) || 0) - (parseInt(a[1]) || 0));
+    if (parts[0]?.[0]) return new URL(parts[0][0], base).href;
+  } catch {}
+  return null;
 }
 
 // Extrait les points forts (bullet list) — Amazon + générique
@@ -151,6 +184,24 @@ async function scrapeProduct(url) {
     const di = domImages($, url).map(cleanImageUrl);
     if (!image && di.length > 0) image = di[0];
     if (gallery.length === 0) gallery = di.slice(image ? 1 : 2, 5);
+  }
+
+  // Images HD Amazon
+  const isAmazon = url.includes('amazon.');
+  if (isAmazon && (!image || gallery.length === 0)) {
+    const amzImgs = extractAmazonImages($);
+    if (amzImgs.length > 0) {
+      if (!image) image = amzImgs[0];
+      if (gallery.length === 0) gallery = amzImgs.slice(1);
+    }
+  }
+
+  // Srcset fallback pour les autres sites
+  if (!image) {
+    $('img').each((_, el) => {
+      const best = bestFromSrcset($(el).attr('srcset'), url);
+      if (best && !best.includes('logo') && !best.includes('icon')) { image = cleanImageUrl(best); return false; }
+    });
   }
 
   // Points forts
