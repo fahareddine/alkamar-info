@@ -468,8 +468,24 @@
       // Features
       const featuresHTML = (p.features || []).map(f => `<li>${f}</li>`).join('');
 
-      // Specs
-      const specsHTML = Object.entries(p.specs || {}).map(([k,v]) =>
+      // Specs — génère depuis le nom/description si vide
+      function buildSpecs(p) {
+        if (p.specs && Object.keys(p.specs).length > 0) return p.specs;
+        const s = {};
+        const n = p.name || '';
+        const capM = n.match(/(\d+)\s*go/i); if (capM) s['Capacité'] = capM[1] + ' Go';
+        const usbM = n.match(/usb\s*([\d.]+(?:\s*gen\s*\d)?)/i); if (usbM) s['Interface'] = 'USB ' + usbM[1].trim();
+        const spdM = n.match(/(\d+)\s*mo\/s/i); if (spdM) s['Débit lecture'] = spdM[1] + ' Mo/s';
+        const nl = n.toLowerCase();
+        if (nl.includes('fit'))      s['Format'] = 'Nano (reste dans le port)';
+        else if (nl.includes('flair'))  s['Format'] = 'Métal coulissant';
+        else if (nl.includes('luxe'))   s['Format'] = 'Tout métal aluminium';
+        else if (nl.includes('bar plus')) s['Format'] = 'Barre métal';
+        if (p.brand)             s['Marque'] = p.brand;
+        if (p.categories?.name) s['Catégorie'] = p.categories.name;
+        return s;
+      }
+      const specsHTML = Object.entries(buildSpecs(p)).map(([k,v]) =>
         `<tr><td>${k}</td><td>${v}</td></tr>`
       ).join('');
 
