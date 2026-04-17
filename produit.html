@@ -492,7 +492,7 @@
             ${badgeHTML}
             <div class="prod-brand" style="margin-top:${p.badge?'10px':'0'}">${p.brand}</div>
             <h1 class="prod-name">${p.name}</h1>
-            <div class="prod-subtitle">${p.subtitle}</div>
+            ${p.subtitle ? `<div class="prod-subtitle">${p.subtitle}</div>` : ''}
 
             <div class="prod-rating">
               <span class="stars">${stars(p.rating)}</span>
