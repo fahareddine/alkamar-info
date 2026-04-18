@@ -439,7 +439,7 @@
       // Galerie — gallery items can be strings or {src, alt} objects
       const rawGallery = (p.gallery_urls && p.gallery_urls.length > 0)
         ? p.gallery_urls
-        : (p.gallery || [p.main_image_url || p.image].filter(Boolean));
+        : ((p.gallery && p.gallery.length > 0) ? p.gallery : [p.main_image_url || p.image].filter(Boolean));
       const _seen = new Set();
       const galleryItems = rawGallery
         .map(item => typeof item === 'string' ? { src: item, alt: '' } : item)
