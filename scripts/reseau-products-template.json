@@ -1,0 +1,107 @@
+[
+  {
+    "name": "TP-Link Archer AX55 Wi-Fi 6",
+    "brand": "TP-Link",
+    "subcategory": "routeur-wifi",
+    "price_eur": 89.90,
+    "price_old": 109.90,
+    "rating": 4.5,
+    "rating_count": 2341,
+    "image": "https://placehold.co/400x300/1e3a8a/fff?text=Routeur+WiFi",
+    "description": "Le TP-Link Archer AX55 est un routeur Wi-Fi 6 dual-band offrant un débit total de 3000 Mbps. Idéal pour les foyers connectés avec de nombreux appareils simultanés.",
+    "specs": {
+      "Standard": "Wi-Fi 6 (802.11ax)",
+      "Débit total": "3000 Mbps (574 + 2402)",
+      "Bandes": "Dual-band 2.4 GHz + 5 GHz",
+      "Ports": "1x WAN Gigabit + 4x LAN Gigabit",
+      "USB": "1x USB 3.0",
+      "Garantie": "3 ans"
+    },
+    "features": [
+      "Wi-Fi 6 jusqu'à 3000 Mbps",
+      "Compatible AiMesh pour réseau maillé",
+      "Sécurité WPA3",
+      "QoS intégré",
+      "Interface web intuitive"
+    ],
+    "stock": 20,
+    "status": "active"
+  },
+  {
+    "name": "TP-Link EAP615-Wall Wi-Fi 6",
+    "brand": "TP-Link",
+    "subcategory": "point-acces",
+    "price_eur": 49.90,
+    "rating": 4.4,
+    "rating_count": 876,
+    "image": "https://placehold.co/400x300/7f1d1d/fff?text=Point+d%27acc%C3%A8s",
+    "description": "Point d'accès mural Wi-Fi 6 PoE pour installation discrète en hôtel ou bureau. Géré via Omada SDN.",
+    "specs": {
+      "Standard": "Wi-Fi 6 (802.11ax)",
+      "Débit": "1800 Mbps",
+      "Alimentation": "PoE 802.3af/at",
+      "Gestion": "Omada SDN / App",
+      "Garantie": "3 ans"
+    },
+    "stock": 15,
+    "status": "active"
+  },
+  {
+    "name": "Netgear GS316 Switch 16 ports Gigabit",
+    "brand": "Netgear",
+    "subcategory": "switch",
+    "price_eur": 69.90,
+    "rating": 4.6,
+    "rating_count": 1543,
+    "image": "https://placehold.co/400x300/312e81/fff?text=Switch+R%C3%A9seau",
+    "description": "Switch non géré 16 ports Gigabit idéal pour les petites entreprises. Silencieux, sans ventilateur.",
+    "specs": {
+      "Ports": "16x Gigabit RJ45",
+      "Type": "Non géré, plug-and-play",
+      "Bande passante": "32 Gbps",
+      "Refroidissement": "Passif (sans ventilateur)",
+      "Garantie": "Vie du produit"
+    },
+    "stock": 12,
+    "status": "active"
+  },
+  {
+    "name": "Huawei B818-263 Routeur 4G+ Cat19",
+    "brand": "Huawei",
+    "subcategory": "routeur-4g5g",
+    "price_eur": 189.90,
+    "rating": 4.3,
+    "rating_count": 987,
+    "image": "https://placehold.co/400x300/065f46/fff?text=Routeur+4G%2F5G",
+    "description": "Routeur 4G+ Cat19 de Huawei, compatible SIM universelle. Jusqu'à 1.65 Gbps en téléchargement. Wi-Fi AC2600 dual-band intégré. Idéal pour les connexions haut débit mobiles aux Comores.",
+    "specs": {
+      "4G": "Cat19, jusqu'à 1.65 Gbps DL",
+      "Wi-Fi": "AC2600 dual-band",
+      "Ports LAN": "4x Gigabit",
+      "SIM": "Nano-SIM universelle",
+      "Antennes": "4 ports TS9 externes",
+      "Garantie": "2 ans"
+    },
+    "stock": 8,
+    "status": "active"
+  },
+  {
+    "name": "Câble RJ45 Cat7 blindé SFTP - 3m",
+    "brand": "Générique",
+    "subcategory": "cable",
+    "price_eur": 8.90,
+    "rating": 4.4,
+    "rating_count": 5432,
+    "image": "https://placehold.co/400x300/78350f/fff?text=C%C3%A2ble+R%C3%A9seau",
+    "description": "Câble RJ45 Cat7 SFTP 3m avec double blindage pour un réseau 10 Gbps sans interférence. Connecteurs dorés et gaine souple.",
+    "specs": {
+      "Catégorie": "Cat7 SFTP",
+      "Longueur": "3m",
+      "Débit max": "10 Gbps (10GBase-T)",
+      "Blindage": "SFTP double blindage",
+      "Connecteurs": "RJ45 plaqués or"
+    },
+    "stock": 100,
+    "status": "active"
+  }
+]
