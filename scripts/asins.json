@@ -1,0 +1,45 @@
+{
+  "portables": {
+    "lenovo-ideapad-3": "",
+    "lenovo-ideapad-5-14": "",
+    "hp-15s-fq5": "",
+    "acer-aspire-5-a515": "",
+    "dell-inspiron-15-3520": "",
+    "asus-vivobook-15": ""
+  },
+  "bureau": {
+    "dell-inspiron-3020-i7": "",
+    "dell-inspiron-3020s-i5": "",
+    "dell-inspiron-3030-sff": "",
+    "lenovo-ideacentre-3-ryzen5": "",
+    "lenovo-ideacentre-3-07ach7": "",
+    "acer-veriton-m4680g": ""
+  },
+  "gaming": {
+    "hp-victus-15": "",
+    "lenovo-ideapad-gaming-3": "",
+    "acer-nitro-5-an515": "",
+    "asus-tuf-gaming-a15": "",
+    "msi-thin-gf63": ""
+  },
+  "toutunun": {
+    "hp-aio-24": "",
+    "acer-aspire-c24": "",
+    "dell-inspiron-24-aio": "",
+    "lenovo-ideacentre-aio-3": "",
+    "hp-envy-27": ""
+  },
+  "reconditiones": {
+    "lenovo-thinkpad-t480-reco": "B0916TZGJH",
+    "dell-latitude-5400-reco": "B0F6T9V2NN",
+    "dell-optiplex-7060": "B0G1C334YW",
+    "hp-elitebook-840-g6-reco": ""
+  },
+  "minipc": {
+    "beelink-mini-s12-pro": "",
+    "beelink-eq12": "",
+    "minisforum-um773": "",
+    "gmktec-nucbox-g3": "",
+    "asus-nuc-14-pro": ""
+  }
+}

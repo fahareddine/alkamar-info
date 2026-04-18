@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Saisie ASINs — Alkamar Info</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 24px; background: #f8fafc; }
+    h1 { font-size: 1.4rem; color: #0f172a; margin-bottom: 4px; }
+    .subtitle { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+    .how-to { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; line-height: 1.7; }
+    .how-to strong { color: #1e3a8a; }
+    .how-to code { background: #dbeafe; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
+    .section { margin-bottom: 24px; }
+    .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #64748b; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e2e8f0; }
+    .product-row { display: grid; grid-template-columns: 1fr 140px 40px; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .product-name { font-size: 13px; font-weight: 600; color: #334155; }
+    .product-slug { font-size: 11px; color: #94a3b8; }
+    input[type=text] { width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: monospace; box-sizing: border-box; }
+    input[type=text]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px #bfdbfe; }
+    input[type=text].filled { border-color: #16a34a; background: #f0fdf4; }
+    a.search-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #ff9900; border-radius: 6px; text-decoration: none; font-size: 16px; }
+    a.search-btn:hover { background: #e88a00; }
+    .sticky-bottom { position: sticky; bottom: 0; background: #fff; border-top: 2px solid #e2e8f0; padding: 16px; display: flex; gap: 12px; align-items: center; }
+    button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .btn-generate { background: #1e3a8a; color: #fff; }
+    .btn-generate:hover { background: #1e40af; }
+    .btn-copy { background: #e2e8f0; color: #334155; }
+    .progress { font-size: 12px; color: #64748b; margin-left: auto; }
+    textarea { width: 100%; height: 220px; font-family: monospace; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; box-sizing: border-box; background: #0f172a; color: #e2e8f0; display: none; margin-top: 12px; }
+  </style>
+</head>
+<body>
+
+<h1>🔍 Saisie des ASINs Amazon</h1>
+<p class="subtitle">Renseigner l'ASIN pour chaque produit afin de récupérer 3 photos distinctes depuis Amazon.fr</p>
+
+<div class="how-to">
+  <strong>Comment trouver l'ASIN ?</strong><br>
+  1. Cliquer 🔍 pour ouvrir la recherche Amazon.fr<br>
+  2. Choisir le bon produit dans les résultats<br>
+  3. Copier l'ASIN depuis l'URL : <code>amazon.fr/dp/<strong>B0XXXXXXXXX</strong>/...</code><br>
+  4. Coller dans le champ ci-dessous<br>
+  5. Cliquer <strong>Générer asins.json</strong> puis copier dans <code>scripts/asins.json</code>
+</div>
+
+<div id="form-container"></div>
+
+<div class="sticky-bottom">
+  <button class="btn-generate" onclick="generate()">📋 Générer asins.json</button>
+  <button class="btn-copy" onclick="copyJson()">📋 Copier JSON</button>
+  <span class="progress" id="progress"></span>
+</div>
+
+<textarea id="json-output" readonly></textarea>
+
+<script>
+const PRODUCTS = {
+  portables: [
+    { slug: 'lenovo-ideapad-3', name: 'Lenovo IdeaPad 3 15ALC6' },
+    { slug: 'lenovo-ideapad-5-14', name: 'Lenovo IdeaPad 5 15ALC05' },
+    { slug: 'hp-15s-fq5', name: 'HP 15s-fq5028nf' },
+    { slug: 'acer-aspire-5-a515', name: 'Acer Aspire 5 A515-57' },
+    { slug: 'dell-inspiron-15-3520', name: 'Dell Inspiron 15 3520' },
+    { slug: 'asus-vivobook-15', name: 'Asus VivoBook 15 X1504VA' },
+  ],
+  bureau: [
+    { slug: 'dell-inspiron-3020-i7', name: 'Dell Inspiron 3020 Tour' },
+    { slug: 'dell-inspiron-3020s-i5', name: 'Dell Inspiron 3020 SFF' },
+    { slug: 'dell-inspiron-3030-sff', name: 'Dell Inspiron 3030 SFF' },
+    { slug: 'lenovo-ideacentre-3-ryzen5', name: 'Lenovo IdeaCentre 3' },
+    { slug: 'lenovo-ideacentre-3-07ach7', name: 'Lenovo IdeaCentre 3 07ACH7' },
+    { slug: 'acer-veriton-m4680g', name: 'Acer Veriton M4680G' },
+  ],
+  gaming: [
+    { slug: 'hp-victus-15', name: 'HP Victus 15-fa1001sf' },
+    { slug: 'lenovo-ideapad-gaming-3', name: 'Lenovo IdeaPad Gaming 3 15ACH6' },
+    { slug: 'acer-nitro-5-an515', name: 'Acer Nitro 5 AN517-55' },
+    { slug: 'asus-tuf-gaming-a15', name: 'Asus TUF Gaming A15 FA507NVR' },
+    { slug: 'msi-thin-gf63', name: 'MSI Thin GF63 12VE-023FR' },
+  ],
+  toutunun: [
+    { slug: 'hp-aio-24', name: 'HP All-in-One 24-cb1029nf' },
+    { slug: 'acer-aspire-c24', name: 'Acer Aspire C24-1800' },
+    { slug: 'dell-inspiron-24-aio', name: 'Dell Inspiron 24 5430' },
+    { slug: 'lenovo-ideacentre-aio-3', name: 'Lenovo IdeaCentre AIO 3 27ALC6' },
+    { slug: 'hp-envy-27', name: 'HP Envy All-in-One 27"' },
+  ],
+  reconditiones: [
+    { slug: 'lenovo-thinkpad-t480-reco', name: 'Lenovo ThinkPad T480 Reconditionné', asin: 'B0916TZGJH' },
+    { slug: 'dell-latitude-5400-reco', name: 'Dell Latitude 5420 Reconditionné', asin: 'B0F6T9V2NN' },
+    { slug: 'dell-optiplex-7060', name: 'Dell OptiPlex 7060 SFF Reconditionné', asin: 'B0G1C334YW' },
+    { slug: 'hp-elitebook-840-g6-reco', name: 'HP EliteBook 840 G6 Reconditionné' },
+  ],
+  minipc: [
+    { slug: 'beelink-mini-s12-pro', name: 'Beelink Mini S12 Pro' },
+    { slug: 'beelink-eq12', name: 'Beelink EQ12' },
+    { slug: 'minisforum-um773', name: 'Minisforum UM773 Lite' },
+    { slug: 'gmktec-nucbox-g3', name: 'GMKtec NucBox G3' },
+    { slug: 'asus-nuc-14-pro', name: 'Asus NUC 14 Pro+' },
+  ],
+};
+
+const CAT_LABELS = {
+  portables: '💻 PC Portables',
+  bureau: '🖥️ PC de Bureau',
+  gaming: '🎮 PC Gaming',
+  toutunun: '🖥️ Tout-en-Un',
+  reconditiones: '♻️ Reconditionnés',
+  minipc: '📦 Mini PC',
+};
+
+const SEARCH_NAMES = {
+  'lenovo-ideapad-3': 'Lenovo IdeaPad 3 15ALC6 Ryzen 5',
+  'lenovo-ideapad-5-14': 'Lenovo IdeaPad 5 15ALC05',
+  'hp-15s-fq5': 'HP 15s-fq5028nf',
+  'acer-aspire-5-a515': 'Acer Aspire 5 A515-57',
+  'dell-inspiron-15-3520': 'Dell Inspiron 15 3520',
+  'asus-vivobook-15': 'Asus VivoBook 15 X1504VA',
+  'dell-inspiron-3020-i7': 'Dell Inspiron 3020 Tour i7',
+  'dell-inspiron-3020s-i5': 'Dell Inspiron 3020 SFF i5',
+  'dell-inspiron-3030-sff': 'Dell Inspiron 3030 SFF',
+  'lenovo-ideacentre-3-ryzen5': 'Lenovo IdeaCentre 3 Ryzen 5',
+  'lenovo-ideacentre-3-07ach7': 'Lenovo IdeaCentre 3 07ACH7',
+  'acer-veriton-m4680g': 'Acer Veriton M4680G',
+  'hp-victus-15': 'HP Victus 15-fa1001sf',
+  'lenovo-ideapad-gaming-3': 'Lenovo IdeaPad Gaming 3 15ACH6',
+  'acer-nitro-5-an515': 'Acer Nitro 5 AN517-55',
+  'asus-tuf-gaming-a15': 'Asus TUF Gaming A15 FA507NVR',
+  'msi-thin-gf63': 'MSI Thin GF63',
+  'hp-aio-24': 'HP All-in-One 24',
+  'acer-aspire-c24': 'Acer Aspire C24-1800',
+  'dell-inspiron-24-aio': 'Dell Inspiron 24 5430 All-in-One',
+  'lenovo-ideacentre-aio-3': 'Lenovo IdeaCentre AIO 3 27',
+  'hp-envy-27': 'HP Envy All-in-One 27',
+  'hp-elitebook-840-g6-reco': 'HP EliteBook 840 G6 reconditionné',
+  'beelink-mini-s12-pro': 'Beelink Mini S12 Pro',
+  'beelink-eq12': 'Beelink EQ12',
+  'minisforum-um773': 'Minisforum UM773 Lite',
+  'gmktec-nucbox-g3': 'GMKtec NucBox G3',
+  'asus-nuc-14-pro': 'Asus NUC 14 Pro',
+};
+
+// Charger depuis localStorage
+const saved = JSON.parse(localStorage.getItem('asins') || '{}');
+
+const container = document.getElementById('form-container');
+
+for (const [cat, products] of Object.entries(PRODUCTS)) {
+  const section = document.createElement('div');
+  section.className = 'section';
+  section.innerHTML = `<div class="section-title">${CAT_LABELS[cat]}</div>`;
+
+  for (const p of products) {
+    const searchQ = encodeURIComponent(SEARCH_NAMES[p.slug] || p.name);
+    const amzUrl = `https://www.amazon.fr/s?k=${searchQ}`;
+    const val = p.asin || saved[p.slug] || '';
+
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    row.innerHTML = `
+      <div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-slug">${p.slug}</div>
+      </div>
+      <input type="text" id="asin-${p.slug}" placeholder="B0XXXXXXXXX"
+        value="${val}" maxlength="10" oninput="saveAsin('${p.slug}', this)"
+        ${p.asin ? 'readonly style="background:#f0fdf4;border-color:#16a34a"' : ''}>
+      <a class="search-btn" href="${amzUrl}" target="_blank" title="Chercher sur Amazon.fr">🔍</a>
+    `;
+    section.appendChild(row);
+    if (val && !p.asin) row.querySelector('input').classList.add('filled');
+  }
+
+  container.appendChild(section);
+}
+
+updateProgress();
+
+function saveAsin(slug, input) {
+  const val = input.value.trim().toUpperCase();
+  input.value = val;
+  if (val.length === 10) {
+    saved[slug] = val;
+    input.classList.add('filled');
+  } else {
+    delete saved[slug];
+    input.classList.remove('filled');
+  }
+  localStorage.setItem('asins', JSON.stringify(saved));
+  updateProgress();
+}
+
+function updateProgress() {
+  const total = Object.values(PRODUCTS).flat().length;
+  let filled = 0;
+  for (const prods of Object.values(PRODUCTS)) {
+    for (const p of prods) {
+      const val = p.asin || saved[p.slug] || '';
+      if (val.length === 10) filled++;
+    }
+  }
+  document.getElementById('progress').textContent = `${filled}/${total} ASINs renseignés`;
+}
+
+function generate() {
+  const result = {};
+  for (const [cat, products] of Object.entries(PRODUCTS)) {
+    result[cat] = {};
+    for (const p of products) {
+      const input = document.getElementById(`asin-${p.slug}`);
+      result[cat][p.slug] = (input ? input.value.trim() : '') || p.asin || '';
+    }
+  }
+  const json = JSON.stringify(result, null, 2);
+  const ta = document.getElementById('json-output');
+  ta.style.display = 'block';
+  ta.value = json;
+  ta.scrollIntoView({ behavior: 'smooth' });
+}
+
+function copyJson() {
+  generate();
+  const ta = document.getElementById('json-output');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = document.querySelector('.btn-copy');
+    btn.textContent = '✅ Copié !';
+    setTimeout(() => btn.textContent = '📋 Copier JSON', 2000);
+  });
+}
+</script>
+</body>
+</html>
