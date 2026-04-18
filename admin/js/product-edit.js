@@ -47,8 +47,21 @@ function renderGallery() {
   grid.innerHTML = galleryItems.map((item, i) => `
     <div class="gallery-item">
       <img src="${esc(item.src)}" alt="${esc(item.alt)}" onerror="this.style.opacity=0.3">
-      <button type="button" class="gallery-item__remove" onclick="removeGalleryItem(${i})">×</button>
+      <button type="button" class="gallery-item__remove" onclick="removeGalleryItem(${i})" title="Supprimer">×</button>
+      <button type="button" class="gallery-item__promote" onclick="promoteToMain(${i})" title="Définir comme image principale">⭐</button>
     </div>`).join('');
+}
+
+function promoteToMain(i) {
+  const currentMain = document.querySelector('[name="image"]').value.trim();
+  const newMain = galleryItems[i].src;
+  // Swap : ancienne principale → galerie, galerie[i] → principale
+  galleryItems[i] = { src: currentMain, alt: '' };
+  if (!currentMain) galleryItems.splice(i, 1); // si pas de principale, juste retirer
+  document.querySelector('[name="image"]').value = newMain;
+  const prev = document.getElementById('img-preview');
+  if (prev) { prev.src = newMain; prev.style.display = 'block'; }
+  renderGallery();
 }
 
 function removeGalleryItem(i) {
