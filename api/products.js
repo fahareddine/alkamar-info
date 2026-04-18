@@ -62,7 +62,7 @@ module.exports = async function handler(req, res) {
         id, legacy_id, name, subtitle, slug, description,
         price_eur, price_kmf, price_old, stock, stock_label, status,
         brand, badge, badge_class, rating, rating_count,
-        image, gallery, features, specs, created_at,
+        image, main_image_url, gallery, gallery_urls, features, specs, created_at,
         categories(id, name, slug, parent_id, icon)
       `)
       .order('name');
