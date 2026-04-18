@@ -394,7 +394,7 @@
         </ul>
       </div>
     </div>
-    <div class="footer__bottom">© 2025 Alkamar Info — Tous droits réservés</div>
+    <div class="footer__bottom">© 2026 Alkamar Info — Tous droits réservés</div>
   </footer>
 
   <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">
@@ -443,6 +443,17 @@
         return '★'.repeat(n) + '☆'.repeat(5 - n);
       }
 
+      function fmtEur(n) {
+        const v = Number(n) || 0;
+        const parts = v.toFixed(2).split('.');
+        return Number(parts[0]).toLocaleString('fr-FR') + ',' + parts[1];
+      }
+
+      function fmtKmf(kmf, eur) {
+        const v = Number(kmf);
+        return (v > 0 ? v : Math.round((Number(eur) || 0) * 492)).toLocaleString('fr-FR');
+      }
+
       const CAT_LABELS = {
         portables: 'PC Portables', bureau: 'PC de Bureau', gaming: 'PC Gaming',
         toutunun: 'Tout-en-un', reconditiones: 'Reconditionnés', minipc: 'Mini PC'
@@ -475,7 +486,7 @@
 
       // Prix barré
       const oldPriceHTML = p.price_old
-        ? `<div class="prod-price-old">${p.price_old},00 €</div>`
+        ? `<div class="prod-price-old">${fmtEur(p.price_old)} €</div>`
         : '';
 
       // Badge
@@ -514,7 +525,7 @@
       ).join('');
 
       // Message WhatsApp
-      const waMsg = encodeURIComponent(`Bonjour, je suis intéressé par le produit : ${p.name} (${p.price_eur} €). Pouvez-vous me donner plus d'informations ?`);
+      const waMsg = encodeURIComponent(`Bonjour, je suis intéressé par le produit : ${p.name} (${fmtEur(p.price_eur)} €). Pouvez-vous me donner plus d'informations ?`);
 
       document.getElementById('product-content').innerHTML = `
         <!-- Vue principale -->
@@ -530,19 +541,19 @@
           <!-- Informations produit -->
           <div class="prod-info">
             ${badgeHTML}
-            <div class="prod-brand" style="margin-top:${p.badge?'10px':'0'}">${p.brand}</div>
+            <div class="prod-brand" style="margin-top:${p.badge?'10px':'0'}">${p.brand || ''}</div>
             <h1 class="prod-name">${p.name}</h1>
             ${p.subtitle ? `<div class="prod-subtitle">${p.subtitle}</div>` : ''}
 
             <div class="prod-rating">
-              <span class="stars">${stars(p.rating)}</span>
-              <span class="count">${p.rating_count} avis clients</span>
+              <span class="stars">${stars(p.rating || 0)}</span>
+              <span class="count">${Number(p.rating_count) || 0} avis client${(Number(p.rating_count) || 0) !== 1 ? 's' : ''}</span>
             </div>
 
             <div class="prod-price-block">
               ${oldPriceHTML}
-              <div class="prod-price-main">${p.price_eur}<span>,00 €</span></div>
-              <div class="prod-price-kmf">≈ ${Number(p.price_kmf || 0).toLocaleString('fr-FR')} KMF</div>
+              <div class="prod-price-main">${fmtEur(p.price_eur)}<span> €</span></div>
+              <div class="prod-price-kmf">≈ ${fmtKmf(p.price_kmf, p.price_eur)} KMF</div>
               <div class="prod-price-ttc">Toutes taxes comprises · Livraison selon zone</div>
             </div>
 

@@ -128,7 +128,7 @@
     <div class="subcat-header" style="background: linear-gradient(135deg, #0f172a 0%, #7f1d1d 100%);">
       <div class="subcat-header__inner">
         <h2>🎮 PC Gaming</h2>
-        <p>Ordinateurs portables gaming — puissance maximale pour jouer partout</p>
+        <p>PC gaming fixes et portables — puissance maximale pour jouer à la maison ou partout</p>
       </div>
     </div>
     <div class="page-layout" style="grid-template-columns:1fr">
@@ -257,7 +257,7 @@
         </ul>
       </div>
     </div>
-    <div class="footer__bottom">© 2025 Alkamar Info — Tous droits réservés</div>
+    <div class="footer__bottom">© 2026 Alkamar Info — Tous droits réservés</div>
   </footer>
 
   <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">
@@ -271,13 +271,26 @@
       return '★'.repeat(n) + '☆'.repeat(5 - n);
     }
 
+    function fmtEur(n) {
+      const v = Number(n) || 0;
+      const parts = v.toFixed(2).split('.');
+      const int = Number(parts[0]).toLocaleString('fr-FR');
+      return `${int}<span class="price-cents">,${parts[1]} €</span>`;
+    }
+
+    function fmtKmf(kmf, eur) {
+      const v = Number(kmf);
+      return (v > 0 ? v : Math.round((Number(eur) || 0) * 492)).toLocaleString('fr-FR');
+    }
+
     function productCard(p) {
       const badge = p.badge
         ? `<div class="card-badges"><span class="badge ${p.badge_class}">${p.badge}</span></div>`
         : '<div class="card-badges"></div>';
       const oldPrice = p.price_old
-        ? `<span class="price-old">${p.price_old},00 €</span>`
+        ? `<span class="price-old">${fmtEur(p.price_old)}</span>`
         : '';
+      const ratingCount = Number(p.rating_count) || 0;
       return `
         <div class="product-card">
           ${badge}
@@ -286,16 +299,16 @@
             <img src="${p.main_image_url || p.image || ''}" alt="${p.name}" width="220" height="170" loading="lazy">
           </div>
           <div class="card-body">
-            <div class="card-brand">${p.brand}</div>
-            <div class="card-title">${p.name} — ${p.subtitle}</div>
+            <div class="card-brand">${p.brand || ''}</div>
+            <div class="card-title">${p.name}${p.subtitle ? ' — ' + p.subtitle : ''}</div>
             <div class="card-rating">
-              <span class="stars">${stars(p.rating)}</span>
-              <span class="rating-count">(${p.rating_count})</span>
+              <span class="stars">${stars(p.rating || 0)}</span>
+              <span class="rating-count">(${ratingCount})</span>
             </div>
             <div class="card-price-block">
               ${oldPrice}
-              <span class="price-main">${p.price_eur}<span class="price-cents">,00 €</span></span>
-              <div class="price-kmf">≈ ${Number(p.price_kmf).toLocaleString('fr-FR')} KMF</div>
+              <span class="price-main">${fmtEur(p.price_eur)}</span>
+              <div class="price-kmf">≈ ${fmtKmf(p.price_kmf, p.price_eur)} KMF</div>
               <div class="price-ttc">Prix TTC</div>
             </div>
             <div class="card-stock ${p.stock_class}">${p.stock_label}</div>
