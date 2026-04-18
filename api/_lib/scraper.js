@@ -177,6 +177,35 @@ async function scrapeProduct(url) {
   if (!priceEur)    priceEur    = toFloat(meta.price);
   if (!image)       image       = cleanImageUrl(meta.image);
 
+  // Fallback DOM prix — Amazon + sites FR (LDLC, Fnac, Cdiscount, etc.)
+  if (!priceEur) {
+    const priceSelectors = [
+      // Amazon
+      '#corePrice_feature_div .a-price .a-offscreen',
+      '#apex_offerDisplay_desktop .a-price .a-offscreen',
+      '.a-price .a-offscreen',
+      '#priceblock_ourprice',
+      '#priceblock_dealprice',
+      // Schema.org attribut
+      '[itemprop="price"]',
+      // Sites FR génériques
+      '.price-box .price',
+      '[class*="prix"] [class*="montant"]',
+      '[class*="price--main"]',
+      '[class*="product-price"]',
+      '.f-priceBox-price',
+      '.current-price',
+      '[class*="selling-price"]',
+    ];
+    for (const sel of priceSelectors) {
+      const el = $(sel).first();
+      if (!el.length) continue;
+      const raw = el.attr('content') || el.text();
+      const v = toFloat(raw);
+      if (v && v > 0 && v < 50000) { priceEur = v; break; }
+    }
+  }
+
   // Fallback DOM
   if (!name) name = $('h1').first().text().trim();
 

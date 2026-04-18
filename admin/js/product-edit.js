@@ -368,7 +368,12 @@ function setupReiimport() {
       }
 
       // Prix si non défini
-      if (p.price_eur && form.price_eur && !form.price_eur.value) form.price_eur.value = p.price_eur;
+      if (p.price_eur && form.price_eur && !form.price_eur.value) {
+        form.price_eur.value = p.price_eur;
+        // Déclencher le calcul KMF automatique
+        const kmfField = document.querySelector('[name=price_kmf]');
+        if (kmfField && !kmfField.value) kmfField.value = Math.round(Number(p.price_eur) * 491);
+      }
 
       // Points forts (features) — stocker dans champ hidden
       if (p.features && p.features.length > 0) {
