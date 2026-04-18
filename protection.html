@@ -55,36 +55,10 @@
 
   <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">✅ Produit ajouté au panier</div>
 
-  <script src="js/products.js"></script>
+  <script src="js/catalog.js"></script>
+  <script src="js/nav.js"></script>
   <script>
-    const KMF=492;
-    function stars(n){const f=Math.round(n);return '★'.repeat(f)+'☆'.repeat(5-f);}
-    function specsSummary(s){if(!s)return '';return Object.keys(s).slice(0,3).map(k=>`<span><strong>${k}:</strong> ${s[k]}</span>`).join(' · ');}
-    function productCard(p){
-      const badge=p.badge?`<div class="card-badges"><span class="badge">${p.badge}</span></div>`:'<div class="card-badges"></div>';
-      const kmf=Math.round(p.price*KMF).toLocaleString('fr-FR');
-      const oldPrice=p.priceOld?`<span class="price-old">${p.priceOld.toFixed(0)} €</span>`:'';
-      return `<div class="product-card">${badge}<button class="card-wishlist" onclick="toggleWish(this)">♡</button><div class="card-img"><img src="${p.image}" alt="${p.name}" width="220" height="170" loading="lazy"></div><div class="card-body"><div class="card-title">${p.name}</div><div class="card-specs">${specsSummary(p.specs)}</div><div class="card-rating"><span class="stars">${stars(p.rating)}</span><span class="rating-count">(${p.reviews})</span></div><div class="card-price-block">${oldPrice}<span class="price-main">${p.price.toFixed(0)}<span class="price-cents">,${String(Math.round((p.price%1)*100)).padStart(2,'0')} €</span></span><div class="price-kmf">≈ ${kmf} KMF</div></div><div class="card-stock in-stock">En stock</div></div><div class="card-footer"><button class="btn-cart" onclick="addToCart(this,'${p.id}')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>Ajouter</button><a href="produit.html?id=${p.id}" class="btn-detail">Voir le détail</a></div></div>`;
-    }
-    let list=PRODUCTS.filter(p=>p.category==='protection');
-    function render(l){
-      const g=document.getElementById('grid-protection');
-      const c=document.getElementById('count-protection');
-      g.innerHTML=l.map(productCard).join('');
-      c.innerHTML=`<strong>${l.length}</strong> produit${l.length>1?'s':''} disponible${l.length>1?'s':''}`;
-    }
-    function sortProds(mode){
-      let l=[...list];
-      if(mode==='price-asc')l.sort((a,b)=>a.price-b.price);
-      if(mode==='price-desc')l.sort((a,b)=>b.price-a.price);
-      if(mode==='rating')l.sort((a,b)=>b.rating-a.rating);
-      render(l);
-    }
-    render(list);
-    let cc=0;function addToCart(b,id){cc++;document.querySelector('.cart-badge').textContent=cc;const n=document.getElementById('cart-notif');n.style.display='flex';setTimeout(()=>n.style.display='none',2500);}
-    function toggleWish(b){const l=b.textContent==='♥';b.textContent=l?'♡':'♥';b.style.color=l?'':'#ef4444';b.style.borderColor=l?'':'#ef4444';}
-    function doSearch(){const q=document.getElementById('searchInput').value.trim().toLowerCase();if(!q)return;window.location.href='index.html?q='+encodeURIComponent(q);}
-    document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
-  </script>  <script src="js/nav.js"></script>
+    CATALOG.initFlat('protection');
+  </script>
 </body>
 </html>

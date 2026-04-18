@@ -140,91 +140,10 @@
 
   <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">✅ Service ajouté au panier</div>
 
-  <script src="js/products.js"></script>
-  <script>
-    const KMF = 492;
-
-    function stars(n) {
-      const f = Math.round(n);
-      return '★'.repeat(f) + '☆'.repeat(5 - f);
-    }
-
-    function productCard(p) {
-      const badge = p.badge ? `<div class="card-badges"><span class="badge ${p.badgeClass || ''}">${p.badge}</span></div>` : '<div class="card-badges"></div>';
-      const kmf = (p.priceKmf || Math.round(p.price * KMF)).toLocaleString('fr-FR');
-      const stockClass = p.stockClass || 'in-stock';
-      const stock = p.stock || 'Disponible';
-      return `
-        <div class="product-card">
-          ${badge}
-          <div class="card-img"><img src="${p.main_image_url || p.image || ''}" alt="${p.name}" width="220" height="170" loading="lazy"></div>
-          <div class="card-body">
-            <div class="card-brand">${p.brand || ''}</div>
-            <div class="card-title">${p.name}</div>
-            <div class="card-subtitle" style="font-size:12px;color:#64748b;margin:4px 0">${p.subtitle || ''}</div>
-            <div class="card-rating"><span class="stars">${stars(p.rating)}</span> <span class="rating-count">(${p.ratingCount || 0} avis)</span></div>
-            <div class="card-price-block">
-              <span class="price-main">${p.price} €</span>
-              <div class="price-kmf">≈ ${kmf} KMF</div>
-            </div>
-            <div class="card-stock ${stockClass}">📅 ${stock}</div>
-          </div>
-          <div class="card-footer">
-            <a href="tel:+26933127222" class="btn-cart" style="text-decoration:none;text-align:center">
-              📞 Prendre rendez-vous
-            </a>
-            <a href="produit.html?id=${p.id}" class="btn-detail">Voir le détail</a>
-          </div>
-        </div>`;
-    }
-
-    const MAX_VISIBLE = 10;
-    const gridsState = {};
-    const gridsExpanded = {};
-
-    function renderGrid(subcategory) {
-      const allList = PRODUCTS.filter(p => p.subcategory === subcategory);
-      const sortedList = gridsState[subcategory] || allList;
-      gridsState[subcategory] = sortedList;
-      const expanded = gridsExpanded[subcategory] || false;
-      const visible = expanded ? sortedList : sortedList.slice(0, MAX_VISIBLE);
-      const grid = document.getElementById('grid-' + subcategory);
-      const count = document.getElementById('count-' + subcategory);
-      if (!grid) return;
-      grid.innerHTML = visible.map(productCard).join('');
-      if (count) count.innerHTML = `<strong>${allList.length}</strong> service${allList.length > 1 ? 's' : ''} disponible${allList.length > 1 ? 's' : ''}`;
-    }
-
-    function sortGrid(subcategory, mode) {
-      let list = PRODUCTS.filter(p => p.subcategory === subcategory);
-      if (mode === 'price-asc') list.sort((a, b) => a.price - b.price);
-      if (mode === 'price-desc') list.sort((a, b) => b.price - a.price);
-      if (mode === 'rating') list.sort((a, b) => b.rating - a.rating);
-      gridsState[subcategory] = list;
-      gridsExpanded[subcategory] = false;
-      renderGrid(subcategory);
-    }
-
-    renderGrid('service');
-
-    let cartCount = 0;
-    function addToCart(btn, id) {
-      cartCount++;
-      document.querySelector('.cart-badge').textContent = cartCount;
-      const n = document.getElementById('cart-notif');
-      n.style.display = 'flex';
-      setTimeout(() => n.style.display = 'none', 2500);
-    }
-
-    function doSearch() {
-      const q = document.getElementById('searchInput').value.trim().toLowerCase();
-      if (!q) return;
-      window.location.href = 'index.html?q=' + encodeURIComponent(q);
-    }
-    document.getElementById('searchInput').addEventListener('keydown', e => {
-      if (e.key === 'Enter') doSearch();
-    });
-  </script>
+  <script src="js/catalog.js"></script>
   <script src="js/nav.js"></script>
+  <script>
+    CATALOG.initFlat('service');
+  </script>
 </body>
 </html>
