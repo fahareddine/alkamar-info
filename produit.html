@@ -32,17 +32,27 @@
       align-items: center;
       justify-content: center;
       aspect-ratio: 4/3;
+      cursor: zoom-in;
     }
     .gallery__main img {
       width: 100%;
       height: 100%;
       object-fit: contain;
       padding: 16px;
+      transition: transform 0.35s ease, opacity 0.18s ease;
+      will-change: transform, opacity;
     }
+    .gallery__main:hover img { transform: scale(1.06); }
+    .gallery__main img.switching { opacity: 0; transform: scale(0.97); }
     .gallery__thumbs {
       display: flex;
       gap: 10px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
     }
+    .gallery__thumbs::-webkit-scrollbar { display: none; }
     .gallery__thumb {
       width: 72px;
       height: 56px;
@@ -52,9 +62,17 @@
       cursor: pointer;
       overflow: hidden;
       flex-shrink: 0;
-      transition: border-color .15s;
+      transition: border-color .2s, transform .2s, box-shadow .2s;
     }
-    .gallery__thumb.active { border-color: var(--primary); }
+    .gallery__thumb:hover {
+      border-color: var(--primary);
+      transform: scale(1.08);
+      box-shadow: 0 4px 14px rgba(0,0,0,.14);
+    }
+    .gallery__thumb.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26,58,143,.18);
+    }
     .gallery__thumb img { width: 100%; height: 100%; object-fit: contain; padding: 4px; }
 
     /* Infos produit */
@@ -441,11 +459,16 @@
         ? p.gallery_urls
         : ((p.gallery && p.gallery.length > 0) ? p.gallery : [p.main_image_url || p.image].filter(Boolean));
       const _seen = new Set();
+      const _viewLabels = ['Vue principale', 'Vue de côté', 'Détails produit', 'Vue arrière', 'Vue packaging'];
       const galleryItems = rawGallery
-        .map(item => typeof item === 'string' ? { src: item, alt: '' } : item)
+        .map((item, i) => {
+          const obj = typeof item === 'string' ? { src: item, alt: '' } : { ...item };
+          if (!obj.alt) obj.alt = `${p.name} — ${_viewLabels[i] || 'Vue ' + (i + 1)}`;
+          return obj;
+        })
         .filter(item => { if (!item?.src || _seen.has(item.src)) return false; _seen.add(item.src); return true; });
       const thumbsHTML = galleryItems.map((item, i) =>
-        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${item.src}', this)">
+        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${item.src}','${item.alt.replace(/'/g,"\\'")}',this)">
           <img src="${item.src}" alt="${item.alt}" loading="lazy">
         </div>`
       ).join('');
@@ -499,7 +522,7 @@
           <!-- Galerie images -->
           <div class="gallery">
             <div class="gallery__main">
-              <img src="${galleryItems[0].src}" alt="${galleryItems[0].alt || p.name}" id="main-img">
+              <img src="${galleryItems[0].src}" alt="${galleryItems[0].alt}" id="main-img" loading="eager">
             </div>
             ${(galleryItems.length > 1) ? `<div class="gallery__thumbs">${thumbsHTML}</div>` : ''}
           </div>
@@ -570,10 +593,16 @@
     })();
 
     /* ── Galerie ─────────────────────────────────────── */
-    function switchImg(src, thumb) {
-      document.getElementById('main-img').src = src;
+    function switchImg(src, alt, thumbEl) {
+      const img = document.getElementById('main-img');
+      img.classList.add('switching');
+      setTimeout(() => {
+        img.src = src;
+        if (alt) img.alt = alt;
+        img.classList.remove('switching');
+      }, 180);
       document.querySelectorAll('.gallery__thumb').forEach(t => t.classList.remove('active'));
-      thumb.classList.add('active');
+      if (thumbEl) thumbEl.classList.add('active');
     }
 
     /* ── Onglets détail ──────────────────────────────── */
@@ -603,6 +632,7 @@
       if (e.key === 'Enter') doSearch();
     });
   </script>
+  <script src="js/product-gallery.js"></script>
   <script src="js/nav.js"></script>
 </body>
 </html>
