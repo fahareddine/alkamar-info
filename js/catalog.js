@@ -72,10 +72,11 @@ const CATALOG = (function () {
           <span class="rating-count">(${ratingN})</span>
         </div>
         <div class="card-price-block">
+          ${Number(p.price_eur) > 0 ? `
           ${oldPrice}
           <span class="price-main">${fmtEur(p.price_eur)}</span>
           <div class="price-kmf">\u2248 ${fmtKmf(p.price_kmf, p.price_eur)} KMF</div>
-          <div class="price-ttc">Prix TTC</div>
+          <div class="price-ttc">Prix TTC</div>` : `<span class="price-main" style="font-size:14px;color:#94a3b8">Prix sur demande</span>`}
         </div>
         <div class="card-stock ${stockClass}">${stockLabel}</div>
       </div>

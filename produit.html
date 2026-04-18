@@ -551,10 +551,12 @@
             </div>
 
             <div class="prod-price-block">
+              ${Number(p.price_eur) > 0 ? `
               ${oldPriceHTML}
               <div class="prod-price-main">${fmtEur(p.price_eur)}<span> €</span></div>
               <div class="prod-price-kmf">≈ ${fmtKmf(p.price_kmf, p.price_eur)} KMF</div>
               <div class="prod-price-ttc">Toutes taxes comprises · Livraison selon zone</div>
+              ` : `<div class="prod-price-main" style="font-size:1.4rem;color:#94a3b8">Prix sur demande</div>`}
             </div>
 
             <div class="prod-stock ${stockClass}">${p.stock_label}</div>
