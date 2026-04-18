@@ -440,9 +440,10 @@
       const rawGallery = (p.gallery_urls && p.gallery_urls.length > 0)
         ? p.gallery_urls
         : (p.gallery || [p.main_image_url || p.image].filter(Boolean));
-      const galleryItems = rawGallery.map(item =>
-        typeof item === 'string' ? { src: item, alt: '' } : item
-      );
+      const _seen = new Set();
+      const galleryItems = rawGallery
+        .map(item => typeof item === 'string' ? { src: item, alt: '' } : item)
+        .filter(item => { if (!item?.src || _seen.has(item.src)) return false; _seen.add(item.src); return true; });
       const thumbsHTML = galleryItems.map((item, i) =>
         `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${item.src}', this)">
           <img src="${item.src}" alt="${item.alt}" loading="lazy">
