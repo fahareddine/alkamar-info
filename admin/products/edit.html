@@ -83,21 +83,29 @@
               </div>
             </div>
 
-            <!-- Photos IA -->
+            <!-- Sélecteur d'images -->
             <div class="form-card" id="ia-photos-card">
-              <h2 style="display:flex;align-items:center;gap:10px">
-                Photos IA
-                <span id="ia-status-badge" class="ia-badge ia-badge--idle">● idle</span>
-              </h2>
+              <h2>Sélecteur d'images</h2>
+              <style>
+                .picker-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-top:10px}
+                .picker-card{border:2px solid var(--admin-border,#e2e8f0);border-radius:8px;overflow:hidden;background:var(--admin-surface);transition:border-color .15s}
+                .picker-card img{width:100%;height:110px;object-fit:cover;display:block}
+                .picker-card--main{border-color:#f59e0b}
+                .picker-card--gallery{border-color:#3b82f6}
+                .picker-actions{display:flex;gap:4px;padding:6px;flex-wrap:wrap}
+                .picker-role{font-size:11px;font-weight:700;padding:2px 6px;border-radius:4px;display:block;margin:0 6px 4px;text-align:center}
+                .picker-role--main{background:#fef3c7;color:#92400e}
+                .picker-role--gallery{background:#dbeafe;color:#1e40af}
+              </style>
 
               <div class="form-group">
                 <label>Source</label>
                 <div style="display:flex;flex-direction:column;gap:6px">
                   <label style="font-weight:normal;display:flex;align-items:center;gap:8px">
-                    <input type="radio" name="ia-source" value="urls" checked> URLs directes (3 images)
+                    <input type="radio" name="ia-source" value="urls" checked> URLs directes
                   </label>
                   <label style="font-weight:normal;display:flex;align-items:center;gap:8px">
-                    <input type="radio" name="ia-source" value="page"> Page fournisseur
+                    <input type="radio" name="ia-source" value="page"> Page fournisseur (scraping auto)
                   </label>
                 </div>
               </div>
@@ -105,7 +113,7 @@
               <div id="ia-urls-inputs">
                 <div class="form-group">
                   <label>URL image 1</label>
-                  <input type="url" id="ia-url-1" class="form-control" placeholder="https://...">
+                  <input type="url" id="ia-url-1" class="form-control" placeholder="https://m.media-amazon.com/images/I/...">
                 </div>
                 <div class="form-group">
                   <label>URL image 2</label>
@@ -120,28 +128,21 @@
               <div id="ia-page-input" style="display:none">
                 <div class="form-group">
                   <label>URL de la page fournisseur</label>
-                  <input type="url" id="ia-page-url" class="form-control" placeholder="https://fournisseur.com/produit-xyz">
+                  <input type="url" id="ia-page-url" class="form-control" placeholder="https://amazon.fr/dp/...">
                 </div>
               </div>
 
               <button type="button" id="btn-fetch-images" class="btn btn--ghost">↓ Récupérer les images</button>
 
-              <div id="ia-sources-preview" style="display:none;margin-top:12px">
-                <label style="font-size:13px;color:var(--admin-muted)">Aperçu sources</label>
-                <div style="display:flex;gap:8px;margin-top:6px" id="ia-sources-thumbs"></div>
-                <p id="ia-partial-msg" style="display:none;color:var(--admin-warning);font-size:13px;margin-top:6px"></p>
-              </div>
-
-              <button type="button" id="btn-process-images" class="btn btn--primary" style="margin-top:12px;display:none">
-                ✨ Lancer traitement IA
-              </button>
-
-              <div id="ia-results" style="display:none;margin-top:16px">
-                <label style="font-size:13px;color:var(--admin-muted)">Résultats</label>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px" id="ia-results-grid"></div>
+              <div id="picker-section" style="display:none;margin-top:16px">
+                <p style="font-size:13px;color:var(--admin-muted);margin-bottom:4px">
+                  Cliquez pour assigner — <span style="color:#92400e;font-weight:600">⭐ principale</span> · <span style="color:#1e40af;font-weight:600">📁 galerie</span>
+                </p>
+                <div id="picker-grid" class="picker-grid"></div>
+                <button type="button" id="btn-apply-picker" class="btn btn--primary" style="margin-top:12px;display:none">✓ Appliquer la sélection</button>
               </div>
             </div>
-            <!-- /Photos IA -->
+            <!-- /Sélecteur d'images -->
 
             <!-- Caractéristiques -->
             <div class="form-card">

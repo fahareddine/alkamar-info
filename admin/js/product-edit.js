@@ -379,22 +379,11 @@ function setupReiimport() {
   });
 }
 
-// ── Photos IA ───────────────────────────────────────────────
+// ── Sélecteur d'images ─────────────────────────────────────
 function setupIAPhotos() {
-  const BADGES = {
-    idle: 'idle', downloading: 'downloading',
-    ready_for_processing: 'ready_for_processing',
-    processing: 'processing', processed: 'processed',
-    failed: 'failed', partial: 'partial',
-  };
+  let pickerImages = []; // [{url, role: null|'main'|'gallery'}]
 
-  function setIAStatus(status, label) {
-    const badge = document.getElementById('ia-status-badge');
-    if (!badge) return;
-    badge.textContent = '● ' + (label || status);
-    badge.className = 'ia-badge ia-badge--' + (BADGES[status] || 'idle');
-  }
-
+  // Toggle inputs source
   document.querySelectorAll('input[name="ia-source"]').forEach(radio => {
     radio.addEventListener('change', () => {
       const isPage = radio.value === 'page';
@@ -403,114 +392,93 @@ function setupIAPhotos() {
     });
   });
 
+  function renderPicker() {
+    const grid = document.getElementById('picker-grid');
+    if (!grid) return;
+    grid.innerHTML = pickerImages.map((img, i) => {
+      const isMain    = img.role === 'main';
+      const isGallery = img.role === 'gallery';
+      const border    = isMain ? '#f59e0b' : isGallery ? '#3b82f6' : 'var(--admin-border,#e2e8f0)';
+      const roleBadge = isMain    ? '<span class="picker-role picker-role--main">⭐ Principale</span>'
+                      : isGallery ? '<span class="picker-role picker-role--gallery">📁 Galerie</span>'
+                      : '';
+      return `<div class="picker-card${isMain?' picker-card--main':isGallery?' picker-card--gallery':''}" style="border-color:${border}">
+        <img src="${esc(img.url)}" onerror="this.style.opacity=.25" loading="lazy">
+        ${roleBadge}
+        <div class="picker-actions">
+          <button type="button" onclick="pickerSetRole(${i},'main')"
+            class="btn btn--sm ${isMain?'btn--warning':'btn--ghost'}" style="flex:1">⭐</button>
+          <button type="button" onclick="pickerSetRole(${i},'gallery')"
+            class="btn btn--sm ${isGallery?'btn--primary':'btn--ghost'}" style="flex:1">📁</button>
+          <button type="button" onclick="pickerSetRole(${i},null)"
+            class="btn btn--sm btn--ghost" style="flex:0;padding:0 6px">×</button>
+        </div>
+      </div>`;
+    }).join('');
+    const applyBtn = document.getElementById('btn-apply-picker');
+    if (applyBtn) applyBtn.style.display = pickerImages.length ? '' : 'none';
+  }
+
+  window.pickerSetRole = function(idx, role) {
+    if (role === 'main') pickerImages.forEach((img, i) => { if (i !== idx && img.role === 'main') img.role = null; });
+    pickerImages[idx].role = role;
+    renderPicker();
+  };
+
   document.getElementById('btn-fetch-images')?.addEventListener('click', async () => {
     const mode = document.querySelector('input[name="ia-source"]:checked').value;
-    const slug = document.querySelector('[name="slug"]')?.value;
-    if (!productId || !slug) { alert('Enregistrez le produit avant de lancer le pipeline'); return; }
+    const btn  = document.getElementById('btn-fetch-images');
+    let urls   = [];
 
-    let payload;
     if (mode === 'urls') {
-      payload = [
-        document.getElementById('ia-url-1').value,
-        document.getElementById('ia-url-2').value,
-        document.getElementById('ia-url-3').value,
-      ].filter(u => u.trim());
+      urls = [
+        document.getElementById('ia-url-1').value.trim(),
+        document.getElementById('ia-url-2').value.trim(),
+        document.getElementById('ia-url-3').value.trim(),
+      ].filter(Boolean);
+      if (!urls.length) { alert('Entrez au moins une URL'); return; }
     } else {
-      payload = [document.getElementById('ia-page-url').value.trim()];
-    }
-    if (payload.length === 0) { alert('Entrez au moins une URL'); return; }
-
-    setIAStatus('downloading', 'téléchargement...');
-    document.getElementById('btn-fetch-images').disabled = true;
-
-    try {
-      const data = await api.post(`/api/products/${productId}/images?action=fetch`, { slug, mode, payload });
-      setIAStatus(data.status === 'partial' ? 'partial' : 'ready_for_processing', data.status);
-
-      if (data.sourceUrls?.length) {
-        const thumbs = document.getElementById('ia-sources-thumbs');
-        thumbs.innerHTML = data.sourceUrls.map(url =>
-          `<img src="${url}" style="width:80px;height:60px;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0">`
-        ).join('');
-        document.getElementById('ia-sources-preview').style.display = '';
-        const partialMsg = document.getElementById('ia-partial-msg');
-        if (data.status === 'partial') {
-          partialMsg.textContent = data.message;
-          partialMsg.style.display = '';
-        } else {
-          partialMsg.style.display = 'none';
-        }
-        document.getElementById('btn-process-images').style.display = '';
+      const pageUrl = document.getElementById('ia-page-url').value.trim();
+      if (!pageUrl) { alert('Entrez une URL de page'); return; }
+      btn.disabled = true; btn.textContent = '⏳ Scraping...';
+      try {
+        const data = await api.post('/api/products?action=scrape', { url: pageUrl });
+        if (data.image) urls.push(data.image);
+        if (data.gallery) urls.push(...data.gallery.map(g => typeof g === 'string' ? g : g.src).filter(Boolean));
+        if (!urls.length) { alert('Aucune image trouvée sur cette page'); return; }
+      } catch(e) {
+        alert('Erreur scraping : ' + (e.message || e)); return;
+      } finally {
+        btn.disabled = false; btn.textContent = '↓ Récupérer les images';
       }
-    } catch (err) {
-      setIAStatus('failed', 'erreur');
-      alert('Erreur : ' + (err.message || err));
-    } finally {
-      document.getElementById('btn-fetch-images').disabled = false;
     }
+
+    // Auto-assign : 1ère = principale, reste = galerie
+    pickerImages = urls.map((url, i) => ({ url, role: i === 0 ? 'main' : 'gallery' }));
+    document.getElementById('picker-section').style.display = '';
+    renderPicker();
   });
 
-  document.getElementById('btn-process-images')?.addEventListener('click', async () => {
-    const slug = document.querySelector('[name="slug"]')?.value;
-    if (!productId || !slug) return;
+  document.getElementById('btn-apply-picker')?.addEventListener('click', () => {
+    const main    = pickerImages.find(img => img.role === 'main');
+    const gallery = pickerImages.filter(img => img.role === 'gallery');
 
-    setIAStatus('processing', 'traitement IA...');
-    document.getElementById('btn-process-images').disabled = true;
-
-    try {
-      const data = await api.post(`/api/products/${productId}/images?action=process`, { slug });
-
-      if (data.status === 'processing') {
-        setIAStatus('processing', 'en cours...');
-        alert('Le traitement est en cours. Revenez dans quelques secondes et rechargez la page.');
-        return;
-      }
-
-      setIAStatus('processed', 'traité ✓');
-
-      const grid = document.getElementById('ia-results-grid');
-      const allUrls = [data.cardCover, ...(data.gallery || [])];
-      const labels = ['card-cover', 'detail-main', 'side-1', 'side-2'];
-      grid.innerHTML = allUrls.map((url, i) =>
-        `<div style="text-align:center">
-          <img src="${url}" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0">
-          <small style="color:var(--admin-muted)">${labels[i] || ''}</small>
-        </div>`
-      ).join('');
-      document.getElementById('ia-results').style.display = '';
-
-      const imgPreview = document.getElementById('img-preview');
-      const imgInput   = document.querySelector('[name="image"]');
-      if (imgPreview && data.cardCover) { imgPreview.src = data.cardCover; imgPreview.style.display = 'block'; }
-      if (imgInput   && data.cardCover) { imgInput.value = data.cardCover; }
-
-    } catch (err) {
-      setIAStatus('failed', 'erreur');
-      alert('Erreur traitement : ' + (err.message || err));
-    } finally {
-      document.getElementById('btn-process-images').disabled = false;
+    if (main) {
+      document.querySelector('[name="image"]').value = main.url;
+      const prev = document.getElementById('img-preview');
+      if (prev) { prev.src = main.url; prev.style.display = 'block'; }
     }
-  });
 
-  if (productId) {
-    fetch(`/api/products/${productId}/images`)
-      .then(r => r.json())
-      .then(data => {
-        if (!data.pipelineStatus || data.pipelineStatus === 'idle') return;
-        setIAStatus(data.pipelineStatus);
-        if (data.pipelineStatus === 'processed' && data.main) {
-          const grid = document.getElementById('ia-results-grid');
-          const allUrls = [data.main, ...(data.gallery || [])];
-          const labels = ['card-cover', 'detail-main', 'side-1', 'side-2'];
-          grid.innerHTML = allUrls.map((url, i) =>
-            `<div style="text-align:center">
-              <img src="${url}" style="width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:4px;border:1px solid #e2e8f0">
-              <small style="color:var(--admin-muted)">${labels[i] || ''}</small>
-            </div>`
-          ).join('');
-          document.getElementById('ia-results').style.display = '';
-        }
-      })
-      .catch(() => {});
-  }
+    galleryItems = gallery.map(img => ({ src: img.url, alt: '' }));
+    renderGallery();
+
+    document.getElementById('picker-section').style.display = 'none';
+    pickerImages = [];
+
+    const alertEl = document.getElementById('alert');
+    alertEl.className = 'alert alert--success';
+    alertEl.textContent = `✓ ${main ? '1 image principale' : 'Aucune principale'} + ${gallery.length} en galerie.`;
+    alertEl.style.display = 'block';
+    setTimeout(() => alertEl.style.display = 'none', 3000);
+  });
 }
