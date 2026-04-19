@@ -1,0 +1,1808 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventaire produits — Alkamar Info</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0f172a;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: #f8fafc;
+      letter-spacing: -0.02em;
+    }
+    header .subtitle {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    /* ── Stats bar ── */
+    .stats-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 16px 32px;
+      background: #1e293b;
+      border-bottom: 1px solid #334155;
+    }
+    .stat-card {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      padding: 10px 18px;
+      min-width: 140px;
+      text-align: center;
+    }
+    .stat-card .num {
+      font-size: 24px;
+      font-weight: 700;
+      display: block;
+    }
+    .stat-card .lbl {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .stat-card.total .num { color: #60a5fa; }
+    .stat-card.ok .num    { color: #34d399; }
+    .stat-card.missing .num { color: #f87171; }
+
+    /* ── Search ── */
+    .search-bar {
+      padding: 16px 32px;
+      background: #0f172a;
+      border-bottom: 1px solid #1e293b;
+    }
+    .search-bar input {
+      width: 100%;
+      max-width: 400px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      color: #e2e8f0;
+      padding: 8px 14px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .search-bar input:focus {
+      border-color: #60a5fa;
+    }
+    .search-bar input::placeholder { color: #475569; }
+
+    /* ── Content ── */
+    main {
+      padding: 24px 32px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* ── Catégorie ── */
+    .cat-section {
+      margin-bottom: 36px;
+    }
+    .cat-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f8fafc;
+      padding: 10px 14px;
+      background: #1e293b;
+      border-left: 4px solid #60a5fa;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── Sous-catégorie ── */
+    .subcat-section {
+      margin-bottom: 20px;
+      margin-left: 12px;
+    }
+    .subcat-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Count badges ── */
+    .count {
+      font-size: 11px;
+      font-weight: 500;
+      background: #334155;
+      color: #94a3b8;
+      padding: 2px 8px;
+      border-radius: 12px;
+    }
+    .cat-count {
+      background: #1e3a5f;
+      color: #60a5fa;
+    }
+
+    /* ── Table ── */
+    .product-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #1e293b;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #334155;
+    }
+    .product-table th {
+      background: #0f172a;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid #334155;
+    }
+    .product-table td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #1a2744;
+      vertical-align: middle;
+    }
+    .product-table tr:last-child td { border-bottom: none; }
+    .product-table tr:hover td { background: #243555; }
+    .product-table tr.hidden { display: none; }
+
+    .td-name { font-weight: 500; color: #e2e8f0; }
+    .td-brand { color: #94a3b8; }
+    .td-price { font-variant-numeric: tabular-nums; color: #7dd3fc; }
+    .td-link { white-space: nowrap; }
+
+    /* ── Buttons ── */
+    .btn-buy {
+      display: inline-block;
+      background: #1e3a5f;
+      color: #60a5fa;
+      border: 1px solid #2563eb;
+      border-radius: 5px;
+      padding: 3px 12px;
+      font-size: 12px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: background 0.15s, color 0.15s;
+    }
+    .btn-buy:hover {
+      background: #2563eb;
+      color: #fff;
+    }
+    .missing {
+      color: #f87171;
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #475569;
+      font-size: 12px;
+      border-top: 1px solid #1e293b;
+      margin-top: 24px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Inventaire produits — Alkamar Info</h1>
+    <div class="subtitle">Généré le 19 avril 2026</div>
+  </div>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-card total">
+    <span class="num">188</span>
+    <span class="lbl">Produits total</span>
+  </div>
+  <div class="stat-card ok">
+    <span class="num">54</span>
+    <span class="lbl">Avec lien Amazon</span>
+  </div>
+  <div class="stat-card missing">
+    <span class="num">134</span>
+    <span class="lbl">Sans lien</span>
+  </div>
+</div>
+
+<div class="search-bar">
+  <input type="search" id="search-input" placeholder="Rechercher un produit..." autocomplete="off">
+</div>
+
+<main>
+  <section class="cat-section">
+    <h2 class="cat-title">Ordinateurs <span class="count cat-count">30 produits</span></h2>
+    <section class="subcat-section">
+      <h3 class="subcat-title">PC Portables <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="inspiron 15 3520">
+          <td class="td-name">Inspiron 15 3520</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">629.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="vivobook 15 x1504va">
+          <td class="td-name">VivoBook 15 X1504VA</td>
+          <td class="td-brand">Asus</td>
+          <td class="td-price">549.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="ideapad 5 15alc05">
+          <td class="td-name">IdeaPad 5 15ALC05</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">499.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="aspire 5 a515-57-53t2">
+          <td class="td-name">Aspire 5 A515-57-53T2</td>
+          <td class="td-brand">Acer</td>
+          <td class="td-price">449.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="ideapad 3 15alc6">
+          <td class="td-name">IdeaPad 3 15ALC6</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">299.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">PC de Bureau <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="dell inspiron 3020 tour">
+          <td class="td-name">Dell Inspiron 3020 Tour</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">799.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell inspiron 3030 sff">
+          <td class="td-name">Dell Inspiron 3030 SFF</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">649.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell inspiron 3020 sff">
+          <td class="td-name">Dell Inspiron 3020 SFF</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">549.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lenovo ideacentre 3 07ach7">
+          <td class="td-name">Lenovo IdeaCentre 3 07ACH7</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">529.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="veriton m4680g">
+          <td class="td-name">Veriton M4680G</td>
+          <td class="td-brand">Acer</td>
+          <td class="td-price">479.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">PC Gaming <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="legion tower 5i gen 8">
+          <td class="td-name">Legion Tower 5i Gen 8</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">1299.99 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="asus tuf gaming a17 rtx 4060">
+          <td class="td-name">ASUS TUF Gaming A17 RTX 4060</td>
+          <td class="td-brand">ASUS</td>
+          <td class="td-price">1199.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0C3WFKDXR" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="tuf gaming a15 fa507nvr">
+          <td class="td-name">TUF Gaming A15 FA507NVR</td>
+          <td class="td-brand">Asus</td>
+          <td class="td-price">899.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B089HFR9CX" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="victus 15-fa1001sf">
+          <td class="td-name">Victus 15-fa1001sf</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">799.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="thin gf63 12ve-023fr">
+          <td class="td-name">Thin GF63 12VE-023FR</td>
+          <td class="td-brand">MSI</td>
+          <td class="td-price">749.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">PC Tout-en-un <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="envy all-in-one 27&quot;">
+          <td class="td-name">Envy All-in-One 27&quot;</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">1499.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="ideacentre aio 3 27alc6">
+          <td class="td-name">IdeaCentre AIO 3 27ALC6</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">849.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="inspiron 24 5430">
+          <td class="td-name">Inspiron 24 5430</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">799.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="all-in-one 24-cb1029nf">
+          <td class="td-name">All-in-One 24-cb1029nf</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">699.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="aspire c24-1800">
+          <td class="td-name">Aspire C24-1800</td>
+          <td class="td-brand">Acer</td>
+          <td class="td-price">699.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Reconditionnés Grade A <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="pack pc bureau complet">
+          <td class="td-name">Pack PC Bureau Complet</td>
+          <td class="td-brand">Alkamar Info</td>
+          <td class="td-price">399.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell latitude 5420 reconditionne">
+          <td class="td-name">Dell Latitude 5420 Reconditionne</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">349.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="hp elitebook 840 g6 reconditionne">
+          <td class="td-name">HP EliteBook 840 G6 Reconditionne</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">319.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BQWSP2ZP" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="dell optiplex 7060 sff reconditionne">
+          <td class="td-name">Dell OptiPlex 7060 SFF Reconditionne</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">279.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0G1C334YW" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="thinkpad t480 reconditionne">
+          <td class="td-name">ThinkPad T480 Reconditionne</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">259.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0916TZGJH" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Mini PC <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="nuc 14 pro+">
+          <td class="td-name">NUC 14 Pro+</td>
+          <td class="td-brand">Asus</td>
+          <td class="td-price">499.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="um773 lite">
+          <td class="td-name">UM773 Lite</td>
+          <td class="td-brand">Minisforum</td>
+          <td class="td-price">329.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="eq12">
+          <td class="td-name">EQ12</td>
+          <td class="td-brand">Beelink</td>
+          <td class="td-price">239.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="nucbox g3">
+          <td class="td-name">NucBox G3</td>
+          <td class="td-brand">GMKtec</td>
+          <td class="td-price">219.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="mini s12 pro">
+          <td class="td-name">Mini S12 Pro</td>
+          <td class="td-brand">Beelink</td>
+          <td class="td-price">189.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+  <section class="cat-section">
+    <h2 class="cat-title">Composants <span class="count cat-count">39 produits</span></h2>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Essentiels montage <span class="count">4 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="kit tournevis ifixit mako 64">
+          <td class="td-name">Kit tournevis iFixit Mako 64</td>
+          <td class="td-brand">iFixit</td>
+          <td class="td-price">34.99 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B078GF4DS3" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="lot 6 câbles sata 3 deleycon">
+          <td class="td-name">Lot 6 câbles SATA 3 deleyCON</td>
+          <td class="td-brand">deleyCON</td>
+          <td class="td-price">8.99 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B09YFC6FZ7" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="bracelet antistatique esd">
+          <td class="td-name">Bracelet antistatique ESD</td>
+          <td class="td-brand">Générique</td>
+          <td class="td-price">7.99 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B07PD5FHK2" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="pâte thermique arctic mx-6">
+          <td class="td-name">Pâte thermique Arctic MX-6</td>
+          <td class="td-brand">Arctic</td>
+          <td class="td-price">6.99 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B09VDL3CW6" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Processeurs CPU <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="core i5-13600k">
+          <td class="td-name">Core i5-13600K</td>
+          <td class="td-brand">Intel</td>
+          <td class="td-price">299.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BS98MM6K" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="ryzen 7 5800x3d">
+          <td class="td-name">Ryzen 7 5800X3D</td>
+          <td class="td-brand">AMD</td>
+          <td class="td-price">279.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B09VCJ2SHD" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="core i5-12400f">
+          <td class="td-name">Core i5-12400F</td>
+          <td class="td-brand">Intel</td>
+          <td class="td-price">149.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B09NPJRDGD" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="ryzen 5 5600x">
+          <td class="td-name">Ryzen 5 5600X</td>
+          <td class="td-brand">AMD</td>
+          <td class="td-price">139.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B08166SLDF" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="core i3-12100f">
+          <td class="td-name">Core i3-12100F</td>
+          <td class="td-brand">Intel</td>
+          <td class="td-price">89.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B09QG131DT" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Cartes mères <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="b760 aorus elite ax">
+          <td class="td-name">B760 AORUS ELITE AX</td>
+          <td class="td-brand">Gigabyte</td>
+          <td class="td-price">219.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BPMHM4ZP" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="rog strix b550-f gaming">
+          <td class="td-name">ROG STRIX B550-F Gaming</td>
+          <td class="td-brand">ASUS</td>
+          <td class="td-price">189.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B089W9QGR7" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="mag b550 tomahawk">
+          <td class="td-name">MAG B550 TOMAHAWK</td>
+          <td class="td-brand">MSI</td>
+          <td class="td-price">139.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B08B4V583Q" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="prime b550-plus">
+          <td class="td-name">PRIME B550-PLUS</td>
+          <td class="td-brand">ASUS</td>
+          <td class="td-price">109.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B08B4V583Q" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="pro b660m-a ddr4">
+          <td class="td-name">PRO B660M-A DDR4</td>
+          <td class="td-brand">MSI</td>
+          <td class="td-price">89.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BJW1G7VN" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">RAM / Mémoire <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="ripjaws s5 96 go ddr5">
+          <td class="td-name">Ripjaws S5 96 Go DDR5</td>
+          <td class="td-brand">G.Skill</td>
+          <td class="td-price">239.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CB78Y7DC" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="fury beast 64 go ddr5">
+          <td class="td-name">FURY Beast 64 Go DDR5</td>
+          <td class="td-brand">Kingston</td>
+          <td class="td-price">149.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B09T8TH7PG" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="trident z5 32 go ddr5">
+          <td class="td-name">Trident Z5 32 Go DDR5</td>
+          <td class="td-brand">G.Skill</td>
+          <td class="td-price">109.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CB78Y7DC" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="vengeance lpx 32 go ddr4">
+          <td class="td-name">Vengeance LPX 32 Go DDR4</td>
+          <td class="td-brand">Corsair</td>
+          <td class="td-price">69.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BJW1G7VN" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="fury beast 16 go ddr4">
+          <td class="td-name">FURY Beast 16 Go DDR4</td>
+          <td class="td-brand">Kingston</td>
+          <td class="td-price">39.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B097K2WBL3" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Cartes graphiques GPU <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="geforce rtx 4080 super 16 go">
+          <td class="td-name">GeForce RTX 4080 SUPER 16 Go</td>
+          <td class="td-brand">NVIDIA</td>
+          <td class="td-price">999.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CS3WNPHS" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="geforce rtx 4070 12 go">
+          <td class="td-name">GeForce RTX 4070 12 Go</td>
+          <td class="td-brand">NVIDIA</td>
+          <td class="td-price">549.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0C3WFHMC7" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="radeon rx 7700 xt 12 go">
+          <td class="td-name">Radeon RX 7700 XT 12 Go</td>
+          <td class="td-brand">AMD</td>
+          <td class="td-price">379.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CFWQR5MW" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="geforce rtx 4060 8 go">
+          <td class="td-name">GeForce RTX 4060 8 Go</td>
+          <td class="td-brand">NVIDIA</td>
+          <td class="td-price">299.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0C3WFKDXR" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="radeon rx 7600 8 go">
+          <td class="td-name">Radeon RX 7600 8 Go</td>
+          <td class="td-brand">AMD</td>
+          <td class="td-price">259.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0C49S5R55" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Alimentations <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="dark power 13 1000 w">
+          <td class="td-name">Dark Power 13 1000 W</td>
+          <td class="td-brand">be quiet!</td>
+          <td class="td-price">249.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0FW56XSG8" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="rm1000e 1000 w">
+          <td class="td-name">RM1000e 1000 W</td>
+          <td class="td-brand">Corsair</td>
+          <td class="td-price">169.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BVKZ9GCB" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="focus gx-850 850 w">
+          <td class="td-name">FOCUS GX-850 850 W</td>
+          <td class="td-brand">Seasonic</td>
+          <td class="td-price">129.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CSN7KNF6" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="pure power 12 700 w">
+          <td class="td-name">Pure Power 12 700 W</td>
+          <td class="td-brand">be quiet!</td>
+          <td class="td-price">89.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0DLHB1QVR" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="cx650m 650 w">
+          <td class="td-name">CX650M 650 W</td>
+          <td class="td-brand">Corsair</td>
+          <td class="td-price">59.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CK8NDN1Q" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Boîtiers PC <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="torrent">
+          <td class="td-name">Torrent</td>
+          <td class="td-brand">Fractal Design</td>
+          <td class="td-price">179.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B08699B69Z" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="o11 dynamic evo">
+          <td class="td-name">O11 Dynamic EVO</td>
+          <td class="td-brand">Lian Li</td>
+          <td class="td-price">149.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CGM5HJM8" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="4000d airflow">
+          <td class="td-name">4000D Airflow</td>
+          <td class="td-brand">Corsair</td>
+          <td class="td-price">99.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B08C7BGV3D" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="h510 flow">
+          <td class="td-name">H510 Flow</td>
+          <td class="td-brand">NZXT</td>
+          <td class="td-price">89.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0D2MJT1FY" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="focus 2 atx">
+          <td class="td-name">Focus 2 ATX</td>
+          <td class="td-brand">Fractal Design</td>
+          <td class="td-price">69.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B095YBWDXT" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Refroidissement <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="icue h150i elite lcd">
+          <td class="td-name">iCUE H150i Elite LCD</td>
+          <td class="td-brand">Corsair</td>
+          <td class="td-price">219.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BQWSP2ZP" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="liquid freezer ii 240">
+          <td class="td-name">Liquid Freezer II 240</td>
+          <td class="td-brand">ARCTIC</td>
+          <td class="td-price">89.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CKXB56MS" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="nh-u12s redux">
+          <td class="td-name">NH-U12S Redux</td>
+          <td class="td-brand">Noctua</td>
+          <td class="td-price">59.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B08WPDD6GD" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="hyper 212 black edition">
+          <td class="td-name">Hyper 212 Black Edition</td>
+          <td class="td-brand">Cooler Master</td>
+          <td class="td-price">39.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B07W6WQLHG" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="pure rock 2">
+          <td class="td-name">Pure Rock 2</td>
+          <td class="td-brand">be quiet!</td>
+          <td class="td-price">29.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CJY2QS2W" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+  <section class="cat-section">
+    <h2 class="cat-title">Peripheriques <span class="count cat-count">30 produits</span></h2>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Claviers <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="k2 pro">
+          <td class="td-name">K2 Pro</td>
+          <td class="td-brand">Keychron</td>
+          <td class="td-price">109.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="alloy origins core">
+          <td class="td-name">Alloy Origins Core</td>
+          <td class="td-brand">HyperX</td>
+          <td class="td-price">89.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BS98MM6K" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="ergonomic keyboard">
+          <td class="td-name">Ergonomic Keyboard</td>
+          <td class="td-brand">Microsoft</td>
+          <td class="td-price">69.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="mk470 slim combo">
+          <td class="td-name">MK470 Slim Combo</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">59.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="k120">
+          <td class="td-name">K120</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">15.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Souris <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="g pro x superlight 2">
+          <td class="td-name">G PRO X Superlight 2</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">149.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0CS3WNPHS" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="g502 x">
+          <td class="td-name">G502 X</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">89.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="logitech mx master 3s">
+          <td class="td-name">Logitech MX Master 3S</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">79.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="razer deathadder v3">
+          <td class="td-name">Razer DeathAdder V3</td>
+          <td class="td-brand">Razer</td>
+          <td class="td-price">39.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="m185">
+          <td class="td-name">M185</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">19.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Casques / Enceintes <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="wh-ch720n">
+          <td class="td-name">WH-CH720N</td>
+          <td class="td-brand">Sony</td>
+          <td class="td-price">99.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="evolve2 30">
+          <td class="td-name">Evolve2 30</td>
+          <td class="td-brand">Jabra</td>
+          <td class="td-price">79.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="blackshark v2 x">
+          <td class="td-name">BlackShark V2 X</td>
+          <td class="td-brand">Razer</td>
+          <td class="td-price">49.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B07H9HJLG5" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="z207 enceintes bureau">
+          <td class="td-name">Z207 Enceintes Bureau</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">49.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="h340">
+          <td class="td-name">H340</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">25.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Webcams <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="facecam mk.2">
+          <td class="td-name">Facecam MK.2</td>
+          <td class="td-brand">Elgato</td>
+          <td class="td-price">169.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="streamcam">
+          <td class="td-name">StreamCam</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">149.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="kiyo pro">
+          <td class="td-name">Kiyo Pro</td>
+          <td class="td-brand">Razer</td>
+          <td class="td-price">129.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="c920 hd pro">
+          <td class="td-name">C920 HD Pro</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">69.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="c270 hd">
+          <td class="td-name">C270 HD</td>
+          <td class="td-brand">Logitech</td>
+          <td class="td-price">29.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Imprimantes <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="ecotank et-2851">
+          <td class="td-name">EcoTank ET-2851</td>
+          <td class="td-brand">Epson</td>
+          <td class="td-price">259.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="laserjet pro m404dw">
+          <td class="td-name">LaserJet Pro M404dw</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">229.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dcp-l2510d">
+          <td class="td-name">DCP-L2510D</td>
+          <td class="td-brand">Brother</td>
+          <td class="td-price">119.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="pixma ts3550i">
+          <td class="td-name">PIXMA TS3550i</td>
+          <td class="td-brand">Canon</td>
+          <td class="td-price">69.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="deskjet 2820e">
+          <td class="td-name">DeskJet 2820e</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">59.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Onduleurs <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="smart-ups 1500va lcd">
+          <td class="td-name">Smart-UPS 1500VA LCD</td>
+          <td class="td-brand">APC</td>
+          <td class="td-price">399.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="cp1500epfclcd">
+          <td class="td-name">CP1500EPFCLCD</td>
+          <td class="td-brand">CyberPower</td>
+          <td class="td-price">169.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="back-ups 1000va">
+          <td class="td-name">Back-UPS 1000VA</td>
+          <td class="td-brand">APC</td>
+          <td class="td-price">129.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BVKZ9GCB" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="5e 1100va">
+          <td class="td-name">5E 1100VA</td>
+          <td class="td-brand">Eaton</td>
+          <td class="td-price">99.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="back-ups 650va">
+          <td class="td-name">Back-UPS 650VA</td>
+          <td class="td-brand">APC</td>
+          <td class="td-price">79.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+  <section class="cat-section">
+    <h2 class="cat-title">Reseau <span class="count cat-count">29 produits</span></h2>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Réseau &amp; Essentiels <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="kit réseau starter — routeur + switch 5 ports + câble 5m">
+          <td class="td-name">Kit Réseau Starter — Routeur + Switch 5 ports + Câble 5m</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">89.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="prise cpl tp-link av1000 tl-pa7017p kit">
+          <td class="td-name">Prise CPL TP-Link AV1000 TL-PA7017P Kit</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">49.90 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BVKZ9GCB" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="répéteur wi-fi tp-link re305 ac1200">
+          <td class="td-name">Répéteur Wi-Fi TP-Link RE305 AC1200</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">29.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="clé wi-fi usb tp-link archer t3u ac1300">
+          <td class="td-name">Clé Wi-Fi USB TP-Link Archer T3U AC1300</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">19.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="pack bureau connecté — 3 câbles rj45 cat6">
+          <td class="td-name">Pack Bureau Connecté — 3 Câbles RJ45 Cat6</td>
+          <td class="td-brand">Générique</td>
+          <td class="td-price">12.90 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B09YFC6FZ7" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Routeurs WiFi <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="asus rog rapture gt-ax6000">
+          <td class="td-name">ASUS ROG Rapture GT-AX6000</td>
+          <td class="td-brand">ASUS</td>
+          <td class="td-price">299.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="netgear nighthawk ax5">
+          <td class="td-name">Netgear Nighthawk AX5</td>
+          <td class="td-brand">Netgear</td>
+          <td class="td-price">149.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link archer ax73">
+          <td class="td-name">TP-Link Archer AX73</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">119.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="asus rt-ax58u">
+          <td class="td-name">ASUS RT-AX58U</td>
+          <td class="td-brand">ASUS</td>
+          <td class="td-price">99.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link archer ax20">
+          <td class="td-name">TP-Link Archer AX20</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">59.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Routeurs 4G/5G <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="netgear nighthawk m6">
+          <td class="td-name">Netgear Nighthawk M6</td>
+          <td class="td-brand">Netgear</td>
+          <td class="td-price">349.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="zyxel nr5103e">
+          <td class="td-name">Zyxel NR5103E</td>
+          <td class="td-brand">Zyxel</td>
+          <td class="td-price">199.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="huawei b535-232">
+          <td class="td-name">Huawei B535-232</td>
+          <td class="td-brand">Huawei</td>
+          <td class="td-price">109.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link mr6400">
+          <td class="td-name">TP-Link MR6400</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">79.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link tl-mr100">
+          <td class="td-name">TP-Link TL-MR100</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">44.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Switches <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="cisco sg350-10">
+          <td class="td-name">Cisco SG350-10</td>
+          <td class="td-brand">Cisco</td>
+          <td class="td-price">189.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link tl-sg116e">
+          <td class="td-name">TP-Link TL-SG116E</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">54.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="netgear gs308">
+          <td class="td-name">Netgear GS308</td>
+          <td class="td-brand">Netgear</td>
+          <td class="td-price">24.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link tl-sg108">
+          <td class="td-name">TP-Link TL-SG108</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">22.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link tl-sg105">
+          <td class="td-name">TP-Link TL-SG105</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">14.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Points d'accès <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="asus expertwifi ebp68">
+          <td class="td-name">ASUS ExpertWiFi EBP68</td>
+          <td class="td-brand">ASUS</td>
+          <td class="td-price">129.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link eap670">
+          <td class="td-name">TP-Link EAP670</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">99.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="ubiquiti unifi u6 lite">
+          <td class="td-name">Ubiquiti UniFi U6 Lite</td>
+          <td class="td-brand">Ubiquiti</td>
+          <td class="td-price">99.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="netgear wax214">
+          <td class="td-name">Netgear WAX214</td>
+          <td class="td-brand">Netgear</td>
+          <td class="td-price">69.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="tp-link eap225">
+          <td class="td-name">TP-Link EAP225</td>
+          <td class="td-brand">TP-Link</td>
+          <td class="td-price">49.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Câbles réseau <span class="count">4 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="câble rj45 cat6 plat - 20m">
+          <td class="td-name">Câble RJ45 Cat6 Plat - 20m</td>
+          <td class="td-brand">Générique</td>
+          <td class="td-price">15.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="testeur de câble réseau rj45/rj11">
+          <td class="td-name">Testeur de câble réseau RJ45/RJ11</td>
+          <td class="td-brand">Générique</td>
+          <td class="td-price">12.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="câble rj45 cat6a - 10m">
+          <td class="td-name">Câble RJ45 Cat6A - 10m</td>
+          <td class="td-brand">Générique</td>
+          <td class="td-price">12.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="câble rj45 cat8 - 2m">
+          <td class="td-name">Câble RJ45 Cat8 - 2m</td>
+          <td class="td-brand">Générique</td>
+          <td class="td-price">8.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+  <section class="cat-section">
+    <h2 class="cat-title">Stockage <span class="count cat-count">30 produits</span></h2>
+    <section class="subcat-section">
+      <h3 class="subcat-title">SSD Externes <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="sandisk extreme pro 2 to">
+          <td class="td-name">SanDisk Extreme Pro 2 To</td>
+          <td class="td-brand">SanDisk</td>
+          <td class="td-price">159.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="wd my passport 2 to">
+          <td class="td-name">WD My Passport 2 To</td>
+          <td class="td-brand">Western Digital</td>
+          <td class="td-price">89.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="samsung t7 1 to">
+          <td class="td-name">Samsung T7 1 To</td>
+          <td class="td-brand">Samsung</td>
+          <td class="td-price">79.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="seagate one touch ssd 1 to">
+          <td class="td-name">Seagate One Touch SSD 1 To</td>
+          <td class="td-brand">Seagate</td>
+          <td class="td-price">69.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="crucial x8 1 to">
+          <td class="td-name">Crucial X8 1 To</td>
+          <td class="td-brand">Crucial</td>
+          <td class="td-price">59.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">SSD Internes <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="samsung ssd 990 pro 1 to nvme">
+          <td class="td-name">Samsung SSD 990 Pro 1 To NVMe</td>
+          <td class="td-brand">Samsung</td>
+          <td class="td-price">139.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="seagate barracuda ssd 2 to">
+          <td class="td-name">Seagate BarraCuda SSD 2 To</td>
+          <td class="td-brand">Seagate</td>
+          <td class="td-price">119.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="samsung 980 pro 1 to">
+          <td class="td-name">Samsung 980 Pro 1 To</td>
+          <td class="td-brand">Samsung</td>
+          <td class="td-price">89.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="crucial mx500 1 to">
+          <td class="td-name">Crucial MX500 1 To</td>
+          <td class="td-brand">Crucial</td>
+          <td class="td-price">74.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="wd blue sn570 nvme 1 to">
+          <td class="td-name">WD Blue SN570 NVMe 1 To</td>
+          <td class="td-brand">Western Digital</td>
+          <td class="td-price">64.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Disques durs HDD <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="seagate ironwolf 8 to">
+          <td class="td-name">Seagate IronWolf 8 To</td>
+          <td class="td-brand">Seagate</td>
+          <td class="td-price">179.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="wd red plus 4 to">
+          <td class="td-name">WD Red Plus 4 To</td>
+          <td class="td-brand">Western Digital</td>
+          <td class="td-price">99.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="seagate barracuda 2 to">
+          <td class="td-name">Seagate BarraCuda 2 To</td>
+          <td class="td-brand">Seagate</td>
+          <td class="td-price">49.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="wd blue 1 to">
+          <td class="td-name">WD Blue 1 To</td>
+          <td class="td-brand">Western Digital</td>
+          <td class="td-price">34.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="toshiba p300 500 go">
+          <td class="td-name">Toshiba P300 500 Go</td>
+          <td class="td-brand">Toshiba</td>
+          <td class="td-price">24.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Clés USB <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="samsung bar plus 128 go usb 3.1">
+          <td class="td-name">Samsung BAR Plus 128 Go USB 3.1</td>
+          <td class="td-brand">Samsung</td>
+          <td class="td-price">28.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="sandisk ultra luxe 128 go usb 3.2">
+          <td class="td-name">SanDisk Ultra Luxe 128 Go USB 3.2</td>
+          <td class="td-brand">SanDisk</td>
+          <td class="td-price">22.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="sandisk ultra fit 128 go usb 3.2">
+          <td class="td-name">SanDisk Ultra Fit 128 Go USB 3.2</td>
+          <td class="td-brand">SanDisk</td>
+          <td class="td-price">18.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="sandisk ultra flair 128 go usb 3.0">
+          <td class="td-name">SanDisk Ultra Flair 128 Go USB 3.0</td>
+          <td class="td-brand">SanDisk</td>
+          <td class="td-price">16.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="samsung bar plus 64 go usb 3.1">
+          <td class="td-name">Samsung BAR Plus 64 Go USB 3.1</td>
+          <td class="td-brand">Samsung</td>
+          <td class="td-price">15.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Cartes mémoire <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="prograde digital cfexpress 512 go">
+          <td class="td-name">ProGrade Digital CFexpress 512 Go</td>
+          <td class="td-brand">ProGrade Digital</td>
+          <td class="td-price">199.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lexar play microsd 512 go">
+          <td class="td-name">Lexar PLAY microSD 512 Go</td>
+          <td class="td-brand">Lexar</td>
+          <td class="td-price">44.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="sandisk extreme pro sd 128 go">
+          <td class="td-name">SanDisk Extreme Pro SD 128 Go</td>
+          <td class="td-brand">SanDisk</td>
+          <td class="td-price">24.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="sandisk ultra microsd 32 go × 4">
+          <td class="td-name">SanDisk Ultra microSD 32 Go × 4</td>
+          <td class="td-brand">SanDisk</td>
+          <td class="td-price">22.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="samsung evo plus microsd 256 go">
+          <td class="td-name">Samsung Evo Plus microSD 256 Go</td>
+          <td class="td-brand">Samsung</td>
+          <td class="td-price">19.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">NAS <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="synology diskstation ds423+">
+          <td class="td-name">Synology DiskStation DS423+</td>
+          <td class="td-brand">Synology</td>
+          <td class="td-price">449.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="wd my cloud ex2 ultra 8 to">
+          <td class="td-name">WD My Cloud EX2 Ultra 8 To</td>
+          <td class="td-brand">Western Digital</td>
+          <td class="td-price">279.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="terramaster f2-423">
+          <td class="td-name">TerraMaster F2-423</td>
+          <td class="td-brand">TerraMaster</td>
+          <td class="td-price">229.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="synology diskstation ds223j">
+          <td class="td-name">Synology DiskStation DS223j</td>
+          <td class="td-brand">Synology</td>
+          <td class="td-price">149.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="qnap ts-233">
+          <td class="td-name">QNAP TS-233</td>
+          <td class="td-brand">QNAP</td>
+          <td class="td-price">129.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+  <section class="cat-section">
+    <h2 class="cat-title">Ecrans <span class="count cat-count">20 produits</span></h2>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Écrans Full HD <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="benq gw2780 27&quot; full hd">
+          <td class="td-name">BenQ GW2780 27&quot; Full HD</td>
+          <td class="td-brand"></td>
+          <td class="td-price">159.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="aoc 24g2 24&quot; full hd">
+          <td class="td-name">AOC 24G2 24&quot; Full HD</td>
+          <td class="td-brand"></td>
+          <td class="td-price">149.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="philips 27e1n3300 27&quot; full hd">
+          <td class="td-name">Philips 27E1N3300 27&quot; Full HD</td>
+          <td class="td-brand"></td>
+          <td class="td-price">139.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell s2421h 24&quot; full hd">
+          <td class="td-name">Dell S2421H 24&quot; Full HD</td>
+          <td class="td-brand"></td>
+          <td class="td-price">129.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lg 24mk430h 24&quot; full hd">
+          <td class="td-name">LG 24MK430H 24&quot; Full HD</td>
+          <td class="td-brand"></td>
+          <td class="td-price">99.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Écrans 4K <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="asus proart pa32ucg 32&quot; 4k mini led">
+          <td class="td-name">ASUS ProArt PA32UCG 32&quot; 4K Mini LED</td>
+          <td class="td-brand"></td>
+          <td class="td-price">1999.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell ultrasharp u2723qe 27&quot; 4k">
+          <td class="td-name">Dell UltraSharp U2723QE 27&quot; 4K</td>
+          <td class="td-brand"></td>
+          <td class="td-price">579.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lg 32un880-p 32&quot; 4k ergo">
+          <td class="td-name">LG 32UN880-P 32&quot; 4K Ergo</td>
+          <td class="td-brand"></td>
+          <td class="td-price">449.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lg 27up850n 27&quot; 4k">
+          <td class="td-name">LG 27UP850N 27&quot; 4K</td>
+          <td class="td-brand"></td>
+          <td class="td-price">349.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="samsung 32&quot; 4k smart m7">
+          <td class="td-name">Samsung 32&quot; 4K Smart M7</td>
+          <td class="td-brand"></td>
+          <td class="td-price">349.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Écrans Gaming <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="samsung odyssey neo g7 32&quot; 4k 165 hz">
+          <td class="td-name">Samsung Odyssey Neo G7 32&quot; 4K 165 Hz</td>
+          <td class="td-brand"></td>
+          <td class="td-price">799.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="alienware aw2723df 27&quot; qhd 280 hz">
+          <td class="td-name">Alienware AW2723DF 27&quot; QHD 280 Hz</td>
+          <td class="td-brand"></td>
+          <td class="td-price">549.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="msi optix mag274qrf-qd 27&quot; qhd">
+          <td class="td-name">MSI Optix MAG274QRF-QD 27&quot; QHD</td>
+          <td class="td-brand"></td>
+          <td class="td-price">329.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lg 27gp850-b 27&quot; qhd 165 hz">
+          <td class="td-name">LG 27GP850-B 27&quot; QHD 165 Hz</td>
+          <td class="td-brand"></td>
+          <td class="td-price">299.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lg ultragear 27gs75q-b 27&quot; qhd 180hz">
+          <td class="td-name">LG UltraGear 27GS75Q-B 27&quot; QHD 180Hz</td>
+          <td class="td-brand">LG</td>
+          <td class="td-price">159.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Écrans reconditionnés <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="benq 32&quot; 4k ips — reconditionné grade a">
+          <td class="td-name">BenQ 32&quot; 4K IPS — Reconditionné Grade A</td>
+          <td class="td-brand"></td>
+          <td class="td-price">229.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lg 34&quot; ultrawide qhd — reconditionné grade b">
+          <td class="td-name">LG 34&quot; UltraWide QHD — Reconditionné Grade B</td>
+          <td class="td-brand"></td>
+          <td class="td-price">179.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="hp 27&quot; 4k uhd — reconditionné grade a">
+          <td class="td-name">HP 27&quot; 4K UHD — Reconditionné Grade A</td>
+          <td class="td-brand"></td>
+          <td class="td-price">149.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="samsung 27&quot; full hd 144 hz — reconditionné grade a">
+          <td class="td-name">Samsung 27&quot; Full HD 144 Hz — Reconditionné Grade A</td>
+          <td class="td-brand"></td>
+          <td class="td-price">89.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell 24&quot; full hd ips — reconditionné grade a">
+          <td class="td-name">Dell 24&quot; Full HD IPS — Reconditionné Grade A</td>
+          <td class="td-brand"></td>
+          <td class="td-price">49.90 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+  <section class="cat-section">
+    <h2 class="cat-title">Sans catégorie <span class="count cat-count">10 produits</span></h2>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Bureaux reconditionnés <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="pack pc bureau complet">
+          <td class="td-name">Pack PC Bureau Complet</td>
+          <td class="td-brand">Alkamar Info</td>
+          <td class="td-price">399.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell optiplex 7060 sff reconditionne">
+          <td class="td-name">Dell OptiPlex 7060 SFF Reconditionne</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">279.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0G1C334YW" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="hp elitedesk 800 g4 mini reconditionné">
+          <td class="td-name">HP EliteDesk 800 G4 Mini Reconditionné</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">249.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BQWSP2ZP" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="dell optiplex 3060 sff reconditionné">
+          <td class="td-name">Dell OptiPlex 3060 SFF Reconditionné</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">229.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="lenovo thinkcentre m720q reconditionné">
+          <td class="td-name">Lenovo ThinkCentre M720q Reconditionné</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">219.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="subcat-section">
+      <h3 class="subcat-title">Portables reconditionnés <span class="count">5 produits</span></h3>
+      <table class="product-table">
+        <thead>
+          <tr><th>Produit</th><th>Marque</th><th>Prix EUR</th><th>Lien externe</th></tr>
+        </thead>
+        <tbody>
+        <tr data-name="lenovo thinkpad t14 gen 2 reconditionné">
+          <td class="td-name">Lenovo ThinkPad T14 Gen 2 Reconditionné</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">349.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="dell latitude 5420 reconditionne">
+          <td class="td-name">Dell Latitude 5420 Reconditionne</td>
+          <td class="td-brand">Dell</td>
+          <td class="td-price">349.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="hp elitebook 840 g6 reconditionne">
+          <td class="td-name">HP EliteBook 840 G6 Reconditionne</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">319.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0BQWSP2ZP" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        <tr data-name="hp probook 450 g7 reconditionné">
+          <td class="td-name">HP ProBook 450 G7 Reconditionné</td>
+          <td class="td-brand">HP</td>
+          <td class="td-price">289.00 €</td>
+          <td class="td-link"><span class="missing">À compléter</span></td>
+        </tr>
+        <tr data-name="thinkpad t480 reconditionne">
+          <td class="td-name">ThinkPad T480 Reconditionne</td>
+          <td class="td-brand">Lenovo</td>
+          <td class="td-price">259.00 €</td>
+          <td class="td-link"><a href="https://www.amazon.fr/dp/B0916TZGJH" target="_blank" rel="noopener" class="btn-buy">Acheter</a></td>
+        </tr>
+        </tbody>
+      </table>
+    </section>
+  </section>
+</main>
+
+<footer>
+  Alkamar Info &mdash; Inventaire produits &mdash; 188 produits &mdash; Données Supabase
+</footer>
+
+<script>
+  const input = document.getElementById('search-input');
+  input.addEventListener('input', () => {
+    const q = input.value.toLowerCase().trim();
+    document.querySelectorAll('tr[data-name]').forEach(row => {
+      if (!q || row.dataset.name.includes(q)) {
+        row.classList.remove('hidden');
+      } else {
+        row.classList.add('hidden');
+      }
+    });
+    // Masquer les sections vides
+    document.querySelectorAll('.subcat-section').forEach(sec => {
+      const visible = sec.querySelectorAll('tr[data-name]:not(.hidden)').length;
+      sec.style.display = visible === 0 && q ? 'none' : '';
+    });
+    document.querySelectorAll('.cat-section').forEach(sec => {
+      const visible = sec.querySelectorAll('tr[data-name]:not(.hidden)').length;
+      sec.style.display = visible === 0 && q ? 'none' : '';
+    });
+  });
+</script>
+</body>
+</html>
