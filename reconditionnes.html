@@ -45,17 +45,17 @@
   </div></div>
 
   <div class="cat-tabs"><div class="cat-tabs__inner">
-    <button class="cat-tab active"  onclick="showTab('reco-portable',this)">💻 Portables</button>
-    <button class="cat-tab"         onclick="showTab('reco-bureau',this)">🖥️ PC Bureau</button>
+    <button class="cat-tab"         onclick="showTab('reco-portable',this)">💻 Portables</button>
+    <button class="cat-tab active"  onclick="showTab('reco-bureau',this)">🖥️ PC Bureau</button>
     <button class="cat-tab"         onclick="showTab('reco-ecran',this)">📺 Écrans</button>
     <button class="cat-tab"         onclick="showTab('reco-smartphone',this)">📱 Smartphones</button>
   </div></div>
 
-  <div class="subcat-section active" id="tab-reco-portable">
+  <div class="subcat-section" id="tab-reco-portable">
     <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#065f46 100%)"><div class="subcat-header__inner"><h2>💻 Portables reconditionnés</h2><p>ThinkPad, EliteBook, MacBook — les meilleures marques professionnelles testées et garanties</p></div></div>
     <div class="page-layout" style="grid-template-columns:1fr"><div class="products-zone"><div class="products-toolbar"><div class="products-toolbar__count" id="count-reco-portable">Chargement…</div><div class="toolbar-sort"><label>Trier :</label><select onchange="sortGrid('reco-portable',this.value)"><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="rating">Meilleures notes</option></select></div></div><div class="products-grid products-grid--5" id="grid-reco-portable"></div></div></div>
   </div>
-  <div class="subcat-section" id="tab-reco-bureau">
+  <div class="subcat-section active" id="tab-reco-bureau">
     <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%)"><div class="subcat-header__inner"><h2>🖥️ PC Bureau reconditionnés</h2><p>HP, Dell, Lenovo — des PC pro robustes à prix imbattable pour le bureau ou la maison</p></div></div>
     <div class="page-layout" style="grid-template-columns:1fr"><div class="products-zone"><div class="products-toolbar"><div class="products-toolbar__count" id="count-reco-bureau">Chargement…</div><div class="toolbar-sort"><label>Trier :</label><select onchange="sortGrid('reco-bureau',this.value)"><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="rating">Meilleures notes</option></select></div></div><div class="products-grid products-grid--5" id="grid-reco-bureau"></div></div></div>
   </div>
