@@ -261,6 +261,7 @@ const CATALOG = (function () {
       return Math.round((1 - Number(p.price_eur) / Number(p.price_old)) * 100);
     }
     promo.sort((a, b) => pct(b) - pct(a));
+    promo = promo.slice(0, 5);
 
     function renderPromo(list) {
       grid.innerHTML = list.map(p => productCard(p, { promoMode: true })).join('');
