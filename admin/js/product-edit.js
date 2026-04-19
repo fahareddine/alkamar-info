@@ -193,22 +193,133 @@ function setupPreview() {
     document.getElementById('preview-price-old').textContent = old ? `${Number(old).toFixed(2)} €` : '';
     const stock = document.querySelector('[name=stock]').value;
     document.getElementById('preview-stock').textContent = stock > 0 ? `${stock} en stock` : '⚠️ Rupture de stock';
-    const badge = document.querySelector('[name=badge]').value;
-    document.getElementById('preview-badge-wrap').innerHTML = badge ? `<span class="badge badge--active" style="margin-bottom:8px;display:inline-block">${esc(badge)}</span>` : '';
+    const badge = document.getElementById('badge-hidden').value || document.querySelector('#badge-custom [name=badge]')?.value || '';
+    const badgeClass = document.getElementById('badge-class-hidden').value || document.querySelector('#badge-custom [name=badge_class]')?.value || '';
+    document.getElementById('preview-badge-wrap').innerHTML = badge ? `<span class="badge ${badgeClass}" style="margin-bottom:8px;display:inline-block">${esc(badge)}</span>` : '';
     modal.style.display = 'flex';
   });
 }
 
-// --- Load produit ---
-async function loadCategories() {
-  const cats = await api.get('/api/categories');
+// --- Badge preset ---
+function setupBadgePreset() {
+  const preset  = document.getElementById('badge-preset');
+  const custom  = document.getElementById('badge-custom');
+  const hBadge  = document.getElementById('badge-hidden');
+  const hClass  = document.getElementById('badge-class-hidden');
+  const preview = document.getElementById('badge-preview-wrap');
+
+  function applyPreset() {
+    const val = preset.value;
+    if (!val) {
+      hBadge.value = ''; hClass.value = '';
+      custom.style.display = 'none';
+      preview.innerHTML = '';
+      return;
+    }
+    if (val === '__custom__|') {
+      hBadge.value = ''; hClass.value = '';
+      custom.style.display = '';
+      preview.innerHTML = '';
+      return;
+    }
+    const [badgeText, badgeClass] = val.split('|');
+    hBadge.value = badgeText; hClass.value = badgeClass;
+    custom.style.display = 'none';
+    preview.innerHTML = `<span class="badge ${badgeClass}" style="display:inline-block">${badgeText}</span>`;
+  }
+
+  preset.addEventListener('change', applyPreset);
+
+  // Sync live preview for custom inputs
+  custom.querySelectorAll('input').forEach(inp => inp.addEventListener('input', () => {
+    const bt = document.querySelector('#badge-custom [name=badge]').value;
+    const bc = document.querySelector('#badge-custom [name=badge_class]').value;
+    preview.innerHTML = bt ? `<span class="badge ${bc}" style="display:inline-block">${bt}</span>` : '';
+  }));
+}
+
+// --- Catégorie : quick-create modal ---
+let allCatsCache = [];
+
+function slugify2(str) {
+  return str.toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
+
+function populateCatSelect(cats, selectedId = null) {
   const sel = document.getElementById('cat-select');
-  (cats||[]).forEach(c => {
+  sel.innerHTML = '<option value="">— Sélectionner —</option>';
+  cats.forEach(c => {
     const opt = document.createElement('option');
     opt.value = c.id;
     opt.textContent = (c.parent_id ? '  ' : '') + (c.icon ? c.icon + ' ' : '') + c.name;
     sel.appendChild(opt);
   });
+  if (selectedId) sel.value = selectedId;
+}
+
+function setupNewCatModal() {
+  const btn   = document.getElementById('btn-new-cat');
+  const modal = document.getElementById('modal-new-cat');
+  const save  = document.getElementById('btn-newcat-save');
+  const alert = document.getElementById('newcat-alert');
+
+  // Populate parent select in modal
+  function refreshModalParents() {
+    const sel = document.getElementById('newcat-parent');
+    const prev = sel.value;
+    sel.innerHTML = '<option value="">— Aucune —</option>';
+    allCatsCache.filter(c => !c.parent_id).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = (c.icon ? c.icon + ' ' : '') + c.name;
+      sel.appendChild(opt);
+    });
+    if (prev) sel.value = prev;
+  }
+
+  btn.addEventListener('click', () => {
+    document.getElementById('newcat-name').value = '';
+    document.getElementById('newcat-icon').value = '';
+    alert.style.display = 'none';
+    refreshModalParents();
+    modal.style.display = 'flex';
+    setTimeout(() => document.getElementById('newcat-name').focus(), 50);
+  });
+
+  modal.addEventListener('click', e => { if (e.target === modal) modal.style.display = 'none'; });
+
+  save.addEventListener('click', async () => {
+    const name = document.getElementById('newcat-name').value.trim();
+    if (!name) { alert.textContent = 'Le nom est requis.'; alert.style.display = ''; return; }
+    const icon = document.getElementById('newcat-icon').value.trim() || null;
+    const parent_id = document.getElementById('newcat-parent').value || null;
+    save.disabled = true; save.textContent = 'Création...';
+    try {
+      const created = await api.post('/api/categories', { name, slug: slugify2(name), icon, parent_id, sort_order: 0 });
+      if (created?.id) {
+        allCatsCache.push(created);
+        populateCatSelect(allCatsCache, created.id);
+      }
+      modal.style.display = 'none';
+    } catch (err) {
+      alert.textContent = err.message || 'Erreur lors de la création.';
+      alert.style.display = '';
+    } finally {
+      save.disabled = false; save.textContent = 'Créer la catégorie';
+    }
+  });
+
+  document.getElementById('newcat-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') { e.preventDefault(); save.click(); }
+  });
+}
+
+// --- Load produit ---
+async function loadCategories() {
+  allCatsCache = await api.get('/api/categories') || [];
+  populateCatSelect(allCatsCache);
 }
 
 async function loadTags() {
@@ -221,12 +332,32 @@ async function loadProduct(id) {
   document.getElementById('page-title').textContent = `Éditer : ${p.name}`;
   const form = document.getElementById('product-form');
 
-  // Champs simples
-  const fields = ['name','slug','brand','subtitle','description','price_eur','price_kmf','price_old','stock','stock_label','status','badge','badge_class','image','sku'];
+  // Champs simples (badge géré séparément via preset)
+  const fields = ['name','slug','brand','subtitle','description','price_eur','price_kmf','price_old','stock','stock_label','status','image','sku'];
   fields.forEach(f => { if (form[f] && p[f] != null) form[f].value = p[f]; });
 
+  // Restaurer badge depuis preset ou custom
+  if (p.badge) {
+    const presetSel = document.getElementById('badge-preset');
+    const matchOpt = [...presetSel.options].find(o => {
+      const [bt] = o.value.split('|');
+      return bt === p.badge && o.value !== '__custom__|';
+    });
+    if (matchOpt) {
+      presetSel.value = matchOpt.value;
+      presetSel.dispatchEvent(new Event('change'));
+    } else {
+      presetSel.value = '__custom__|';
+      presetSel.dispatchEvent(new Event('change'));
+      const bc = document.querySelector('#badge-custom [name=badge]');
+      const bcc = document.querySelector('#badge-custom [name=badge_class]');
+      if (bc) bc.value = p.badge;
+      if (bcc) bcc.value = p.badge_class || '';
+    }
+  }
+
   // Catégorie
-  if (form.category_id && p.category_id) form.category_id.value = p.category_id;
+  if (p.category_id) populateCatSelect(allCatsCache, p.category_id);
 
   // Specs (excluant clés privées)
   Object.entries(p.specs || {}).forEach(([k,v]) => {
@@ -270,6 +401,20 @@ async function saveProduct(statusOverride = null) {
 
   const fd = new FormData(form);
   const body = Object.fromEntries(fd.entries());
+
+  // Badge — résoudre depuis preset ou champs custom
+  const preset = document.getElementById('badge-preset').value;
+  if (preset && preset !== '__custom__|') {
+    const [bt, bc] = preset.split('|');
+    body.badge = bt; body.badge_class = bc;
+  } else if (preset === '__custom__|') {
+    body.badge = document.querySelector('#badge-custom [name=badge]')?.value || '';
+    body.badge_class = document.querySelector('#badge-custom [name=badge_class]')?.value || '';
+  } else {
+    body.badge = ''; body.badge_class = '';
+  }
+  // Supprimer les doublons issus du FormData (les hidden + custom ont le même name)
+  delete body['badge-hidden']; delete body['badge-class-hidden'];
 
   // Types numériques
   body.price_eur = Number(body.price_eur) || 0;
@@ -327,6 +472,8 @@ async function init() {
   setupSeoCounter();
   setupTagInput();
   setupPreview();
+  setupBadgePreset();
+  setupNewCatModal();
 
   document.getElementById('add-spec').addEventListener('click', () => addSpecRow());
   document.getElementById('gallery-add-btn').addEventListener('click', addGalleryItem);

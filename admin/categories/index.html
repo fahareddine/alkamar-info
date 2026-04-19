@@ -4,19 +4,81 @@
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Catégories — Alkamar Admin</title>
   <link rel="stylesheet" href="/admin/css/admin.css">
+  <style>
+    .cats-layout { display:grid; grid-template-columns:320px 1fr; gap:24px; align-items:start; }
+    .cats-form-card { position:sticky; top:80px; }
+    .cat-row-actions { display:flex; gap:6px; }
+    @media(max-width:900px){ .cats-layout{grid-template-columns:1fr} .cats-form-card{position:static} }
+  </style>
 </head>
 <body>
   <div class="admin-layout">
     <main class="admin-main">
-      <div class="page-header"><h1>Catégories</h1></div>
-      <div class="admin-table-wrap">
-        <table class="admin-table">
-          <thead><tr><th>Icône</th><th>Nom</th><th>Slug</th><th>Parent</th><th>Ordre</th></tr></thead>
-          <tbody id="cats-body"><tr><td colspan="5" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr></tbody>
-        </table>
+      <div class="page-header">
+        <h1>Catégories</h1>
+        <span id="cats-count" style="font-size:13px;color:var(--admin-muted)"></span>
+      </div>
+
+      <div id="alert" class="alert" style="display:none"></div>
+
+      <div class="cats-layout">
+
+        <!-- Panneau gauche : formulaire -->
+        <div class="form-card cats-form-card">
+          <h2 id="form-title">Ajouter une catégorie</h2>
+          <div class="form-group">
+            <label>Nom *</label>
+            <input type="text" id="cat-name" class="form-control" placeholder="ex: Ordinateurs">
+          </div>
+          <div class="form-group">
+            <label>Slug</label>
+            <input type="text" id="cat-slug" class="form-control" placeholder="auto-généré depuis le nom">
+          </div>
+          <div class="form-group">
+            <label>Icône</label>
+            <input type="text" id="cat-icon" class="form-control" placeholder="ex: 💻">
+          </div>
+          <div class="form-group">
+            <label>Catégorie parente</label>
+            <select id="cat-parent" class="form-control">
+              <option value="">— Aucune (catégorie principale) —</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Ordre d'affichage</label>
+            <input type="number" id="cat-order" class="form-control" value="0" min="0">
+          </div>
+          <div style="display:flex;gap:8px;margin-top:4px">
+            <button id="btn-save-cat" class="btn btn--primary" style="flex:1">Ajouter</button>
+            <button id="btn-cancel-edit" class="btn btn--ghost" style="display:none">Annuler</button>
+          </div>
+        </div>
+
+        <!-- Panneau droit : table -->
+        <div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th style="width:48px">Icône</th>
+                  <th>Nom</th>
+                  <th>Slug</th>
+                  <th>Parente</th>
+                  <th style="width:60px;text-align:center">Ordre</th>
+                  <th style="width:90px">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="cats-body">
+                <tr><td colspan="6" style="text-align:center;padding:24px;color:var(--admin-muted)">Chargement...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </main>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="/admin/js/config.js"></script>
   <script src="/admin/js/auth.js"></script>

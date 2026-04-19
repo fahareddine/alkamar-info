@@ -192,9 +192,12 @@
               <h2>Catégorie &amp; Tags</h2>
               <div class="form-group">
                 <label>Catégorie</label>
-                <select name="category_id" class="form-control" id="cat-select">
-                  <option value="">— Sélectionner —</option>
-                </select>
+                <div style="display:flex;gap:6px">
+                  <select name="category_id" class="form-control" id="cat-select">
+                    <option value="">— Sélectionner —</option>
+                  </select>
+                  <button type="button" id="btn-new-cat" class="btn btn--ghost btn--sm" title="Créer une catégorie" style="white-space:nowrap">+ Catégorie</button>
+                </div>
               </div>
               <div class="form-group">
                 <label>Tags</label>
@@ -245,19 +248,62 @@
             <div class="form-card">
               <h2>Badge</h2>
               <div class="form-group">
-                <label>Texte badge</label>
-                <input type="text" name="badge" class="form-control" placeholder="ex: Nouveau, Promo...">
+                <label>Preset</label>
+                <select id="badge-preset" class="form-control">
+                  <option value="">— Aucun badge —</option>
+                  <option value="Nouveau|badge--new">🆕 Nouveau</option>
+                  <option value="Promo|badge--promo">🔥 Promo</option>
+                  <option value="Bestseller|badge--best">⭐ Bestseller</option>
+                  <option value="Populaire|badge--popular">🌟 Populaire</option>
+                  <option value="Reconditionné|badge--reco">♻️ Reconditionné</option>
+                  <option value="Exclusif|badge--exclusive">🎯 Exclusif</option>
+                  <option value="__custom__|">✏️ Personnalisé…</option>
+                </select>
               </div>
-              <div class="form-group">
-                <label>Classe CSS</label>
-                <input type="text" name="badge_class" class="form-control" placeholder="ex: badge--new">
+              <div id="badge-custom" style="display:none">
+                <div class="form-group">
+                  <label>Texte badge</label>
+                  <input type="text" name="badge" class="form-control" placeholder="ex: -40%">
+                </div>
+                <div class="form-group">
+                  <label>Classe CSS</label>
+                  <input type="text" name="badge_class" class="form-control" placeholder="ex: badge--new">
+                </div>
               </div>
+              <!-- valeurs résolues par JS, pas de name pour éviter les doublons FormData -->
+              <input type="hidden" id="badge-hidden" value="">
+              <input type="hidden" id="badge-class-hidden" value="">
+              <div id="badge-preview-wrap" style="margin-top:8px"></div>
             </div>
 
           </div><!-- /product-col-side -->
 
         </div><!-- /product-layout -->
       </form>
+
+      <!-- Modal nouvelle catégorie -->
+      <div id="modal-new-cat" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center">
+        <div style="background:var(--admin-surface);border-radius:12px;padding:24px;width:380px;max-width:90%;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.4)">
+          <button onclick="document.getElementById('modal-new-cat').style.display='none'" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--admin-muted);font-size:20px;cursor:pointer;line-height:1">×</button>
+          <h3 style="margin-bottom:16px;font-size:16px">Nouvelle catégorie</h3>
+          <div class="form-group">
+            <label>Nom *</label>
+            <input type="text" id="newcat-name" class="form-control" placeholder="ex: Accessoires">
+          </div>
+          <div class="form-group">
+            <label>Icône</label>
+            <input type="text" id="newcat-icon" class="form-control" placeholder="ex: 🖱️">
+          </div>
+          <div class="form-group">
+            <label>Catégorie parente</label>
+            <select id="newcat-parent" class="form-control">
+              <option value="">— Aucune —</option>
+            </select>
+          </div>
+          <div id="newcat-alert" style="display:none;color:#ef4444;font-size:13px;margin-bottom:8px"></div>
+          <button id="btn-newcat-save" class="btn btn--primary" style="width:100%">Créer la catégorie</button>
+        </div>
+      </div>
 
       <!-- Modal aperçu -->
       <div id="preview-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center">
