@@ -1,0 +1,90 @@
+{
+  "beelink-mini-s12-pro": {
+    "asin": "B0BVB7JRJB",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71yonCCmlvL.jpg",
+      "https://m.media-amazon.com/images/I/61aaUUhnplL.jpg",
+      "https://m.media-amazon.com/images/I/61au6Y0u2rL.jpg"
+    ]
+  },
+  "beelink-eq12": {
+    "asin": "B0BVB7JRJB",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71yonCCmlvL.jpg",
+      "https://m.media-amazon.com/images/I/61aaUUhnplL.jpg",
+      "https://m.media-amazon.com/images/I/61au6Y0u2rL.jpg"
+    ]
+  },
+  "gmktec-nucbox-g3": {
+    "asin": "B0DMSJNG44",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/715dlRbL1TL.jpg",
+      "https://m.media-amazon.com/images/I/81fc24pqnXL.jpg",
+      "https://m.media-amazon.com/images/I/81XHnfL2uBL.jpg"
+    ]
+  },
+  "minisforum-um773": {
+    "asin": "B0CFLJ38MR",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/81V9ZHMLDrL.jpg",
+      "https://m.media-amazon.com/images/I/81hFt2-Z++L.jpg",
+      "https://m.media-amazon.com/images/I/61v4b6gv7QL.jpg"
+    ]
+  },
+  "asus-nuc-14-pro": {
+    "asin": "B0D9248PYW",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/610btspBTgL.jpg",
+      "https://m.media-amazon.com/images/I/811vglGfW3L.jpg",
+      "https://m.media-amazon.com/images/I/81ZWw03eBlL.jpg"
+    ]
+  },
+  "hp-aio-24": {
+    "asin": "B0GQ3BZY7R",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/715dlRbL1TL.jpg",
+      "https://m.media-amazon.com/images/I/81qpCUwIg3L.jpg",
+      "https://m.media-amazon.com/images/I/81MPsNGAY7L.jpg"
+    ]
+  },
+  "acer-aspire-c24": {
+    "asin": "B0C296K2YC",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/713729TLGfL.jpg",
+      "https://m.media-amazon.com/images/I/718pZzF9qBL.jpg",
+      "https://m.media-amazon.com/images/I/61ayyq81uOL.jpg"
+    ]
+  },
+  "dell-inspiron-24-aio": {
+    "asin": "B0DMSCNC42",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/612bW5nyWKL.jpg",
+      "https://m.media-amazon.com/images/I/71hFGH8fS9L.jpg",
+      "https://m.media-amazon.com/images/I/81bFFO9fPnL.jpg"
+    ]
+  },
+  "lenovo-ideacentre-aio-3": {
+    "asin": "B09B26PXV9",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/715I6vhRLdL.jpg",
+      "https://m.media-amazon.com/images/I/71IKwBY6XgL.jpg",
+      "https://m.media-amazon.com/images/I/71Wk+BhwRXL.jpg"
+    ]
+  },
+  "hp-envy-27": {
+    "asin": "B09KVFBWX1",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/6165F88AhRL.jpg",
+      "https://m.media-amazon.com/images/I/710N-DyLCpL.jpg",
+      "https://m.media-amazon.com/images/I/613sB+V8NUL.jpg"
+    ]
+  },
+  "hp-elitebook-840-g6-reco": {
+    "asin": "B0GMW59ZCX",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/61OYAqV6EcL.jpg",
+      "https://m.media-amazon.com/images/I/61jNsa7YM-L.jpg",
+      "https://m.media-amazon.com/images/I/61A1oGIHNZL.jpg"
+    ]
+  }
+}

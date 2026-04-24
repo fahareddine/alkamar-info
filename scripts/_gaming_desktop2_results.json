@@ -1,0 +1,22 @@
+{
+  "lenovo-legion-tower-5-gen8": {
+    "asin": "B0GQM1S6FG",
+    "name": "Lenovo Legion Tower 5i Gaming PC de bureau, NVIDIA GeForce RTX 5060Ti 8 Go GDDR7, processeur Intel Core Ultra 7 265F, 32 Go DDR5 5600 MHz, SSD PCIe 2 To, Windows 11 Pro, Kit casque de jeu",
+    "price": 4167.94,
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71978wp-amL.jpg",
+      "https://m.media-amazon.com/images/I/61u4nQI1fOL.jpg",
+      "https://m.media-amazon.com/images/I/71fJU2rMjsL.jpg"
+    ]
+  },
+  "hp-victus-tgr": {
+    "asin": "B0CJRTC4FG",
+    "name": "INFOMAX | PC Gamer, Ordinateur de Bureau, PC Gaming - PROCESSEUR Core i5-12400F • RTX 5060 8 GO • RAM DDR4 16 GO RGB • SSD 1 to • WiFi • BOÎTIER ARGB 7 VENTILOS • Watercooling • FREEOS",
+    "price": 1099,
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71vqBRAbofL.jpg",
+      "https://m.media-amazon.com/images/I/71szESP8i8L.jpg",
+      "https://m.media-amazon.com/images/I/71Tv+rZ2mCL.jpg"
+    ]
+  }
+}

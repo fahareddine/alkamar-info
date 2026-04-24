@@ -1,0 +1,50 @@
+{
+  "lenovo-ideapad-3": {
+    "asin": "B0FJ24PQSK",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71KGgFmDzYL.jpg",
+      "https://m.media-amazon.com/images/I/71uHP9xcseL.jpg",
+      "https://m.media-amazon.com/images/I/71u6pq48OkL.jpg"
+    ]
+  },
+  "hp-15s-fq5": {
+    "asin": "B0DVW2GBGY",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/718T2YHONQL.jpg",
+      "https://m.media-amazon.com/images/I/71TUD8FG7SL.jpg",
+      "https://m.media-amazon.com/images/I/71-N3PbtX8L.jpg"
+    ]
+  },
+  "acer-aspire-5-a515": {
+    "asin": "B09YFVNK2Q",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71y5vC9-clL.jpg",
+      "https://m.media-amazon.com/images/I/61FItMiy-2L.jpg",
+      "https://m.media-amazon.com/images/I/61KIhiJYcmL.jpg"
+    ]
+  },
+  "lenovo-ideapad-5-14": {
+    "asin": "B0FRGKHK34",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71svwfr+AJL.jpg",
+      "https://m.media-amazon.com/images/I/71mOb2HluQL.jpg",
+      "https://m.media-amazon.com/images/I/71MUkIadi7L.jpg"
+    ]
+  },
+  "dell-inspiron-15-3520": {
+    "asin": "B0CZC66C4W",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71bP-N6bzGL.jpg",
+      "https://m.media-amazon.com/images/I/71-3sW+z6FL.jpg",
+      "https://m.media-amazon.com/images/I/71m3ntHhRNL.jpg"
+    ]
+  },
+  "asus-vivobook-15": {
+    "asin": "B0BSKVD15Y",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/714N5Ey923L.jpg",
+      "https://m.media-amazon.com/images/I/71LDAr-RKwL.jpg",
+      "https://m.media-amazon.com/images/I/71zPFfLHeDL.jpg"
+    ]
+  }
+}

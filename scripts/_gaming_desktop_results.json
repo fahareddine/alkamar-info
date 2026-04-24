@@ -1,0 +1,22 @@
+{
+  "lenovo-legion-tower-5i": {
+    "asin": "B0GQM1S6FG",
+    "name": "Lenovo Legion Tower 5i Gaming PC de bureau, NVIDIA GeForce RTX 5060Ti 8 Go GDDR7, processeur Intel Core Ultra 7 265F, 32 Go DDR5 5600 MHz, SSD PCIe 2 To, Windows 11 Pro, Kit casque de jeu",
+    "price": 4167.94,
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71978wp-amL.jpg",
+      "https://m.media-amazon.com/images/I/61u4nQI1fOL.jpg",
+      "https://m.media-amazon.com/images/I/71fJU2rMjsL.jpg"
+    ]
+  },
+  "hp-omen-25l": {
+    "asin": "B0B6297M4B",
+    "name": "OMEN 40L GT21-0076ns Gaming PC, Intel Core i7, NVIDIA GeForce RTX 4070 Ti (12 Go), Windows 11 Home, 16 Go RAM, 1TB SSD, 5600X, 1512Go SSD",
+    "price": 1851.52,
+    "imgs": [
+      "https://m.media-amazon.com/images/I/41fsrhxGPkL.jpg",
+      "https://m.media-amazon.com/images/I/51AQYkQKwWL.jpg",
+      "https://m.media-amazon.com/images/I/41ozspfeFXL.jpg"
+    ]
+  }
+}

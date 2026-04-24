@@ -1,0 +1,90 @@
+{
+  "dell-inspiron-3020s-i5": {
+    "asin": "B0GGBC2S7Y",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/61h-FN1XdML.jpg",
+      "https://m.media-amazon.com/images/I/71LNbczC3jL.jpg",
+      "https://m.media-amazon.com/images/I/61s2LVrH8WL.jpg"
+    ]
+  },
+  "dell-inspiron-3020-i7": {
+    "asin": "B0FYQS3T8R",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/61ErXM21-DL.jpg",
+      "https://m.media-amazon.com/images/I/71Wf7FORoFL.jpg",
+      "https://m.media-amazon.com/images/I/71HU5f0oa6L.jpg"
+    ]
+  },
+  "dell-inspiron-3030-sff": {
+    "asin": "B0BCWRSPJ7",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/51NBgtkGgkL.jpg",
+      "https://m.media-amazon.com/images/I/51Ft+ziPLaL.jpg",
+      "https://m.media-amazon.com/images/I/4100EIEP2uL.jpg"
+    ]
+  },
+  "lenovo-ideacentre-3-ryzen5": {
+    "asin": "B0GGCVX4HV",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/61hj2TZ-iPL.jpg",
+      "https://m.media-amazon.com/images/I/61aJIMvcZfL.jpg",
+      "https://m.media-amazon.com/images/I/61Yt9hvlOlL.jpg"
+    ]
+  },
+  "lenovo-ideacentre-3-07ach7": {
+    "asin": "B0GGCVX4HV",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/61hj2TZ-iPL.jpg",
+      "https://m.media-amazon.com/images/I/61aJIMvcZfL.jpg",
+      "https://m.media-amazon.com/images/I/61Yt9hvlOlL.jpg"
+    ]
+  },
+  "acer-veriton-m4680g": {
+    "asin": "B0D1TGVCMH",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/512LF7coReL.jpg",
+      "https://m.media-amazon.com/images/I/51OnT1ir78L.jpg",
+      "https://m.media-amazon.com/images/I/51MgbiDNnTL.jpg"
+    ]
+  },
+  "hp-victus-15": {
+    "asin": "B0FXBL6N2R",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/81onBIo992L.jpg",
+      "https://m.media-amazon.com/images/I/611VZbwGvFL.jpg",
+      "https://m.media-amazon.com/images/I/81tCAEsd6pL.jpg"
+    ]
+  },
+  "lenovo-ideapad-gaming-3": {
+    "asin": "B0B4HHR4JR",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/81nmV0izWKL.jpg",
+      "https://m.media-amazon.com/images/I/814S-zDUL+L.jpg",
+      "https://m.media-amazon.com/images/I/81mdSUJvV8L.jpg"
+    ]
+  },
+  "acer-nitro-5-an515": {
+    "asin": "B08334VZ7K",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/51DbfnZOFqL.jpg",
+      "https://m.media-amazon.com/images/I/51iVJsljAQL.jpg",
+      "https://m.media-amazon.com/images/I/51DTBiplEDL.jpg"
+    ]
+  },
+  "msi-thin-gf63": {
+    "asin": "B0BV9HQ8TZ",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/714qeYUfo0L.jpg",
+      "https://m.media-amazon.com/images/I/61wJywRVJlL.jpg",
+      "https://m.media-amazon.com/images/I/71As2Ntfs7L.jpg"
+    ]
+  },
+  "asus-tuf-gaming-a15": {
+    "asin": "B09TDVFWSF",
+    "imgs": [
+      "https://m.media-amazon.com/images/I/71oTWZ9oH6L.jpg",
+      "https://m.media-amazon.com/images/I/81Bh37jpZgL.jpg",
+      "https://m.media-amazon.com/images/I/71CQRXKpdCL.jpg"
+    ]
+  }
+}
