@@ -4,43 +4,46 @@
   <meta charset="UTF-8">
   <title>Saisie ASINs — Alkamar Info</title>
   <style>
-    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 24px; background: #f8fafc; }
+    body { font-family: system-ui, sans-serif; max-width: 960px; margin: 0 auto; padding: 24px; background: #f8fafc; }
     h1 { font-size: 1.4rem; color: #0f172a; margin-bottom: 4px; }
-    .subtitle { color: #64748b; font-size: 13px; margin-bottom: 24px; }
+    .subtitle { color: #64748b; font-size: 13px; margin-bottom: 20px; }
     .how-to { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; margin-bottom: 24px; font-size: 13px; line-height: 1.7; }
     .how-to strong { color: #1e3a8a; }
     .how-to code { background: #dbeafe; padding: 1px 5px; border-radius: 3px; font-size: 12px; }
-    .section { margin-bottom: 24px; }
-    .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #64748b; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #e2e8f0; }
-    .product-row { display: grid; grid-template-columns: 1fr 140px 40px; gap: 8px; align-items: center; margin-bottom: 8px; }
-    .product-name { font-size: 13px; font-weight: 600; color: #334155; }
-    .product-slug { font-size: 11px; color: #94a3b8; }
-    input[type=text] { width: 100%; padding: 7px 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; font-family: monospace; box-sizing: border-box; }
+    .section { margin-bottom: 20px; background: #fff; border-radius: 10px; border: 1px solid #e2e8f0; padding: 16px; }
+    .section-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #64748b; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; }
+    .section-title .count { font-size: 11px; background: #e2e8f0; border-radius: 20px; padding: 1px 8px; color: #475569; text-transform: none; letter-spacing: 0; font-weight: 500; }
+    .product-row { display: grid; grid-template-columns: 1fr 160px 36px; gap: 8px; align-items: center; margin-bottom: 8px; }
+    .product-info { min-width: 0; }
+    .product-name { font-size: 13px; font-weight: 600; color: #334155; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .product-slug { font-size: 10px; color: #94a3b8; font-family: monospace; }
+    input[type=text] { width: 100%; padding: 6px 10px; border: 1.5px solid #cbd5e1; border-radius: 6px; font-size: 12px; font-family: monospace; box-sizing: border-box; }
     input[type=text]:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px #bfdbfe; }
     input[type=text].filled { border-color: #16a34a; background: #f0fdf4; }
-    a.search-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #ff9900; border-radius: 6px; text-decoration: none; font-size: 16px; }
+    a.search-btn { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: #ff9900; border-radius: 6px; text-decoration: none; font-size: 14px; flex-shrink: 0; }
     a.search-btn:hover { background: #e88a00; }
-    .sticky-bottom { position: sticky; bottom: 0; background: #fff; border-top: 2px solid #e2e8f0; padding: 16px; display: flex; gap: 12px; align-items: center; }
-    button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+    .sticky-bottom { position: sticky; bottom: 0; background: #fff; border-top: 2px solid #e2e8f0; padding: 14px 16px; display: flex; gap: 12px; align-items: center; box-shadow: 0 -4px 12px rgba(0,0,0,.06); }
+    button { padding: 9px 18px; border: none; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
     .btn-generate { background: #1e3a8a; color: #fff; }
     .btn-generate:hover { background: #1e40af; }
     .btn-copy { background: #e2e8f0; color: #334155; }
     .progress { font-size: 12px; color: #64748b; margin-left: auto; }
-    textarea { width: 100%; height: 220px; font-family: monospace; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; box-sizing: border-box; background: #0f172a; color: #e2e8f0; display: none; margin-top: 12px; }
+    .progress span { font-weight: 700; color: #16a34a; }
+    textarea { width: 100%; height: 200px; font-family: monospace; font-size: 11px; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; box-sizing: border-box; background: #0f172a; color: #e2e8f0; display: none; margin-top: 12px; }
   </style>
 </head>
 <body>
 
 <h1>🔍 Saisie des ASINs Amazon</h1>
-<p class="subtitle">Renseigner l'ASIN pour chaque produit afin de récupérer 3 photos distinctes depuis Amazon.fr</p>
+<p class="subtitle">Renseigner l'ASIN pour chaque produit — utilisé pour récupérer les images depuis Amazon.fr</p>
 
 <div class="how-to">
-  <strong>Comment trouver l'ASIN ?</strong><br>
-  1. Cliquer 🔍 pour ouvrir la recherche Amazon.fr<br>
+  <strong>Comment trouver un ASIN ?</strong><br>
+  1. Cliquer 🔍 pour ouvrir la recherche Amazon.fr dans un nouvel onglet<br>
   2. Choisir le bon produit dans les résultats<br>
   3. Copier l'ASIN depuis l'URL : <code>amazon.fr/dp/<strong>B0XXXXXXXXX</strong>/...</code><br>
-  4. Coller dans le champ ci-dessous<br>
-  5. Cliquer <strong>Générer asins.json</strong> puis copier dans <code>scripts/asins.json</code>
+  4. Coller dans le champ et appuyer sur Tab pour passer au suivant<br>
+  5. Cliquer <strong>Générer asins.json</strong> → copier dans <code>scripts/asins.json</code> → lancer <code>node scripts/set-asins.js</code>
 </div>
 
 <div id="form-container"></div>
@@ -48,185 +51,301 @@
 <div class="sticky-bottom">
   <button class="btn-generate" onclick="generate()">📋 Générer asins.json</button>
   <button class="btn-copy" onclick="copyJson()">📋 Copier JSON</button>
-  <span class="progress" id="progress"></span>
+  <div class="progress">Renseignés : <span id="filled-count">0</span> / <span id="total-count">0</span></div>
 </div>
 
-<textarea id="json-output" readonly></textarea>
+<textarea id="output"></textarea>
 
 <script>
-const PRODUCTS = {
-  portables: [
-    { slug: 'lenovo-ideapad-3', name: 'Lenovo IdeaPad 3 15ALC6' },
-    { slug: 'lenovo-ideapad-5-14', name: 'Lenovo IdeaPad 5 15ALC05' },
-    { slug: 'hp-15s-fq5', name: 'HP 15s-fq5028nf' },
-    { slug: 'acer-aspire-5-a515', name: 'Acer Aspire 5 A515-57' },
-    { slug: 'dell-inspiron-15-3520', name: 'Dell Inspiron 15 3520' },
-    { slug: 'asus-vivobook-15', name: 'Asus VivoBook 15 X1504VA' },
-  ],
-  bureau: [
-    { slug: 'dell-inspiron-3020-i7', name: 'Dell Inspiron 3020 Tour' },
-    { slug: 'dell-inspiron-3020s-i5', name: 'Dell Inspiron 3020 SFF' },
-    { slug: 'dell-inspiron-3030-sff', name: 'Dell Inspiron 3030 SFF' },
-    { slug: 'lenovo-ideacentre-3-ryzen5', name: 'Lenovo IdeaCentre 3' },
-    { slug: 'lenovo-ideacentre-3-07ach7', name: 'Lenovo IdeaCentre 3 07ACH7' },
-    { slug: 'acer-veriton-m4680g', name: 'Acer Veriton M4680G' },
-  ],
-  gaming: [
-    { slug: 'hp-victus-15', name: 'HP Victus 15-fa1001sf' },
-    { slug: 'lenovo-ideapad-gaming-3', name: 'Lenovo IdeaPad Gaming 3 15ACH6' },
-    { slug: 'acer-nitro-5-an515', name: 'Acer Nitro 5 AN517-55' },
-    { slug: 'asus-tuf-gaming-a15', name: 'Asus TUF Gaming A15 FA507NVR' },
-    { slug: 'msi-thin-gf63', name: 'MSI Thin GF63 12VE-023FR' },
-  ],
-  toutunun: [
-    { slug: 'hp-aio-24', name: 'HP All-in-One 24-cb1029nf' },
-    { slug: 'acer-aspire-c24', name: 'Acer Aspire C24-1800' },
-    { slug: 'dell-inspiron-24-aio', name: 'Dell Inspiron 24 5430' },
-    { slug: 'lenovo-ideacentre-aio-3', name: 'Lenovo IdeaCentre AIO 3 27ALC6' },
-    { slug: 'hp-envy-27', name: 'HP Envy All-in-One 27"' },
-  ],
-  reconditiones: [
-    { slug: 'lenovo-thinkpad-t480-reco', name: 'Lenovo ThinkPad T480 Reconditionné', asin: 'B0916TZGJH' },
-    { slug: 'dell-latitude-5400-reco', name: 'Dell Latitude 5420 Reconditionné', asin: 'B0F6T9V2NN' },
-    { slug: 'dell-optiplex-7060', name: 'Dell OptiPlex 7060 SFF Reconditionné', asin: 'B0G1C334YW' },
-    { slug: 'hp-elitebook-840-g6-reco', name: 'HP EliteBook 840 G6 Reconditionné' },
-  ],
-  minipc: [
-    { slug: 'beelink-mini-s12-pro', name: 'Beelink Mini S12 Pro' },
-    { slug: 'beelink-eq12', name: 'Beelink EQ12' },
-    { slug: 'minisforum-um773', name: 'Minisforum UM773 Lite' },
-    { slug: 'gmktec-nucbox-g3', name: 'GMKtec NucBox G3' },
-    { slug: 'asus-nuc-14-pro', name: 'Asus NUC 14 Pro+' },
-  ],
+const SECTIONS = [
+  { cat: "bureau", label: "Ordinateurs de bureau", products: [
+    { slug: "dell-inspiron-3020s-i5",       name: "Dell Inspiron 3020 SFF" },
+    { slug: "dell-inspiron-3020-i7",         name: "Dell Inspiron 3020 Tour" },
+    { slug: "dell-inspiron-3030-sff",        name: "Dell Inspiron 3030 SFF" },
+    { slug: "lenovo-ideacentre-3-07ach7",   name: "Lenovo IdeaCentre 3 07ACH7" },
+    { slug: "acer-veriton-m4680g",           name: "Acer Veriton M4680G" },
+  ]},
+  { cat: "portables", label: "Portables", products: [
+    { slug: "acer-aspire-5-a515",    name: "Acer Aspire 5 A515-57-53T2" },
+    { slug: "lenovo-ideapad-3",      name: "Lenovo IdeaPad 3 15ALC6" },
+    { slug: "lenovo-ideapad-5-14",   name: "Lenovo IdeaPad 5 15ALC05" },
+    { slug: "dell-inspiron-15-3520", name: "Dell Inspiron 15 3520" },
+    { slug: "asus-vivobook-15",      name: "Asus VivoBook 15 X1504VA" },
+  ]},
+  { cat: "gaming", label: "Gaming", products: [
+    { slug: "asus-tuf-gaming-a17-rtx4060-promo", name: "ASUS TUF Gaming A17 RTX 4060" },
+    { slug: "lenovo-legion-tower-5i",             name: "Lenovo Legion Tower 5i Gen 8" },
+    { slug: "msi-thin-gf63",                      name: "MSI Thin GF63 12VE-023FR" },
+    { slug: "asus-tuf-gaming-a15",                name: "Asus TUF Gaming A15 FA507NVR" },
+    { slug: "hp-victus-15",                       name: "HP Victus 15-fa1001sf" },
+  ]},
+  { cat: "toutunun", label: "Tout-en-un", products: [
+    { slug: "hp-aio-24",              name: "HP All-in-One 24-cb1029nf" },
+    { slug: "acer-aspire-c24",        name: "Acer Aspire C24-1800" },
+    { slug: "hp-envy-27",             name: "HP Envy All-in-One 27\"" },
+    { slug: "lenovo-ideacentre-aio-3", name: "Lenovo IdeaCentre AIO 3 27ALC6" },
+    { slug: "dell-inspiron-24-aio",   name: "Dell Inspiron 24 5430" },
+  ]},
+  { cat: "minipc", label: "Mini PC", products: [
+    { slug: "beelink-eq12",       name: "Beelink EQ12" },
+    { slug: "beelink-mini-s12-pro", name: "Beelink Mini S12 Pro" },
+    { slug: "asus-nuc-14-pro",    name: "Asus NUC 14 Pro+" },
+    { slug: "gmktec-nucbox-g3",   name: "GMKtec NucBox G3" },
+    { slug: "minisforum-um773",   name: "Minisforum UM773 Lite" },
+  ]},
+  { cat: "reconditiones", label: "Reconditionnés (onglet principal)", products: [
+    { slug: "dell-latitude-5400-reco",   name: "Dell Latitude 5420 Reconditionné" },
+    { slug: "dell-optiplex-7060",        name: "Dell OptiPlex 7060 SFF Reconditionné" },
+    { slug: "hp-elitebook-840-g6-reco",  name: "HP EliteBook 840 G6 Reconditionné" },
+    { slug: "pack-pc-bureau-complet",    name: "Pack PC Bureau Complet" },
+    { slug: "lenovo-thinkpad-t480-reco", name: "Lenovo ThinkPad T480 Reconditionné" },
+  ]},
+  { cat: "reco-portable", label: "Reconditionnés — Portables", products: [
+    { slug: "dell-latitude-5400-reco-port",     name: "Dell Latitude 5420 Reconditionné" },
+    { slug: "hp-elitebook-840-g6-reco-port",    name: "HP EliteBook 840 G6 Reconditionné" },
+    { slug: "hp-probook-450-g7-reco",           name: "HP ProBook 450 G7 Reconditionné" },
+    { slug: "lenovo-thinkpad-t14-g2-reco",      name: "Lenovo ThinkPad T14 Gen 2 Reconditionné" },
+    { slug: "lenovo-thinkpad-t480-reco-port",   name: "Lenovo ThinkPad T480 Reconditionné" },
+  ]},
+  { cat: "reco-bureau", label: "Reconditionnés — Bureau", products: [
+    { slug: "dell-optiplex-3060-sff-reco",   name: "Dell OptiPlex 3060 SFF Reconditionné" },
+    { slug: "dell-optiplex-7060-bur",        name: "Dell OptiPlex 7060 SFF Reconditionné" },
+    { slug: "hp-elitedesk-800-g4-reco",      name: "HP EliteDesk 800 G4 Mini Reconditionné" },
+    { slug: "lenovo-thinkcentre-m720q-reco", name: "Lenovo ThinkCentre M720q Reconditionné" },
+    { slug: "pack-pc-bureau-complet-bur",    name: "Pack PC Bureau Complet" },
+  ]},
+  { cat: "ecran-fhd", label: "Écrans Full HD", products: [
+    { slug: "aoc-24g2",          name: "AOC 24G2 24\" Full HD" },
+    { slug: "benq-gw2780",       name: "BenQ GW2780 27\" Full HD" },
+    { slug: "dell-s2421h",       name: "Dell S2421H 24\" Full HD" },
+    { slug: "lg-24mk430h",       name: "LG 24MK430H 24\" Full HD" },
+    { slug: "philips-27e1n3300", name: "Philips 27E1N3300 27\" Full HD" },
+  ]},
+  { cat: "ecran-4k", label: "Écrans 4K", products: [
+    { slug: "asus-proart-pa32ucg", name: "ASUS ProArt PA32UCG 32\" 4K Mini LED" },
+    { slug: "dell-u2723qe",        name: "Dell UltraSharp U2723QE 27\" 4K" },
+    { slug: "lg-27up850n",         name: "LG 27UP850N 27\" 4K" },
+    { slug: "lg-32un880-p",        name: "LG 32UN880-P 32\" 4K Ergo" },
+    { slug: "samsung-32-4k-m7",    name: "Samsung 32\" 4K Smart M7" },
+  ]},
+  { cat: "ecran-gaming", label: "Écrans Gaming", products: [
+    { slug: "alienware-aw2723df",         name: "Alienware AW2723DF 27\" QHD 280 Hz" },
+    { slug: "lg-27gp850-b",              name: "LG 27GP850-B 27\" QHD 165 Hz" },
+    { slug: "lg-27gs75q-qhd-180hz-promo", name: "LG UltraGear 27GS75Q-B 27\" QHD 180 Hz" },
+    { slug: "msi-optix-mag274qrf",        name: "MSI Optix MAG274QRF-QD 27\" QHD" },
+    { slug: "samsung-odyssey-neo-g7-32",  name: "Samsung Odyssey Neo G7 32\" 4K 165 Hz" },
+  ]},
+  { cat: "ecran-reco", label: "Écrans Reconditionnés", products: [
+    { slug: "ecran-benq-32-4k-reco",       name: "BenQ 32\" 4K IPS Reconditionné" },
+    { slug: "ecran-dell-24-fhd-reco",      name: "Dell 24\" Full HD IPS Reconditionné" },
+    { slug: "ecran-hp-27-4k-reco",         name: "HP 27\" 4K UHD Reconditionné" },
+    { slug: "ecran-lg-34-ultrawide-reco",  name: "LG 34\" UltraWide QHD Reconditionné" },
+    { slug: "ecran-samsung-27-144hz-reco", name: "Samsung 27\" Full HD 144 Hz Reconditionné" },
+  ]},
+  { cat: "clavier", label: "Claviers", products: [
+    { slug: "hyperx-alloy-origins-core",   name: "HyperX Alloy Origins Core" },
+    { slug: "microsoft-ergonomic-keyboard", name: "Microsoft Ergonomic Keyboard" },
+    { slug: "logitech-k120",               name: "Logitech K120" },
+    { slug: "keychron-k2-pro",             name: "Keychron K2 Pro" },
+    { slug: "logitech-mk470-combo",        name: "Logitech MK470 Slim Combo" },
+  ]},
+  { cat: "souris", label: "Souris", products: [
+    { slug: "logitech-g-pro-x-superlight2", name: "Logitech G PRO X Superlight 2" },
+    { slug: "logitech-g502-x",             name: "Logitech G502 X" },
+    { slug: "logitech-mx-master-3s-promo", name: "Logitech MX Master 3S" },
+    { slug: "logitech-m185",               name: "Logitech M185" },
+    { slug: "razer-deathadder-v3-promo",   name: "Razer DeathAdder V3" },
+  ]},
+  { cat: "casque", label: "Casques", products: [
+    { slug: "razer-blackshark-v2-x", name: "Razer BlackShark V2 X" },
+    { slug: "jabra-evolve2-30",      name: "Jabra Evolve2 30" },
+    { slug: "logitech-h340",         name: "Logitech H340" },
+    { slug: "sony-wh-ch720n",        name: "Sony WH-CH720N" },
+    { slug: "logitech-z207",         name: "Logitech Z207 Enceintes" },
+  ]},
+  { cat: "webcam", label: "Webcams", products: [
+    { slug: "logitech-c270",       name: "Logitech C270 HD" },
+    { slug: "logitech-c920-hd-pro", name: "Logitech C920 HD Pro" },
+    { slug: "elgato-facecam-mk2",  name: "Elgato Facecam MK.2" },
+    { slug: "razer-kiyo-pro",      name: "Razer Kiyo Pro" },
+    { slug: "logitech-streamcam",  name: "Logitech StreamCam" },
+  ]},
+  { cat: "imprimante", label: "Imprimantes", products: [
+    { slug: "brother-dcp-l2510d",    name: "Brother DCP-L2510D" },
+    { slug: "hp-deskjet-2820e",      name: "HP DeskJet 2820e" },
+    { slug: "epson-ecotank-et-2851", name: "Epson EcoTank ET-2851" },
+    { slug: "hp-laserjet-pro-m404dw", name: "HP LaserJet Pro M404dw" },
+    { slug: "canon-pixma-ts3550i",   name: "Canon PIXMA TS3550i" },
+  ]},
+  { cat: "onduleur", label: "Onduleurs", products: [
+    { slug: "eaton-5e-1100va",         name: "Eaton 5E 1100VA" },
+    { slug: "apc-back-ups-1000va",     name: "APC Back-UPS 1000VA" },
+    { slug: "apc-back-ups-650va",      name: "APC Back-UPS 650VA" },
+    { slug: "cyberpower-cp1500epfclcd", name: "CyberPower CP1500EPFCLCD" },
+    { slug: "apc-smart-ups-1500va",    name: "APC Smart-UPS 1500VA LCD" },
+  ]},
+  { cat: "ssd-interne", label: "SSD Internes", products: [
+    { slug: "crucial-mx500-1to",       name: "Crucial MX500 1 To" },
+    { slug: "samsung-980-pro-1to",     name: "Samsung 980 Pro 1 To" },
+    { slug: "samsung-990-pro-1to-promo", name: "Samsung SSD 990 Pro 1 To NVMe" },
+    { slug: "seagate-barracuda-ssd-2to", name: "Seagate BarraCuda SSD 2 To" },
+    { slug: "wd-blue-sn570-1to",       name: "WD Blue SN570 NVMe 1 To" },
+  ]},
+  { cat: "ssd-externe", label: "SSD Externes", products: [
+    { slug: "crucial-x8-1to",        name: "Crucial X8 1 To" },
+    { slug: "samsung-t7-1to",        name: "Samsung T7 1 To" },
+    { slug: "sandisk-extreme-pro-2to", name: "SanDisk Extreme Pro 2 To" },
+    { slug: "seagate-onetouch-1to",  name: "Seagate One Touch SSD 1 To" },
+    { slug: "wd-my-passport-2to",    name: "WD My Passport 2 To" },
+  ]},
+  { cat: "hdd", label: "Disques durs HDD", products: [
+    { slug: "seagate-barracuda-2to", name: "Seagate BarraCuda 2 To" },
+    { slug: "seagate-ironwolf-8to",  name: "Seagate IronWolf 8 To" },
+    { slug: "toshiba-p300-500go",    name: "Toshiba P300 500 Go" },
+    { slug: "wd-blue-1to",           name: "WD Blue 1 To" },
+    { slug: "wd-red-plus-4to",       name: "WD Red Plus 4 To" },
+  ]},
+  { cat: "cle-usb", label: "Clés USB", products: [
+    { slug: "samsung-bar-plus-128go",   name: "Samsung BAR Plus 128 Go USB 3.1" },
+    { slug: "samsung-bar-plus-64go",    name: "Samsung BAR Plus 64 Go USB 3.1" },
+    { slug: "sandisk-ultra-fit-128go",  name: "SanDisk Ultra Fit 128 Go USB 3.2" },
+    { slug: "sandisk-ultra-flair-128go", name: "SanDisk Ultra Flair 128 Go USB 3.0" },
+    { slug: "sandisk-ultra-luxe-128go", name: "SanDisk Ultra Luxe 128 Go USB 3.2" },
+  ]},
+  { cat: "carte-memoire", label: "Cartes mémoire", products: [
+    { slug: "lexar-1066x-microsd-512go",    name: "Lexar PLAY microSD 512 Go" },
+    { slug: "cf-express-512go",             name: "ProGrade Digital CFexpress 512 Go" },
+    { slug: "samsung-evo-plus-microsd-256go", name: "Samsung Evo Plus microSD 256 Go" },
+    { slug: "sandisk-extreme-pro-sd-128go", name: "SanDisk Extreme Pro SD 128 Go" },
+    { slug: "sandisk-microsd-32go-pack4",   name: "SanDisk Ultra microSD 32 Go × 4" },
+  ]},
+  { cat: "nas", label: "NAS", products: [
+    { slug: "qnap-ts-233",          name: "QNAP TS-233" },
+    { slug: "synology-ds223j",      name: "Synology DiskStation DS223j" },
+    { slug: "synology-ds423plus",   name: "Synology DiskStation DS423+" },
+    { slug: "terramaster-f2-423",   name: "TerraMaster F2-423" },
+    { slug: "wd-my-cloud-ex2-ultra", name: "WD My Cloud EX2 Ultra 8 To" },
+  ]},
+  { cat: "routeur-wifi", label: "Routeurs Wi-Fi", products: [
+    { slug: "asus-rog-rapture-gt-ax6000", name: "ASUS ROG Rapture GT-AX6000" },
+    { slug: "asus-rt-ax58u",             name: "ASUS RT-AX58U" },
+    { slug: "netgear-nighthawk-ax5",     name: "Netgear Nighthawk AX5" },
+    { slug: "tp-link-archer-ax20",       name: "TP-Link Archer AX20" },
+    { slug: "tp-link-archer-ax73",       name: "TP-Link Archer AX73" },
+  ]},
+  { cat: "routeur-4g5g", label: "Routeurs 4G/5G", products: [
+    { slug: "huawei-b535-232",      name: "Huawei B535-232" },
+    { slug: "netgear-nighthawk-m6", name: "Netgear Nighthawk M6" },
+    { slug: "tp-link-mr6400",       name: "TP-Link MR6400" },
+    { slug: "tp-link-tl-mr100",     name: "TP-Link TL-MR100" },
+    { slug: "zyxel-nr5103e",        name: "Zyxel NR5103E" },
+  ]},
+  { cat: "switch", label: "Switchs réseau", products: [
+    { slug: "cisco-sg350-10",    name: "Cisco SG350-10" },
+    { slug: "netgear-gs308",     name: "Netgear GS308" },
+    { slug: "tp-link-tl-sg105",  name: "TP-Link TL-SG105" },
+    { slug: "tp-link-tl-sg108",  name: "TP-Link TL-SG108" },
+    { slug: "tp-link-tl-sg116e", name: "TP-Link TL-SG116E" },
+  ]},
+  { cat: "point-acces", label: "Points d'accès Wi-Fi", products: [
+    { slug: "asus-exp-ax73",         name: "ASUS ExpertWiFi EBP68" },
+    { slug: "netgear-wax214",        name: "Netgear WAX214" },
+    { slug: "tp-link-eap225",        name: "TP-Link EAP225" },
+    { slug: "tp-link-eap670",        name: "TP-Link EAP670" },
+    { slug: "ubiquiti-unifi-u6-lite", name: "Ubiquiti UniFi U6 Lite" },
+  ]},
+  { cat: "cable", label: "Câbles réseau", products: [
+    { slug: "cable-rj45-plat-20m",  name: "Câble RJ45 Cat6 Plat 20m" },
+    { slug: "cable-rj45-cat6a-10m", name: "Câble RJ45 Cat6A 10m" },
+    { slug: "cable-rj45-cat8-2m",   name: "Câble RJ45 Cat8 2m" },
+    { slug: "testeur-cable-rj45",   name: "Testeur câble RJ45/RJ11" },
+  ]},
+  { cat: "essentiel-reseau", label: "Essentiels réseau", products: [
+    { slug: "cle-wifi-tp-link-archer-t3u", name: "TP-Link Archer T3U AC1300 (clé Wi-Fi)" },
+    { slug: "kit-reseau-starter",          name: "Kit Réseau Starter (routeur + switch + câble)" },
+    { slug: "pack-bureau-cable-cat6",      name: "Pack Bureau Connecté (3 câbles Cat6)" },
+    { slug: "cpl-tp-link-av1000-kit",      name: "TP-Link AV1000 TL-PA7017P Kit CPL" },
+    { slug: "repeteur-wifi-tp-link-re305", name: "TP-Link RE305 AC1200 (répéteur Wi-Fi)" },
+  ]},
+];
+
+// Pré-remplissage depuis asins.json (valeurs connues)
+const PREFILL = {
+  "dell-latitude-5400-reco":   "B0F6T9V2NN",
+  "dell-optiplex-7060":        "B0G1C334YW",
+  "lenovo-thinkpad-t480-reco": "B0916TZGJH",
 };
 
-const CAT_LABELS = {
-  portables: '💻 PC Portables',
-  bureau: '🖥️ PC de Bureau',
-  gaming: '🎮 PC Gaming',
-  toutunun: '🖥️ Tout-en-Un',
-  reconditiones: '♻️ Reconditionnés',
-  minipc: '📦 Mini PC',
-};
-
-const SEARCH_NAMES = {
-  'lenovo-ideapad-3': 'Lenovo IdeaPad 3 15ALC6 Ryzen 5',
-  'lenovo-ideapad-5-14': 'Lenovo IdeaPad 5 15ALC05',
-  'hp-15s-fq5': 'HP 15s-fq5028nf',
-  'acer-aspire-5-a515': 'Acer Aspire 5 A515-57',
-  'dell-inspiron-15-3520': 'Dell Inspiron 15 3520',
-  'asus-vivobook-15': 'Asus VivoBook 15 X1504VA',
-  'dell-inspiron-3020-i7': 'Dell Inspiron 3020 Tour i7',
-  'dell-inspiron-3020s-i5': 'Dell Inspiron 3020 SFF i5',
-  'dell-inspiron-3030-sff': 'Dell Inspiron 3030 SFF',
-  'lenovo-ideacentre-3-ryzen5': 'Lenovo IdeaCentre 3 Ryzen 5',
-  'lenovo-ideacentre-3-07ach7': 'Lenovo IdeaCentre 3 07ACH7',
-  'acer-veriton-m4680g': 'Acer Veriton M4680G',
-  'hp-victus-15': 'HP Victus 15-fa1001sf',
-  'lenovo-ideapad-gaming-3': 'Lenovo IdeaPad Gaming 3 15ACH6',
-  'acer-nitro-5-an515': 'Acer Nitro 5 AN517-55',
-  'asus-tuf-gaming-a15': 'Asus TUF Gaming A15 FA507NVR',
-  'msi-thin-gf63': 'MSI Thin GF63',
-  'hp-aio-24': 'HP All-in-One 24',
-  'acer-aspire-c24': 'Acer Aspire C24-1800',
-  'dell-inspiron-24-aio': 'Dell Inspiron 24 5430 All-in-One',
-  'lenovo-ideacentre-aio-3': 'Lenovo IdeaCentre AIO 3 27',
-  'hp-envy-27': 'HP Envy All-in-One 27',
-  'hp-elitebook-840-g6-reco': 'HP EliteBook 840 G6 reconditionné',
-  'beelink-mini-s12-pro': 'Beelink Mini S12 Pro',
-  'beelink-eq12': 'Beelink EQ12',
-  'minisforum-um773': 'Minisforum UM773 Lite',
-  'gmktec-nucbox-g3': 'GMKtec NucBox G3',
-  'asus-nuc-14-pro': 'Asus NUC 14 Pro',
-};
-
-// Charger depuis localStorage
-const saved = JSON.parse(localStorage.getItem('asins') || '{}');
-
-const container = document.getElementById('form-container');
-
-for (const [cat, products] of Object.entries(PRODUCTS)) {
-  const section = document.createElement('div');
-  section.className = 'section';
-  section.innerHTML = `<div class="section-title">${CAT_LABELS[cat]}</div>`;
-
-  for (const p of products) {
-    const searchQ = encodeURIComponent(SEARCH_NAMES[p.slug] || p.name);
-    const amzUrl = `https://www.amazon.fr/s?k=${searchQ}`;
-    const val = p.asin || saved[p.slug] || '';
-
-    const row = document.createElement('div');
-    row.className = 'product-row';
-    row.innerHTML = `
-      <div>
-        <div class="product-name">${p.name}</div>
-        <div class="product-slug">${p.slug}</div>
-      </div>
-      <input type="text" id="asin-${p.slug}" placeholder="B0XXXXXXXXX"
-        value="${val}" maxlength="10" oninput="saveAsin('${p.slug}', this)"
-        ${p.asin ? 'readonly style="background:#f0fdf4;border-color:#16a34a"' : ''}>
-      <a class="search-btn" href="${amzUrl}" target="_blank" title="Chercher sur Amazon.fr">🔍</a>
-    `;
-    section.appendChild(row);
-    if (val && !p.asin) row.querySelector('input').classList.add('filled');
-  }
-
-  container.appendChild(section);
+function updateCount() {
+  let filled = 0, total = 0;
+  document.querySelectorAll('input[type=text]').forEach(inp => {
+    total++;
+    if (inp.value.trim()) { filled++; inp.classList.add('filled'); }
+    else inp.classList.remove('filled');
+  });
+  document.getElementById('filled-count').textContent = filled;
+  document.getElementById('total-count').textContent = total;
 }
 
-updateProgress();
-
-function saveAsin(slug, input) {
-  const val = input.value.trim().toUpperCase();
-  input.value = val;
-  if (val.length === 10) {
-    saved[slug] = val;
-    input.classList.add('filled');
-  } else {
-    delete saved[slug];
-    input.classList.remove('filled');
-  }
-  localStorage.setItem('asins', JSON.stringify(saved));
-  updateProgress();
+function buildForm() {
+  const container = document.getElementById('form-container');
+  SECTIONS.forEach(({ cat, label, products }) => {
+    const sec = document.createElement('div');
+    sec.className = 'section';
+    sec.innerHTML = `<div class="section-title">${label} <span class="count">${products.length}</span></div>`;
+    products.forEach(({ slug, name }) => {
+      const row = document.createElement('div');
+      row.className = 'product-row';
+      const q = encodeURIComponent(name);
+      const prefill = PREFILL[slug] || '';
+      row.innerHTML = `
+        <div class="product-info">
+          <div class="product-name">${name}</div>
+          <div class="product-slug">${slug}</div>
+        </div>
+        <input type="text" id="asin-${slug}" data-slug="${slug}" data-cat="${cat}"
+               placeholder="B0XXXXXXXXX" value="${prefill}" maxlength="10"
+               oninput="updateCount()" />
+        <a class="search-btn" href="https://www.amazon.fr/s?k=${q}" target="_blank" title="Rechercher sur Amazon.fr">🔍</a>
+      `;
+      sec.appendChild(row);
+    });
+    container.appendChild(sec);
+  });
+  updateCount();
 }
 
-function updateProgress() {
-  const total = Object.values(PRODUCTS).flat().length;
-  let filled = 0;
-  for (const prods of Object.values(PRODUCTS)) {
-    for (const p of prods) {
-      const val = p.asin || saved[p.slug] || '';
-      if (val.length === 10) filled++;
-    }
-  }
-  document.getElementById('progress').textContent = `${filled}/${total} ASINs renseignés`;
+function getValues() {
+  const result = {};
+  SECTIONS.forEach(({ cat, products }) => {
+    result[cat] = {};
+    products.forEach(({ slug }) => {
+      const inp = document.getElementById(`asin-${slug}`);
+      result[cat][slug] = inp ? inp.value.trim() : '';
+    });
+  });
+  return result;
 }
 
 function generate() {
-  const result = {};
-  for (const [cat, products] of Object.entries(PRODUCTS)) {
-    result[cat] = {};
-    for (const p of products) {
-      const input = document.getElementById(`asin-${p.slug}`);
-      result[cat][p.slug] = (input ? input.value.trim() : '') || p.asin || '';
-    }
-  }
-  const json = JSON.stringify(result, null, 2);
-  const ta = document.getElementById('json-output');
+  const json = JSON.stringify(getValues(), null, 2);
+  const ta = document.getElementById('output');
   ta.style.display = 'block';
   ta.value = json;
-  ta.scrollIntoView({ behavior: 'smooth' });
+  ta.select();
+  document.execCommand('copy');
+  alert('JSON généré et copié ! Coller dans scripts/asins.json puis lancer:\n\nnode scripts/set-asins.js');
 }
 
 function copyJson() {
-  generate();
-  const ta = document.getElementById('json-output');
-  navigator.clipboard.writeText(ta.value).then(() => {
-    const btn = document.querySelector('.btn-copy');
-    btn.textContent = '✅ Copié !';
-    setTimeout(() => btn.textContent = '📋 Copier JSON', 2000);
-  });
+  const ta = document.getElementById('output');
+  ta.style.display = 'block';
+  ta.value = JSON.stringify(getValues(), null, 2);
+  ta.select();
+  document.execCommand('copy');
 }
+
+buildForm();
 </script>
 </body>
 </html>

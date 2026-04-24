@@ -1,45 +1,211 @@
 {
-  "portables": {
-    "lenovo-ideapad-3": "",
-    "lenovo-ideapad-5-14": "",
-    "hp-15s-fq5": "",
-    "acer-aspire-5-a515": "",
-    "dell-inspiron-15-3520": "",
-    "asus-vivobook-15": ""
-  },
   "bureau": {
-    "dell-inspiron-3020-i7": "",
     "dell-inspiron-3020s-i5": "",
+    "dell-inspiron-3020-i7": "",
     "dell-inspiron-3030-sff": "",
-    "lenovo-ideacentre-3-ryzen5": "",
     "lenovo-ideacentre-3-07ach7": "",
     "acer-veriton-m4680g": ""
   },
+  "cable": {
+    "cable-rj45-plat-20m": "",
+    "cable-rj45-cat6a-10m": "",
+    "cable-rj45-cat8-2m": "",
+    "testeur-cable-rj45": ""
+  },
+  "carte-memoire": {
+    "lexar-1066x-microsd-512go": "",
+    "cf-express-512go": "",
+    "samsung-evo-plus-microsd-256go": "",
+    "sandisk-extreme-pro-sd-128go": "",
+    "sandisk-microsd-32go-pack4": ""
+  },
+  "casque": {
+    "razer-blackshark-v2-x": "",
+    "jabra-evolve2-30": "",
+    "logitech-h340": "",
+    "sony-wh-ch720n": "",
+    "logitech-z207": ""
+  },
+  "clavier": {
+    "hyperx-alloy-origins-core": "",
+    "microsoft-ergonomic-keyboard": "",
+    "logitech-k120": "",
+    "keychron-k2-pro": "",
+    "logitech-mk470-combo": ""
+  },
+  "cle-usb": {
+    "samsung-bar-plus-128go": "",
+    "samsung-bar-plus-64go": "",
+    "sandisk-ultra-fit-128go": "",
+    "sandisk-ultra-flair-128go": "",
+    "sandisk-ultra-luxe-128go": ""
+  },
+  "ecran-4k": {
+    "asus-proart-pa32ucg": "",
+    "dell-u2723qe": "",
+    "lg-27up850n": "",
+    "lg-32un880-p": "",
+    "samsung-32-4k-m7": ""
+  },
+  "ecran-fhd": {
+    "aoc-24g2": "",
+    "benq-gw2780": "",
+    "dell-s2421h": "",
+    "lg-24mk430h": "",
+    "philips-27e1n3300": ""
+  },
+  "ecran-gaming": {
+    "alienware-aw2723df": "",
+    "lg-27gp850-b": "",
+    "lg-27gs75q-qhd-180hz-promo": "",
+    "msi-optix-mag274qrf": "",
+    "samsung-odyssey-neo-g7-32": ""
+  },
+  "ecran-reco": {
+    "ecran-benq-32-4k-reco": "",
+    "ecran-dell-24-fhd-reco": "",
+    "ecran-hp-27-4k-reco": "",
+    "ecran-lg-34-ultrawide-reco": "",
+    "ecran-samsung-27-144hz-reco": ""
+  },
+  "essentiel-reseau": {
+    "cle-wifi-tp-link-archer-t3u": "",
+    "kit-reseau-starter": "",
+    "pack-bureau-cable-cat6": "",
+    "cpl-tp-link-av1000-kit": "",
+    "repeteur-wifi-tp-link-re305": ""
+  },
   "gaming": {
-    "hp-victus-15": "",
-    "lenovo-ideapad-gaming-3": "",
-    "acer-nitro-5-an515": "",
+    "asus-tuf-gaming-a17-rtx4060-promo": "",
+    "lenovo-legion-tower-5i": "",
+    "msi-thin-gf63": "",
     "asus-tuf-gaming-a15": "",
-    "msi-thin-gf63": ""
+    "hp-victus-15": ""
+  },
+  "hdd": {
+    "seagate-barracuda-2to": "",
+    "seagate-ironwolf-8to": "",
+    "toshiba-p300-500go": "",
+    "wd-blue-1to": "",
+    "wd-red-plus-4to": ""
+  },
+  "imprimante": {
+    "brother-dcp-l2510d": "",
+    "hp-deskjet-2820e": "",
+    "epson-ecotank-et-2851": "",
+    "hp-laserjet-pro-m404dw": "",
+    "canon-pixma-ts3550i": ""
+  },
+  "minipc": {
+    "beelink-eq12": "",
+    "beelink-mini-s12-pro": "",
+    "asus-nuc-14-pro": "",
+    "gmktec-nucbox-g3": "",
+    "minisforum-um773": ""
+  },
+  "nas": {
+    "qnap-ts-233": "",
+    "synology-ds223j": "",
+    "synology-ds423plus": "",
+    "terramaster-f2-423": "",
+    "wd-my-cloud-ex2-ultra": ""
+  },
+  "onduleur": {
+    "eaton-5e-1100va": "",
+    "apc-back-ups-1000va": "",
+    "apc-back-ups-650va": "",
+    "cyberpower-cp1500epfclcd": "",
+    "apc-smart-ups-1500va": ""
+  },
+  "point-acces": {
+    "asus-exp-ax73": "",
+    "netgear-wax214": "",
+    "tp-link-eap225": "",
+    "tp-link-eap670": "",
+    "ubiquiti-unifi-u6-lite": ""
+  },
+  "portables": {
+    "acer-aspire-5-a515": "",
+    "lenovo-ideapad-3": "",
+    "lenovo-ideapad-5-14": "",
+    "dell-inspiron-15-3520": "",
+    "asus-vivobook-15": ""
+  },
+  "reco-bureau": {
+    "dell-optiplex-3060-sff-reco": "",
+    "dell-optiplex-7060-bur": "",
+    "hp-elitedesk-800-g4-reco": "",
+    "lenovo-thinkcentre-m720q-reco": "",
+    "pack-pc-bureau-complet-bur": ""
+  },
+  "reco-portable": {
+    "dell-latitude-5400-reco-port": "",
+    "hp-elitebook-840-g6-reco-port": "",
+    "hp-probook-450-g7-reco": "",
+    "lenovo-thinkpad-t14-g2-reco": "",
+    "lenovo-thinkpad-t480-reco-port": ""
+  },
+  "reconditiones": {
+    "dell-latitude-5400-reco": "B0F6T9V2NN",
+    "dell-optiplex-7060": "B0G1C334YW",
+    "hp-elitebook-840-g6-reco": "",
+    "pack-pc-bureau-complet": "",
+    "lenovo-thinkpad-t480-reco": "B0916TZGJH"
+  },
+  "routeur-4g5g": {
+    "huawei-b535-232": "",
+    "netgear-nighthawk-m6": "",
+    "tp-link-mr6400": "",
+    "tp-link-tl-mr100": "",
+    "zyxel-nr5103e": ""
+  },
+  "routeur-wifi": {
+    "asus-rog-rapture-gt-ax6000": "",
+    "asus-rt-ax58u": "",
+    "netgear-nighthawk-ax5": "",
+    "tp-link-archer-ax20": "",
+    "tp-link-archer-ax73": ""
+  },
+  "souris": {
+    "logitech-g-pro-x-superlight2": "",
+    "logitech-g502-x": "",
+    "logitech-mx-master-3s-promo": "",
+    "logitech-m185": "",
+    "razer-deathadder-v3-promo": ""
+  },
+  "ssd-externe": {
+    "crucial-x8-1to": "",
+    "samsung-t7-1to": "",
+    "sandisk-extreme-pro-2to": "",
+    "seagate-onetouch-1to": "",
+    "wd-my-passport-2to": ""
+  },
+  "ssd-interne": {
+    "crucial-mx500-1to": "",
+    "samsung-980-pro-1to": "",
+    "samsung-990-pro-1to-promo": "",
+    "seagate-barracuda-ssd-2to": "",
+    "wd-blue-sn570-1to": ""
+  },
+  "switch": {
+    "cisco-sg350-10": "",
+    "netgear-gs308": "",
+    "tp-link-tl-sg105": "",
+    "tp-link-tl-sg108": "",
+    "tp-link-tl-sg116e": ""
   },
   "toutunun": {
     "hp-aio-24": "",
     "acer-aspire-c24": "",
-    "dell-inspiron-24-aio": "",
+    "hp-envy-27": "",
     "lenovo-ideacentre-aio-3": "",
-    "hp-envy-27": ""
+    "dell-inspiron-24-aio": ""
   },
-  "reconditiones": {
-    "lenovo-thinkpad-t480-reco": "B0916TZGJH",
-    "dell-latitude-5400-reco": "B0F6T9V2NN",
-    "dell-optiplex-7060": "B0G1C334YW",
-    "hp-elitebook-840-g6-reco": ""
-  },
-  "minipc": {
-    "beelink-mini-s12-pro": "",
-    "beelink-eq12": "",
-    "minisforum-um773": "",
-    "gmktec-nucbox-g3": "",
-    "asus-nuc-14-pro": ""
+  "webcam": {
+    "logitech-c270": "",
+    "logitech-c920-hd-pro": "",
+    "elgato-facecam-mk2": "",
+    "razer-kiyo-pro": "",
+    "logitech-streamcam": ""
   }
 }
