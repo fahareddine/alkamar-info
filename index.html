@@ -446,7 +446,10 @@
     function renderPagination() {
       const container = document.querySelector('.pagination');
       if (!container) return;
-      const pages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));
+      const totalPages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));
+      const WINDOW = 10;
+      const winStart = Math.floor((_currentPage - 1) / WINDOW) * WINDOW + 1;
+      const winEnd   = Math.min(winStart + WINDOW - 1, totalPages);
       container.innerHTML = '';
 
       const prev = document.createElement('button');
@@ -457,7 +460,7 @@
       prev.onclick = () => goToPage(_currentPage - 1);
       container.appendChild(prev);
 
-      for (let i = 1; i <= pages; i++) {
+      for (let i = winStart; i <= winEnd; i++) {
         const btn = document.createElement('button');
         btn.className = 'page-btn' + (i === _currentPage ? ' active' : '');
         btn.textContent = i;
@@ -468,8 +471,8 @@
       const next = document.createElement('button');
       next.className = 'page-btn next';
       next.textContent = 'Suivant →';
-      next.disabled = _currentPage >= pages;
-      next.style.opacity = _currentPage >= pages ? '.4' : '1';
+      next.disabled = _currentPage >= totalPages;
+      next.style.opacity = _currentPage >= totalPages ? '.4' : '1';
       next.onclick = () => goToPage(_currentPage + 1);
       container.appendChild(next);
     }
