@@ -568,6 +568,7 @@
     @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
   </style>
 
+  <script src="js/catalog.js"></script>
   <script>
     // Filtre catégories sidebar
     function filterCat(e, cat) {
@@ -626,7 +627,7 @@
     });
 
     // ── CATALOGUE DYNAMIQUE + PAGINATION ────────────────
-    const ITEMS_PER_PAGE = 10;
+    const ITEMS_PER_PAGE = 8;
     let _allProducts     = [];
     let _filtered        = [];
     let _currentPage     = 1;
@@ -740,7 +741,6 @@
     loadCatalog();
   </script>
 
-  <script src="js/catalog.js"></script>
   <script src="js/sidebar.js"></script>
 </body>
 </html>
