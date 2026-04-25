@@ -1,4 +1,13 @@
 {
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "ALLOWALL" },
+        { "key": "Content-Security-Policy", "value": "frame-ancestors *" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/api/tags", "destination": "/api/categories?_route=tags" },
     { "source": "/api/coupons/validate", "destination": "/api/coupons?_route=validate" },
