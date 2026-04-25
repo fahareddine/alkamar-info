@@ -1,1 +1,510 @@
-<!DOCTYPE html><html lang="fr"><head>  <meta charset="UTF-8">  <meta name="viewport" content="width=device-width, initial-scale=1.0">  <title>La Boutique — Boutique Informatique en ligne</title>  <meta name="description" content="La Boutique, votre boutique informatique en ligne. Ordinateurs, composants, périphériques, réseau, stockage. Livraison rapide, prix compétitifs.">  <link rel="icon" href="/favicon.svg" type="image/svg+xml">  <link rel="stylesheet" href="style.css"></head><body>  <!-- ── TOPBAR ─────────────────────────────────────── -->  <div class="topbar">    <div class="topbar__inner">      <span>📦 Livraison gratuite dès 150 € d'achat · Retrait en boutique disponible</span>      <div class="topbar__links">        <a href="https://info-experts.fr/booking.html">Mon compte</a>        <a href="https://wa.me/33667491345?text=Bonjour%2C+je+voudrais+suivre+ma+commande">Mes commandes</a>        <a href="https://info-experts.fr/#formulaire">Aide &amp; Contact</a>        <a href="tel:+26933127222">+269 331 27 22</a>      </div>    </div>  </div>  <!-- ── HEADER ─────────────────────────────────────── -->  <header class="header">    <div class="header__inner">      <!-- Logo -->      <a href="index.html" class="logo">        <div class="logo__icon">B</div>        <span class="logo__text">La <span>Boutique</span></span>      </a>      <!-- Barre de recherche -->      <div class="search-bar">        <select class="search-bar__select" aria-label="Catégorie">          <option>Toutes catégories</option>          <option>Ordinateurs</option>          <option>Composants</option>          <option>Périphériques</option>          <option>Réseau</option>          <option>Stockage</option>          <option>Écrans</option>          <option>Smartphones</option>        </select>        <input class="search-bar__input" type="text" placeholder="Rechercher un produit, une marque…" id="search-input">        <button class="search-bar__btn" aria-label="Rechercher" onclick="doSearch()">          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>          </svg>        </button>      </div>      <!-- Actions -->      <div class="header__actions">                <a href="#" class="header__action">          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>          </svg>          <span>Favoris</span>        </a>        <a href="#" class="header__action">          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>          </svg>          <span>Panier</span>          <span class="cart-badge">0</span>        </a>        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>      </div>    </div>  </header>  <script src="js/nav.js"></script>  <!-- ── BANNIÈRE PROMO ──────────────────────────────── -->  <div class="promo-banner">    <div class="promo-banner__inner">      <div>        <span class="promo-banner__tag">⚡ Ventes Flash</span>        <h1 class="promo-banner__title">Boutique <span>Informatique</span></h1>        <p class="promo-banner__sub">Matériel neuf &amp; reconditionné · Paiement sécurisé · Livraison rapide</p>      </div>      <a href="#produits" class="promo-banner__cta">        Voir tous les produits        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5-5 5M6 12h12"/>        </svg>      </a>    </div>  </div>  <!-- ── FIL D'ARIANE ───────────────────────────────── -->  <nav class="breadcrumb" aria-label="Fil d'Ariane">    <a href="index.html">Accueil</a>    <span class="sep">›</span>    <span>Boutique</span>  </nav>  <!-- ── LAYOUT : SIDEBAR + PRODUITS ───────────────── -->  <div class="page-layout" id="produits">    <!-- SIDEBAR -->    <aside class="sidebar">      <!-- Catégories -->      <div class="sidebar-block">        <div class="sidebar-block__title">Catégories</div>        <div class="sidebar-block__body">          <a class="filter-cat active" href="#" onclick="filterCat(event,'all')">Tous les produits <span class="filter-cat__count">24</span></a>          <a class="filter-cat" href="#" onclick="filterCat(event,'ordinateurs')">Ordinateurs <span class="filter-cat__count">6</span></a>          <a class="filter-cat" href="#" onclick="filterCat(event,'composants')">Composants <span class="filter-cat__count">4</span></a>          <a class="filter-cat" href="#" onclick="filterCat(event,'peripheriques')">Périphériques <span class="filter-cat__count">5</span></a>          <a class="filter-cat" href="#" onclick="filterCat(event,'reseau')">Réseau <span class="filter-cat__count">4</span></a>          <a class="filter-cat" href="#" onclick="filterCat(event,'stockage')">Stockage <span class="filter-cat__count">5</span></a>        </div>      </div>      <!-- Prix -->      <div class="sidebar-block">        <div class="sidebar-block__title">Prix</div>        <div class="sidebar-block__body">          <div class="filter-price">            <label>Budget maximum : <strong id="price-val">1 500 €</strong></label>            <input type="range" min="0" max="3000" value="1500" step="50" oninput="document.getElementById('price-val').textContent=this.value+' €'">            <div class="filter-price__vals"><span>0 €</span><span>3 000 €</span></div>          </div>        </div>      </div>      <!-- État -->      <div class="sidebar-block">        <div class="sidebar-block__title">État</div>        <div class="sidebar-block__body">          <div class="filter-check"><label><input type="checkbox" checked> Neuf</label></div>          <div class="filter-check"><label><input type="checkbox"> Reconditionné Grade A</label></div>          <div class="filter-check"><label><input type="checkbox"> Reconditionné Grade B</label></div>        </div>      </div>      <!-- Marques -->      <div class="sidebar-block">        <div class="sidebar-block__title">Marques</div>        <div class="sidebar-block__body">          <label class="filter-brand"><input type="checkbox"> Apple</label>          <label class="filter-brand"><input type="checkbox"> Asus</label>          <label class="filter-brand"><input type="checkbox"> Dell</label>          <label class="filter-brand"><input type="checkbox"> HP</label>          <label class="filter-brand"><input type="checkbox"> Lenovo</label>          <label class="filter-brand"><input type="checkbox"> Samsung</label>          <label class="filter-brand"><input type="checkbox"> TP-Link</label>          <label class="filter-brand"><input type="checkbox"> APC</label>          <label class="filter-brand"><input type="checkbox"> Belkin</label>        </div>      </div>      <!-- Stock -->      <div class="sidebar-block">        <div class="sidebar-block__title">Disponibilité</div>        <div class="sidebar-block__body">          <div class="filter-check"><label><input type="checkbox" checked> En stock</label></div>          <div class="filter-check"><label><input type="checkbox"> Stock limité</label></div>          <div class="filter-check"><label><input type="checkbox"> Sur commande</label></div>        </div>      </div>    </aside>    <!-- ZONE PRODUITS -->    <div class="products-zone">      <!-- Toolbar -->      <div class="products-toolbar">        <div class="products-toolbar__count"><strong id="product-count">24</strong> produits trouvés</div>        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">          <div class="toolbar-sort">            <label>Trier par :</label>            <select>              <option>Pertinence</option>              <option>Prix croissant</option>              <option>Prix décroissant</option>              <option>Nouveautés</option>              <option>Meilleures ventes</option>            </select>          </div>          <div class="toolbar-view">            <button class="view-btn active" title="Grille">              <svg fill="currentColor" viewBox="0 0 16 16" width="14" height="14"><path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3a1.5 1.5 0 011.5 1.5v3a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 019 13.5v-3z"/></svg>            </button>            <button class="view-btn" title="Liste">              <svg fill="currentColor" viewBox="0 0 16 16" width="14" height="14"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/></svg>            </button>          </div>        </div>      </div>      <!-- GRILLE PRODUITS -->      <div class="products-grid" id="products-grid">        <!-- Produits dynamiques Supabase -->        <div id="loading-state" style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6b7280;font-size:14px">          Chargement des produits…        </div>      </div><!-- /products-grid -->      <!-- Pagination -->      <div class="pagination">        <button class="page-btn prev">← Précédent</button>        <button class="page-btn active">1</button>        <button class="page-btn">2</button>        <button class="page-btn">3</button>        <button class="page-btn">4</button>        <button class="page-btn">5</button>        <button class="page-btn next">Suivant →</button>      </div>    </div><!-- /products-zone -->  </div><!-- /page-layout -->  <!-- ── RÉASSURANCE ────────────────────────────────── -->  <div class="reassurance">    <div class="reassurance__inner">      <div class="reassurance-item">        <div class="reassurance-item__icon">🚚</div>        <div>          <div class="reassurance-item__title">Livraison rapide</div>          <div class="reassurance-item__text">Gratuite dès 150 €. Expédition sous 24h en stock.</div>        </div>      </div>      <div class="reassurance-item">        <div class="reassurance-item__icon">🔒</div>        <div>          <div class="reassurance-item__title">Paiement sécurisé</div>          <div class="reassurance-item__text">CB, virement, mobile money. Données chiffrées SSL.</div>        </div>      </div>      <div class="reassurance-item">        <div class="reassurance-item__icon">🛡️</div>        <div>          <div class="reassurance-item__title">Garantie 6 à 24 mois</div>          <div class="reassurance-item__text">Tous produits reconditionnés testés et certifiés Grade A.</div>        </div>      </div>      <div class="reassurance-item">        <div class="reassurance-item__icon">↩️</div>        <div>          <div class="reassurance-item__title">Retour 14 jours</div>          <div class="reassurance-item__text">Satisfait ou remboursé. Retour simple et sans frais.</div>        </div>      </div>      <div class="reassurance-item">        <div class="reassurance-item__icon">💬</div>        <div>          <div class="reassurance-item__title">Support expert</div>          <div class="reassurance-item__text">Réponse en moins de 15 min par WhatsApp ou téléphone.</div>        </div>      </div>    </div>  </div>  <!-- ── FOOTER ─────────────────────────────────────── -->  <footer class="footer">    <div class="footer__inner">      <div>        <div class="footer-brand">La <span>Boutique</span></div>        <p class="footer-desc">Votre spécialiste en matériel informatique neuf et reconditionné. Qualité garantie, prix compétitifs, service expert.</p>        <div class="footer-contact">          <a href="tel:+26933127222">            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>            +269 331 27 22          </a>          <a href="mailto:contact@info-experts.fr">            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>            contact@info-experts.fr          </a>        </div>      </div>      <div>        <div class="footer-col__title">Catégories</div>        <div class="footer-col__links">          <a href="ordinateurs.html?tab=portables">Ordinateurs portables</a>          <a href="ordinateurs.html?tab=bureau">PC de bureau</a>          <a href="composants.html">Composants</a>          <a href="reseau.html">Réseau & WiFi</a>          <a href="stockage.html">Stockage</a>          <a href="ecrans.html">Écrans</a>        </div>      </div>      <div>        <div class="footer-col__title">Services</div>        <div class="footer-col__links">          <a href="ordinateurs.html?tab=reconditiones">Reconditionnement</a>          <a href="services.html">Réparation PC</a>          <a href="services.html">Installation réseau</a>          <a href="services.html">Maintenance</a>          <a href="services.html">Conseil &amp; devis</a>        </div>      </div>      <div>        <div class="footer-col__title">Informations</div>        <div class="footer-col__links">          <a href="https://info-experts.fr/a-propos.html">À propos</a>          <a href="index.html#reassurance">Livraison</a>          <a href="services.html">Retours &amp; garanties</a>          <a href="https://info-experts.fr/boutique">CGV</a>          <a href="https://info-experts.fr">Mentions légales</a>          <a href="https://info-experts.fr/#formulaire">Contact</a>        </div>      </div>    </div>    <div class="footer__bottom">      <span>© 2026 La Boutique — Tous droits réservés</span>      <div class="footer__pay">        <span class="pay-icon">CB</span>        <span class="pay-icon">Huri</span>        <span class="pay-icon">MVola</span>        <span class="pay-icon">Virement</span>      </div>    </div>  </footer>  <!-- ── PANIER NOTIFICATION ─────────────────────── -->  <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;animation:slideIn .3s ease">    ✅ Produit ajouté au panier  </div>  <style>    @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }  </style>  <script src="js/catalog.js"></script>  <script>    // Filtre catégories sidebar    function filterCat(e, cat) {      e.preventDefault();      document.querySelectorAll('.filter-cat').forEach(el => el.classList.remove('active'));      e.currentTarget.classList.add('active');      const cards = document.querySelectorAll('.product-card');      let count = 0;      cards.forEach(card => {        const show = cat === 'all' || card.dataset.cat === cat;        card.style.display = show ? 'flex' : 'none';        if (show) count++;      });      document.getElementById('product-count').textContent = count;    }    // Panier    let cartCount = 0;    function addToCart(btn) {      cartCount++;      document.querySelector('.cart-badge').textContent = cartCount;      const notif = document.getElementById('cart-notif');      notif.style.display = 'flex';      setTimeout(() => { notif.style.display = 'none'; }, 2500);    }    // Recherche    function doSearch() {      const q = document.getElementById('search-input').value.toLowerCase().trim();      if (!q) return;      document.querySelectorAll('.product-card').forEach(card => {        const title = card.querySelector('.card-title').textContent.toLowerCase();        card.style.display = title.includes(q) ? 'flex' : 'none';      });    }    document.getElementById('search-input').addEventListener('keydown', e => {      if (e.key === 'Enter') doSearch();    });    // Favoris toggle    document.querySelectorAll('.card-wishlist').forEach(btn => {      btn.addEventListener('click', function() {        this.textContent = this.textContent === '♡' ? '♥' : '♡';        this.style.color = this.textContent === '♥' ? '#ef4444' : '';        this.style.borderColor = this.textContent === '♥' ? '#ef4444' : '';      });    });    // Quick cats actif    document.querySelectorAll('.quick-cat').forEach(cat => {      cat.addEventListener('click', function(e) {        if (this.getAttribute('href') === '#') e.preventDefault();        document.querySelectorAll('.quick-cat').forEach(c => c.classList.remove('active'));        this.classList.add('active');      });    });    // ── CATALOGUE DYNAMIQUE + PAGINATION ────────────────    const ITEMS_PER_PAGE = 8;    let _allProducts     = [];    let _filtered        = [];    let _currentPage     = 1;    let _activeCat       = 'all';    let _searchQuery     = '';    const grid     = document.getElementById('products-grid');    const countEl  = document.getElementById('product-count');    async function loadCatalog() {      try {        const res = await fetch('/api/products?status=active&limit=500');        _allProducts = res.ok ? (await res.json()) : [];      } catch(e) { _allProducts = []; }      const loading = document.getElementById('loading-state');      if (loading) loading.remove();      applyFiltersAndRender();    }    function applyFiltersAndRender() {      _filtered = _allProducts.filter(p => {        const txt  = ((p.name||'')+(p.description||'')+(p.brand||'')).toLowerCase();        const cat  = (p.subcategory||p.category||'').toLowerCase();        const matchQ = !_searchQuery || txt.includes(_searchQuery);        const matchC = _activeCat === 'all' || cat.includes(_activeCat);        return matchQ && matchC;      });      if (countEl) countEl.textContent = _filtered.length;      _currentPage = 1;      renderPage();      renderPagination();    }    function renderPage() {      if (!grid) return;      const start = (_currentPage - 1) * ITEMS_PER_PAGE;      const items = _filtered.slice(start, start + ITEMS_PER_PAGE);      if (!items.length) {        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6b7280">Aucun produit trouvé.</div>';        return;      }      grid.innerHTML = items.map(p => CATALOG.productCard(p)).join('');      // Réattache favoris      grid.querySelectorAll('.card-wishlist').forEach(btn => {        btn.addEventListener('click', function() {          this.textContent = this.textContent === '♡' ? '♥' : '♡';          this.style.color = this.textContent === '♥' ? '#ef4444' : '';        });      });    }    function renderPagination() {      const container = document.querySelector('.pagination');      if (!container) return;      const pages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));      container.innerHTML = '';      const prev = document.createElement('button');      prev.className = 'page-btn prev';      prev.textContent = '← Précédent';      prev.disabled = _currentPage === 1;      prev.style.opacity = _currentPage === 1 ? '.4' : '1';      prev.onclick = () => goToPage(_currentPage - 1);      container.appendChild(prev);      for (let i = 1; i <= pages; i++) {        const btn = document.createElement('button');        btn.className = 'page-btn' + (i === _currentPage ? ' active' : '');        btn.textContent = i;        btn.onclick = () => goToPage(i);        container.appendChild(btn);      }      const next = document.createElement('button');      next.className = 'page-btn next';      next.textContent = 'Suivant →';      next.disabled = _currentPage >= pages;      next.style.opacity = _currentPage >= pages ? '.4' : '1';      next.onclick = () => goToPage(_currentPage + 1);      container.appendChild(next);    }    function goToPage(p) {      const pages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));      if (p < 1 || p > pages) return;      _currentPage = p;      renderPage();      renderPagination();      document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth', block: 'start' });    }    // Override filterCat pour catalogue dynamique    filterCat = function(e, cat) {      e && e.preventDefault();      document.querySelectorAll('.filter-cat').forEach(el => el.classList.remove('active'));      if (e) e.currentTarget.classList.add('active');      _activeCat = cat;      applyFiltersAndRender();    };    // Override doSearch    doSearch = function() {      _searchQuery = (document.getElementById('search-input').value || '').toLowerCase().trim();      applyFiltersAndRender();    };    document.getElementById('search-input').addEventListener('keydown', e => {      if (e.key === 'Enter') doSearch();    });    // Lance le chargement    loadCatalog();  </script>  <script src="js/sidebar.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Boutique — Boutique Informatique en ligne</title>
+  <meta name="description" content="La Boutique, votre boutique informatique en ligne. Ordinateurs, composants, périphériques, réseau, stockage. Livraison rapide, prix compétitifs.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ── TOPBAR ─────────────────────────────────────── -->
+  <div class="topbar">
+    <div class="topbar__inner">
+      <span>📦 Livraison gratuite dès 150 € d'achat · Retrait en boutique disponible</span>
+      <div class="topbar__links">
+        <a href="https://info-experts.fr/booking.html">Mon compte</a>
+        <a href="https://wa.me/33667491345?text=Bonjour%2C+je+voudrais+suivre+ma+commande">Mes commandes</a>
+        <a href="https://info-experts.fr/#formulaire">Aide &amp; Contact</a>
+        <a href="tel:+26933127222">+269 331 27 22</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── HEADER ─────────────────────────────────────── -->
+  <header class="header">
+    <div class="header__inner">
+
+      <!-- Logo -->
+      <a href="index.html" class="logo">
+        <div class="logo__icon">B</div>
+        <span class="logo__text">La <span>Boutique</span></span>
+      </a>
+
+      <!-- Barre de recherche -->
+      <div class="search-bar">
+        <select class="search-bar__select" aria-label="Catégorie">
+          <option>Toutes catégories</option>
+          <option>Ordinateurs</option>
+          <option>Composants</option>
+          <option>Périphériques</option>
+          <option>Réseau</option>
+          <option>Stockage</option>
+          <option>Écrans</option>
+          <option>Smartphones</option>
+        </select>
+        <input class="search-bar__input" type="text" placeholder="Rechercher un produit, une marque…" id="search-input">
+        <button class="search-bar__btn" aria-label="Rechercher" onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Actions -->
+      <div class="header__actions">
+        
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+          </svg>
+          <span>Favoris</span>
+        </a>
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+          <span>Panier</span>
+          <span class="cart-badge">0</span>
+        </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
+      </div>
+
+    </div>
+  </header>
+
+  <script src="js/nav.js"></script>
+
+  <!-- ── BANNIÈRE PROMO ──────────────────────────────── -->
+  <div class="promo-banner">
+    <div class="promo-banner__inner">
+      <div>
+        <span class="promo-banner__tag">⚡ Ventes Flash</span>
+        <h1 class="promo-banner__title">Boutique <span>Informatique</span></h1>
+        <p class="promo-banner__sub">Matériel neuf &amp; reconditionné · Paiement sécurisé · Livraison rapide</p>
+      </div>
+      <a href="#produits" class="promo-banner__cta">
+        Voir tous les produits
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5-5 5M6 12h12"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- ── FIL D'ARIANE ───────────────────────────────── -->
+  <nav class="breadcrumb" aria-label="Fil d'Ariane">
+    <a href="index.html">Accueil</a>
+    <span class="sep">›</span>
+    <span>Boutique</span>
+  </nav>
+
+  <!-- ── LAYOUT : SIDEBAR + PRODUITS ───────────────── -->
+  <div class="page-layout" id="produits">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- Catégories -->
+      <div class="sidebar-block">
+        <div class="sidebar-block__title">Catégories</div>
+        <div class="sidebar-block__body">
+          <a class="filter-cat active" href="#" onclick="filterCat(event,'all')">Tous les produits <span class="filter-cat__count">24</span></a>
+          <a class="filter-cat" href="#" onclick="filterCat(event,'ordinateurs')">Ordinateurs <span class="filter-cat__count">6</span></a>
+          <a class="filter-cat" href="#" onclick="filterCat(event,'composants')">Composants <span class="filter-cat__count">4</span></a>
+          <a class="filter-cat" href="#" onclick="filterCat(event,'peripheriques')">Périphériques <span class="filter-cat__count">5</span></a>
+          <a class="filter-cat" href="#" onclick="filterCat(event,'reseau')">Réseau <span class="filter-cat__count">4</span></a>
+          <a class="filter-cat" href="#" onclick="filterCat(event,'stockage')">Stockage <span class="filter-cat__count">5</span></a>
+        </div>
+      </div>
+
+      <!-- Prix -->
+      <div class="sidebar-block">
+        <div class="sidebar-block__title">Prix</div>
+        <div class="sidebar-block__body">
+          <div class="filter-price">
+            <label>Budget maximum : <strong id="price-val">1 500 €</strong></label>
+            <input type="range" min="0" max="3000" value="1500" step="50" oninput="document.getElementById('price-val').textContent=this.value+' €'">
+            <div class="filter-price__vals"><span>0 €</span><span>3 000 €</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- État -->
+      <div class="sidebar-block">
+        <div class="sidebar-block__title">État</div>
+        <div class="sidebar-block__body">
+          <div class="filter-check"><label><input type="checkbox" checked> Neuf</label></div>
+          <div class="filter-check"><label><input type="checkbox"> Reconditionné Grade A</label></div>
+          <div class="filter-check"><label><input type="checkbox"> Reconditionné Grade B</label></div>
+        </div>
+      </div>
+
+      <!-- Marques -->
+      <div class="sidebar-block">
+        <div class="sidebar-block__title">Marques</div>
+        <div class="sidebar-block__body">
+          <label class="filter-brand"><input type="checkbox"> Apple</label>
+          <label class="filter-brand"><input type="checkbox"> Asus</label>
+          <label class="filter-brand"><input type="checkbox"> Dell</label>
+          <label class="filter-brand"><input type="checkbox"> HP</label>
+          <label class="filter-brand"><input type="checkbox"> Lenovo</label>
+          <label class="filter-brand"><input type="checkbox"> Samsung</label>
+          <label class="filter-brand"><input type="checkbox"> TP-Link</label>
+          <label class="filter-brand"><input type="checkbox"> APC</label>
+          <label class="filter-brand"><input type="checkbox"> Belkin</label>
+        </div>
+      </div>
+
+      <!-- Stock -->
+      <div class="sidebar-block">
+        <div class="sidebar-block__title">Disponibilité</div>
+        <div class="sidebar-block__body">
+          <div class="filter-check"><label><input type="checkbox" checked> En stock</label></div>
+          <div class="filter-check"><label><input type="checkbox"> Stock limité</label></div>
+          <div class="filter-check"><label><input type="checkbox"> Sur commande</label></div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- ZONE PRODUITS -->
+    <div class="products-zone">
+
+      <!-- Toolbar -->
+      <div class="products-toolbar">
+        <div class="products-toolbar__count"><strong id="product-count">24</strong> produits trouvés</div>
+        <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+          <div class="toolbar-sort">
+            <label>Trier par :</label>
+            <select>
+              <option>Pertinence</option>
+              <option>Prix croissant</option>
+              <option>Prix décroissant</option>
+              <option>Nouveautés</option>
+              <option>Meilleures ventes</option>
+            </select>
+          </div>
+          <div class="toolbar-view">
+            <button class="view-btn active" title="Grille">
+              <svg fill="currentColor" viewBox="0 0 16 16" width="14" height="14"><path d="M1 2.5A1.5 1.5 0 012.5 1h3A1.5 1.5 0 017 2.5v3A1.5 1.5 0 015.5 7h-3A1.5 1.5 0 011 5.5v-3zm8 0A1.5 1.5 0 0110.5 1h3A1.5 1.5 0 0115 2.5v3A1.5 1.5 0 0113.5 7h-3A1.5 1.5 0 019 5.5v-3zm-8 8A1.5 1.5 0 012.5 9h3A1.5 1.5 0 017 10.5v3A1.5 1.5 0 015.5 15h-3A1.5 1.5 0 011 13.5v-3zm8 0A1.5 1.5 0 0110.5 9h3a1.5 1.5 0 011.5 1.5v3a1.5 1.5 0 01-1.5 1.5h-3A1.5 1.5 0 019 13.5v-3z"/></svg>
+            </button>
+            <button class="view-btn" title="Liste">
+              <svg fill="currentColor" viewBox="0 0 16 16" width="14" height="14"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRILLE PRODUITS -->
+      <div class="products-grid" id="products-grid">
+
+        <!-- Produits dynamiques Supabase -->
+        <div id="loading-state" style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6b7280;font-size:14px">
+          Chargement des produits…
+        </div>
+      </div><!-- /products-grid -->
+
+      <!-- Pagination -->
+      <div class="pagination">
+        <button class="page-btn prev">← Précédent</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">4</button>
+        <button class="page-btn">5</button>
+        <button class="page-btn next">Suivant →</button>
+      </div>
+
+    </div><!-- /products-zone -->
+  </div><!-- /page-layout -->
+
+  <!-- ── RÉASSURANCE ────────────────────────────────── -->
+  <div class="reassurance">
+    <div class="reassurance__inner">
+      <div class="reassurance-item">
+        <div class="reassurance-item__icon">🚚</div>
+        <div>
+          <div class="reassurance-item__title">Livraison rapide</div>
+          <div class="reassurance-item__text">Gratuite dès 150 €. Expédition sous 24h en stock.</div>
+        </div>
+      </div>
+      <div class="reassurance-item">
+        <div class="reassurance-item__icon">🔒</div>
+        <div>
+          <div class="reassurance-item__title">Paiement sécurisé</div>
+          <div class="reassurance-item__text">CB, virement, mobile money. Données chiffrées SSL.</div>
+        </div>
+      </div>
+      <div class="reassurance-item">
+        <div class="reassurance-item__icon">🛡️</div>
+        <div>
+          <div class="reassurance-item__title">Garantie 6 à 24 mois</div>
+          <div class="reassurance-item__text">Tous produits reconditionnés testés et certifiés Grade A.</div>
+        </div>
+      </div>
+      <div class="reassurance-item">
+        <div class="reassurance-item__icon">↩️</div>
+        <div>
+          <div class="reassurance-item__title">Retour 14 jours</div>
+          <div class="reassurance-item__text">Satisfait ou remboursé. Retour simple et sans frais.</div>
+        </div>
+      </div>
+      <div class="reassurance-item">
+        <div class="reassurance-item__icon">💬</div>
+        <div>
+          <div class="reassurance-item__title">Support expert</div>
+          <div class="reassurance-item__text">Réponse en moins de 15 min par WhatsApp ou téléphone.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ─────────────────────────────────────── -->
+  <footer class="footer">
+    <div class="footer__inner">
+      <div>
+        <div class="footer-brand">La <span>Boutique</span></div>
+        <p class="footer-desc">Votre spécialiste en matériel informatique neuf et reconditionné. Qualité garantie, prix compétitifs, service expert.</p>
+        <div class="footer-contact">
+          <a href="tel:+26933127222">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.948V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            +269 331 27 22
+          </a>
+          <a href="mailto:contact@info-experts.fr">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            contact@info-experts.fr
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col__title">Catégories</div>
+        <div class="footer-col__links">
+          <a href="ordinateurs.html?tab=portables">Ordinateurs portables</a>
+          <a href="ordinateurs.html?tab=bureau">PC de bureau</a>
+          <a href="composants.html">Composants</a>
+          <a href="reseau.html">Réseau & WiFi</a>
+          <a href="stockage.html">Stockage</a>
+          <a href="ecrans.html">Écrans</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col__title">Services</div>
+        <div class="footer-col__links">
+          <a href="ordinateurs.html?tab=reconditiones">Reconditionnement</a>
+          <a href="services.html">Réparation PC</a>
+          <a href="services.html">Installation réseau</a>
+          <a href="services.html">Maintenance</a>
+          <a href="services.html">Conseil &amp; devis</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-col__title">Informations</div>
+        <div class="footer-col__links">
+          <a href="https://info-experts.fr/a-propos.html">À propos</a>
+          <a href="index.html#reassurance">Livraison</a>
+          <a href="services.html">Retours &amp; garanties</a>
+          <a href="https://info-experts.fr/boutique">CGV</a>
+          <a href="https://info-experts.fr">Mentions légales</a>
+          <a href="https://info-experts.fr/#formulaire">Contact</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom">
+      <span>© 2026 La Boutique — Tous droits réservés</span>
+      <div class="footer__pay">
+        <span class="pay-icon">CB</span>
+        <span class="pay-icon">Huri</span>
+        <span class="pay-icon">MVola</span>
+        <span class="pay-icon">Virement</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ── PANIER NOTIFICATION ─────────────────────── -->
+  <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999;animation:slideIn .3s ease">
+    ✅ Produit ajouté au panier
+  </div>
+
+  <style>
+    @keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  </style>
+
+  <script src="js/catalog.js"></script>
+  <script>
+    // Filtre catégories sidebar
+    function filterCat(e, cat) {
+      e.preventDefault();
+      document.querySelectorAll('.filter-cat').forEach(el => el.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      const cards = document.querySelectorAll('.product-card');
+      let count = 0;
+      cards.forEach(card => {
+        const show = cat === 'all' || card.dataset.cat === cat;
+        card.style.display = show ? 'flex' : 'none';
+        if (show) count++;
+      });
+      document.getElementById('product-count').textContent = count;
+    }
+
+    // Panier
+    let cartCount = 0;
+    function addToCart(btn) {
+      cartCount++;
+      document.querySelector('.cart-badge').textContent = cartCount;
+      const notif = document.getElementById('cart-notif');
+      notif.style.display = 'flex';
+      setTimeout(() => { notif.style.display = 'none'; }, 2500);
+    }
+
+    // Recherche
+    function doSearch() {
+      const q = document.getElementById('search-input').value.toLowerCase().trim();
+      if (!q) return;
+      document.querySelectorAll('.product-card').forEach(card => {
+        const title = card.querySelector('.card-title').textContent.toLowerCase();
+        card.style.display = title.includes(q) ? 'flex' : 'none';
+      });
+    }
+    document.getElementById('search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+
+    // Favoris toggle
+    document.querySelectorAll('.card-wishlist').forEach(btn => {
+      btn.addEventListener('click', function() {
+        this.textContent = this.textContent === '♡' ? '♥' : '♡';
+        this.style.color = this.textContent === '♥' ? '#ef4444' : '';
+        this.style.borderColor = this.textContent === '♥' ? '#ef4444' : '';
+      });
+    });
+
+    // Quick cats actif
+    document.querySelectorAll('.quick-cat').forEach(cat => {
+      cat.addEventListener('click', function(e) {
+        if (this.getAttribute('href') === '#') e.preventDefault();
+        document.querySelectorAll('.quick-cat').forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+
+    // ── CATALOGUE DYNAMIQUE + PAGINATION ────────────────
+    const ITEMS_PER_PAGE = 8;
+    let _allProducts     = [];
+    let _filtered        = [];
+    let _currentPage     = 1;
+    let _activeCat       = 'all';
+    let _searchQuery     = '';
+
+    const grid     = document.getElementById('products-grid');
+    const countEl  = document.getElementById('product-count');
+
+    async function loadCatalog() {
+      try {
+        const res = await fetch('/api/products?status=active&limit=500');
+        _allProducts = res.ok ? (await res.json()) : [];
+      } catch(e) { _allProducts = []; }
+      const loading = document.getElementById('loading-state');
+      if (loading) loading.remove();
+      applyFiltersAndRender();
+    }
+
+    function applyFiltersAndRender() {
+      _filtered = _allProducts.filter(p => {
+        const txt  = ((p.name||'')+(p.description||'')+(p.brand||'')).toLowerCase();
+        const cat  = (p.subcategory||p.category||'').toLowerCase();
+        const matchQ = !_searchQuery || txt.includes(_searchQuery);
+        const matchC = _activeCat === 'all' || cat.includes(_activeCat);
+        return matchQ && matchC;
+      });
+      if (countEl) countEl.textContent = _filtered.length;
+      _currentPage = 1;
+      renderPage();
+      renderPagination();
+    }
+
+    function renderPage() {
+      if (!grid) return;
+      const start = (_currentPage - 1) * ITEMS_PER_PAGE;
+      const items = _filtered.slice(start, start + ITEMS_PER_PAGE);
+      if (!items.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6b7280">Aucun produit trouvé.</div>';
+        return;
+      }
+      grid.innerHTML = items.map(p => CATALOG.productCard(p)).join('');
+      // Réattache favoris
+      grid.querySelectorAll('.card-wishlist').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.textContent = this.textContent === '♡' ? '♥' : '♡';
+          this.style.color = this.textContent === '♥' ? '#ef4444' : '';
+        });
+      });
+    }
+
+    function renderPagination() {
+      const container = document.querySelector('.pagination');
+      if (!container) return;
+      const pages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));
+      container.innerHTML = '';
+
+      const prev = document.createElement('button');
+      prev.className = 'page-btn prev';
+      prev.textContent = '← Précédent';
+      prev.disabled = _currentPage === 1;
+      prev.style.opacity = _currentPage === 1 ? '.4' : '1';
+      prev.onclick = () => goToPage(_currentPage - 1);
+      container.appendChild(prev);
+
+      for (let i = 1; i <= pages; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === _currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.onclick = () => goToPage(i);
+        container.appendChild(btn);
+      }
+
+      const next = document.createElement('button');
+      next.className = 'page-btn next';
+      next.textContent = 'Suivant →';
+      next.disabled = _currentPage >= pages;
+      next.style.opacity = _currentPage >= pages ? '.4' : '1';
+      next.onclick = () => goToPage(_currentPage + 1);
+      container.appendChild(next);
+    }
+
+    function goToPage(p) {
+      const pages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));
+      if (p < 1 || p > pages) return;
+      _currentPage = p;
+      renderPage();
+      renderPagination();
+      document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    // Override filterCat pour catalogue dynamique
+    filterCat = function(e, cat) {
+      e && e.preventDefault();
+      document.querySelectorAll('.filter-cat').forEach(el => el.classList.remove('active'));
+      if (e) e.currentTarget.classList.add('active');
+      _activeCat = cat;
+      applyFiltersAndRender();
+    };
+
+    // Override doSearch
+    doSearch = function() {
+      _searchQuery = (document.getElementById('search-input').value || '').toLowerCase().trim();
+      applyFiltersAndRender();
+    };
+    document.getElementById('search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+
+    // Lance le chargement
+    loadCatalog();
+  </script>
+
+  <script src="js/sidebar.js"></script>
+</body>
+</html>
