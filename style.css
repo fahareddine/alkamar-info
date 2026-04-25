@@ -38,6 +38,12 @@ body {
 }
 
 a { text-decoration: none; color: inherit; }
+
+/* ── Mode embed (iframe info-experts) ── */
+html.is-embedded .topbar,
+html.is-embedded .header,
+html.is-embedded .nav-bar,
+html.is-embedded .quick-cats { display: none !important; }
 img { display: block; max-width: 100%; }
 button { font-family: inherit; cursor: pointer; }
 ul { list-style: none; }

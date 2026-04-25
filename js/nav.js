@@ -145,6 +145,12 @@
     </div>
   </div>`;
 
+  /* ── Mode embed (iframe depuis info-experts) ── */
+  if (window.self !== window.top) {
+    document.documentElement.classList.add('is-embedded');
+    return; // ne pas injecter nav/quick-cats dans l'iframe
+  }
+
   /* ── Injection du nav ── */
   if (!document.getElementById('main-nav')) {
     const header = document.querySelector('.header');
