@@ -201,7 +201,10 @@
       <!-- GRILLE PRODUITS -->
       <div class="products-grid" id="products-grid">
 
-        <!-- Produit 1 -->
+        <!-- Produits dynamiques Supabase -->
+        <div id="loading-state" style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6b7280;font-size:14px">
+          Chargement des produits…
+        </div>
         <div class="product-card" data-cat="ordinateurs">
           <div class="card-badges">
             <span class="badge badge--new">Nouveau</span>
@@ -438,17 +441,6 @@
               <span class="price-main">50<span class="price-cents">,00 €</span></span>
               <div class="price-ttc">Prix TTC</div>
             </div>
-            <div class="card-stock in-stock">En stock</div>
-          </div>
-          <div class="card-footer">
-            <button class="btn-cart" onclick="addToCart(this)">
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-              Ajouter au panier
-            </button>
-            <a href="peripheriques.html" class="btn-detail">Voir le détail</a>
-          </div>
-        </div>
-
       </div><!-- /products-grid -->
 
       <!-- Pagination -->
@@ -633,73 +625,122 @@
       });
     });
 
-    // ── PAGINATION ──────────────────────────────────────
-    const ITEMS_PER_PAGE = 6;
-    let currentPage = 1;
+    // ── CATALOGUE DYNAMIQUE + PAGINATION ────────────────
+    const ITEMS_PER_PAGE = 10;
+    let _allProducts     = [];
+    let _filtered        = [];
+    let _currentPage     = 1;
+    let _activeCat       = 'all';
+    let _searchQuery     = '';
 
-    function getVisibleCards() {
-      return [...document.querySelectorAll('.product-card')].filter(c => c.style.display !== 'none' || c.style.display === '');
+    const grid     = document.getElementById('products-grid');
+    const countEl  = document.getElementById('product-count');
+
+    async function loadCatalog() {
+      try {
+        const res = await fetch('/api/products?status=active&limit=500');
+        _allProducts = res.ok ? (await res.json()) : [];
+      } catch(e) { _allProducts = []; }
+      const loading = document.getElementById('loading-state');
+      if (loading) loading.remove();
+      applyFiltersAndRender();
     }
 
-    function getAllCards() {
-      return [...document.querySelectorAll('.product-card')];
+    function applyFiltersAndRender() {
+      _filtered = _allProducts.filter(p => {
+        const txt  = ((p.name||'')+(p.description||'')+(p.brand||'')).toLowerCase();
+        const cat  = (p.subcategory||p.category||'').toLowerCase();
+        const matchQ = !_searchQuery || txt.includes(_searchQuery);
+        const matchC = _activeCat === 'all' || cat.includes(_activeCat);
+        return matchQ && matchC;
+      });
+      if (countEl) countEl.textContent = _filtered.length;
+      _currentPage = 1;
+      renderPage();
+      renderPagination();
+    }
+
+    function renderPage() {
+      if (!grid) return;
+      const start = (_currentPage - 1) * ITEMS_PER_PAGE;
+      const items = _filtered.slice(start, start + ITEMS_PER_PAGE);
+      if (!items.length) {
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6b7280">Aucun produit trouvé.</div>';
+        return;
+      }
+      grid.innerHTML = items.map(p => CATALOG.productCard(p)).join('');
+      // Réattache favoris
+      grid.querySelectorAll('.card-wishlist').forEach(btn => {
+        btn.addEventListener('click', function() {
+          this.textContent = this.textContent === '♡' ? '♥' : '♡';
+          this.style.color = this.textContent === '♥' ? '#ef4444' : '';
+        });
+      });
     }
 
     function renderPagination() {
-      const total = getAllCards().length;
-      const pages = Math.ceil(total / ITEMS_PER_PAGE);
       const container = document.querySelector('.pagination');
       if (!container) return;
-
+      const pages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));
       container.innerHTML = '';
 
-      // Précédent
       const prev = document.createElement('button');
       prev.className = 'page-btn prev';
       prev.textContent = '← Précédent';
-      prev.disabled = currentPage === 1;
-      prev.style.opacity = currentPage === 1 ? '.4' : '1';
-      prev.addEventListener('click', () => goToPage(currentPage - 1));
+      prev.disabled = _currentPage === 1;
+      prev.style.opacity = _currentPage === 1 ? '.4' : '1';
+      prev.onclick = () => goToPage(_currentPage - 1);
       container.appendChild(prev);
 
-      // Numéros
       for (let i = 1; i <= pages; i++) {
         const btn = document.createElement('button');
-        btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        btn.className = 'page-btn' + (i === _currentPage ? ' active' : '');
         btn.textContent = i;
-        btn.addEventListener('click', () => goToPage(i));
+        btn.onclick = () => goToPage(i);
         container.appendChild(btn);
       }
 
-      // Suivant
       const next = document.createElement('button');
       next.className = 'page-btn next';
       next.textContent = 'Suivant →';
-      next.disabled = currentPage === pages;
-      next.style.opacity = currentPage === pages ? '.4' : '1';
-      next.addEventListener('click', () => goToPage(currentPage + 1));
+      next.disabled = _currentPage >= pages;
+      next.style.opacity = _currentPage >= pages ? '.4' : '1';
+      next.onclick = () => goToPage(_currentPage + 1);
       container.appendChild(next);
     }
 
-    function goToPage(page) {
-      const cards = getAllCards();
-      const pages = Math.ceil(cards.length / ITEMS_PER_PAGE);
-      if (page < 1 || page > pages) return;
-      currentPage = page;
-      const start = (page - 1) * ITEMS_PER_PAGE;
-      const end   = start + ITEMS_PER_PAGE;
-      cards.forEach((card, i) => {
-        card.style.display = (i >= start && i < end) ? 'flex' : 'none';
-      });
+    function goToPage(p) {
+      const pages = Math.max(1, Math.ceil(_filtered.length / ITEMS_PER_PAGE));
+      if (p < 1 || p > pages) return;
+      _currentPage = p;
+      renderPage();
       renderPagination();
-      window.scrollTo({ top: document.getElementById('produits')?.offsetTop - 80 || 0, behavior: 'smooth' });
+      document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
-    // Init pagination
-    renderPagination();
-    goToPage(1);
+    // Override filterCat pour catalogue dynamique
+    filterCat = function(e, cat) {
+      e && e.preventDefault();
+      document.querySelectorAll('.filter-cat').forEach(el => el.classList.remove('active'));
+      if (e) e.currentTarget.classList.add('active');
+      _activeCat = cat;
+      applyFiltersAndRender();
+    };
+
+    // Override doSearch
+    doSearch = function() {
+      _searchQuery = (document.getElementById('search-input').value || '').toLowerCase().trim();
+      applyFiltersAndRender();
+    };
+    document.getElementById('search-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') doSearch();
+    });
+
+    // Lance le chargement
+    loadCatalog();
   </script>
 
+  <script src="js/catalog.js"></script>
   <script src="js/sidebar.js"></script>
 </body>
 </html>
