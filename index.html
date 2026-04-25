@@ -632,6 +632,72 @@
         this.classList.add('active');
       });
     });
+
+    // ── PAGINATION ──────────────────────────────────────
+    const ITEMS_PER_PAGE = 6;
+    let currentPage = 1;
+
+    function getVisibleCards() {
+      return [...document.querySelectorAll('.product-card')].filter(c => c.style.display !== 'none' || c.style.display === '');
+    }
+
+    function getAllCards() {
+      return [...document.querySelectorAll('.product-card')];
+    }
+
+    function renderPagination() {
+      const total = getAllCards().length;
+      const pages = Math.ceil(total / ITEMS_PER_PAGE);
+      const container = document.querySelector('.pagination');
+      if (!container) return;
+
+      container.innerHTML = '';
+
+      // Précédent
+      const prev = document.createElement('button');
+      prev.className = 'page-btn prev';
+      prev.textContent = '← Précédent';
+      prev.disabled = currentPage === 1;
+      prev.style.opacity = currentPage === 1 ? '.4' : '1';
+      prev.addEventListener('click', () => goToPage(currentPage - 1));
+      container.appendChild(prev);
+
+      // Numéros
+      for (let i = 1; i <= pages; i++) {
+        const btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === currentPage ? ' active' : '');
+        btn.textContent = i;
+        btn.addEventListener('click', () => goToPage(i));
+        container.appendChild(btn);
+      }
+
+      // Suivant
+      const next = document.createElement('button');
+      next.className = 'page-btn next';
+      next.textContent = 'Suivant →';
+      next.disabled = currentPage === pages;
+      next.style.opacity = currentPage === pages ? '.4' : '1';
+      next.addEventListener('click', () => goToPage(currentPage + 1));
+      container.appendChild(next);
+    }
+
+    function goToPage(page) {
+      const cards = getAllCards();
+      const pages = Math.ceil(cards.length / ITEMS_PER_PAGE);
+      if (page < 1 || page > pages) return;
+      currentPage = page;
+      const start = (page - 1) * ITEMS_PER_PAGE;
+      const end   = start + ITEMS_PER_PAGE;
+      cards.forEach((card, i) => {
+        card.style.display = (i >= start && i < end) ? 'flex' : 'none';
+      });
+      renderPagination();
+      window.scrollTo({ top: document.getElementById('produits')?.offsetTop - 80 || 0, behavior: 'smooth' });
+    }
+
+    // Init pagination
+    renderPagination();
+    goToPage(1);
   </script>
 
   <script src="js/sidebar.js"></script>
