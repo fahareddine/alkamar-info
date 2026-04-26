@@ -437,30 +437,47 @@ ul { list-style: none; }
   transform: translateY(-3px);
 }
 
-/* Badges */
+/* Badges — design premium */
 .card-badges {
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 10px;
+  left: 10px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
   z-index: 2;
 }
 .badge {
+  display: inline-flex;
+  align-items: center;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: .04em;
-  padding: 3px 8px;
-  border-radius: 3px;
+  letter-spacing: .08em;
+  padding: 3px 9px;
+  border-radius: 4px;
   color: #fff;
+  box-shadow: 0 2px 6px rgba(0,0,0,.18);
+  white-space: nowrap;
+  line-height: 1.5;
 }
-.badge--promo   { background: var(--red); }
-.badge--new     { background: var(--primary); }
-.badge--deal    { background: var(--accent); }
-.badge--reco    { background: #8b5cf6; }
-.badge--stock   { background: #059669; }
+
+/* Promo / Soldes — rouge vif */
+.badge--promo     { background: linear-gradient(135deg, #dc2626 0%, #f87171 100%); }
+/* Nouveau produit — vert émeraude */
+.badge--new       { background: linear-gradient(135deg, #059669 0%, #34d399 100%); }
+/* Bestseller / Meilleur choix — ambre chaud */
+.badge--best      { background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%); }
+/* Populaire / Polyvalent — bleu confiance */
+.badge--popular   { background: linear-gradient(135deg, #1d4ed8 0%, #60a5fa 100%); }
+/* Exclusif / Pro / Chiffré — violet premium */
+.badge--exclusive { background: linear-gradient(135deg, #6d28d9 0%, #a78bfa 100%); }
+/* Reconditionné / Grade A — vert forêt */
+.badge--reco      { background: linear-gradient(135deg, #065f46 0%, #10b981 100%); }
+/* Offre / Deal — orange brûlé */
+.badge--deal      { background: linear-gradient(135deg, #9a3412 0%, #f97316 100%); }
+/* En stock / Dispo — vert */
+.badge--stock     { background: linear-gradient(135deg, #047857 0%, #10b981 100%); }
 
 .card-wishlist {
   position: absolute;
