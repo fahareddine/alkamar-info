@@ -456,13 +456,20 @@
 
       const CAT_LABELS = {
         portables: 'PC Portables', bureau: 'PC de Bureau', gaming: 'PC Gaming',
-        toutunun: 'Tout-en-un', reconditiones: 'Reconditionnés', minipc: 'Mini PC'
+        toutunun: 'Tout-en-un', reconditiones: 'Reconditionnés', minipc: 'Mini PC',
+        'ecran-fhd': 'Écrans Full HD', 'ecran-4k': 'Écrans 4K UHD',
+        'ecran-gaming': 'Écrans Gaming', 'ecran-reco': 'Écrans Reconditionnés'
+      };
+      const CAT_PAGES = {
+        'ecran-fhd': 'ecrans.html', 'ecran-4k': 'ecrans.html',
+        'ecran-gaming': 'ecrans.html', 'ecran-reco': 'ecrans.html'
       };
 
       // Breadcrumb — utilise categories.slug renvoyé par l'API
       const catSlug = p.categories?.slug || '';
+      const catPage = CAT_PAGES[catSlug] || 'ordinateurs.html';
       document.title = p.name + ' — Alkamar Info';
-      document.getElementById('bc-cat').innerHTML = `<a href="ordinateurs.html?tab=${catSlug}">${CAT_LABELS[catSlug] || (p.categories?.name || 'Produits')}</a>`;
+      document.getElementById('bc-cat').innerHTML = `<a href="${catPage}?tab=${catSlug}">${CAT_LABELS[catSlug] || (p.categories?.name || 'Produits')}</a>`;
       document.getElementById('bc-product').textContent = p.name;
 
       // Galerie — gallery items can be strings or {src, alt} objects
@@ -520,9 +527,10 @@
         if (p.categories?.name) s['Catégorie'] = p.categories.name;
         return s;
       }
-      const specsHTML = Object.entries(buildSpecs(p)).map(([k,v]) =>
-        `<tr><td>${k}</td><td>${v}</td></tr>`
-      ).join('');
+      const specsHTML = Object.entries(buildSpecs(p))
+        .filter(([k]) => !k.startsWith('_'))
+        .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+        .join('');
 
       // Message WhatsApp
       const waMsg = encodeURIComponent(`Bonjour, je suis intéressé par le produit : ${p.name} (${fmtEur(p.price_eur)} €). Pouvez-vous me donner plus d'informations ?`);
@@ -570,6 +578,11 @@
                 <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.131.558 4.13 1.535 5.862L.057 23.571l5.853-1.535A11.943 11.943 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.001-1.373l-.359-.213-3.476.911.927-3.381-.234-.372A9.818 9.818 0 1112 21.818z"/></svg>
                 Commander via WhatsApp
               </a>
+              ${(p.specs && p.specs._amazon_url) ? `
+              <a href="${p.specs._amazon_url}" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;justify-content:center;gap:10px;padding:11px 24px;background:#ff9900;color:#0f172a;border-radius:8px;font-size:14px;font-weight:700;text-decoration:none;transition:background .15s;font-family:inherit" onmouseover="this.style.background='#e68900'" onmouseout="this.style.background='#ff9900'">
+                <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M13.23 10.56V10c-1.94.02-3.99.25-3.99 2.55 0 1.11.58 1.86 1.57 1.86.73 0 1.38-.45 1.79-1.18.51-.93.63-1.8.63-2.67m1.43 3.46c-.19.17-.46.19-.67.07-.95-.79-1.11-1.15-1.63-1.9-1.56 1.59-2.66 2.07-4.68 2.07-2.39 0-4.24-1.47-4.24-4.42 0-2.3 1.25-3.87 3.02-4.64 1.54-.68 3.69-.8 5.33-.99V4c0-.66.05-1.44-.33-2.01C11.16 1.46 10.44 1 9.71 1c-1.4 0-2.65.72-2.95 2.2-.06.33-.32.65-.65.67L3.84 3.6c-.28-.06-.59-.29-.51-.71C4.12.97 6.78 0 9.16 0c1.21 0 2.8.32 3.76 1.24 1.21 1.14.97 2.67.97 4.33v3.93c0 1.18.49 1.7 1.04 2.33.24.3.3.65-.01.87-.82.68-2.28 1.95-3.19 2.66M20.16 22.5C18.16 24.1 15.27 25 12.74 25 9.09 25 5.8 23.63 3.34 21.36c-.19-.17-.02-.41.21-.28 2.68 1.56 5.99 2.5 9.41 2.5 2.3 0 4.84-.48 7.17-1.47.35-.15.64.23.03.39"/><path d="M21.07 21.51c-.27-.35-1.77-.16-2.44-.08-.21.02-.24-.16-.05-.29 1.2-.84 3.16-.6 3.39-.31.23.28-.06 2.24-1.18 3.17-.17.15-.34.07-.26-.12.25-.63.81-2.02.54-2.37"/></svg>
+                Voir sur Amazon
+              </a>` : ''}
             </div>
 
             <div class="prod-assurances">
