@@ -486,7 +486,7 @@
         })
         .filter(item => { if (!item?.src || _seen.has(item.src)) return false; _seen.add(item.src); return true; });
       const thumbsHTML = galleryItems.map((item, i) =>
-        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${item.src}','${item.alt.replace(/'/g,"\\'")}',this)">
+        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${item.src}','',this)">
           <img src="${item.src}" alt="${item.alt}" loading="lazy">
         </div>`
       ).join('');
