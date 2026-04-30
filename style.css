@@ -35,6 +35,7 @@ body {
   color: var(--text);
   background: var(--light);
   line-height: 1.5;
+  overflow-x: hidden;
 }
 
 a { text-decoration: none; color: inherit; }
@@ -1088,13 +1089,13 @@ ul { list-style: none; }
   }
 
   /* ── Responsive accueil mobile 768px ─── */
-  .promo-banner { padding: 20px 16px; }
+  .promo-banner { padding: 20px 12px; }
   .promo-banner__inner { flex-direction: column; align-items: flex-start; gap: 14px; }
   .promo-banner__cta { width: 100%; justify-content: center; padding: 12px 20px; }
-  .page-layout { padding: 12px 16px; gap: 16px; }
-  .breadcrumb { padding: 0 16px; }
-  .products-toolbar { flex-wrap: wrap; padding: 8px 12px; }
-  .reassurance { padding: 24px 16px; margin-top: 20px; }
+  .page-layout { padding: 8px 4px; gap: 8px; }
+  .breadcrumb { padding: 0 8px; }
+  .products-toolbar { flex-wrap: wrap; padding: 8px 10px; margin-bottom: 8px; }
+  .reassurance { padding: 24px 12px; margin-top: 16px; }
   .reassurance__inner { grid-template-columns: repeat(2, 1fr); gap: 14px; }
 }
 
@@ -1110,8 +1111,8 @@ ul { list-style: none; }
   .products-grid--4 { grid-template-columns: 1fr; }
   /* Topbar : texte tronqué si nécessaire */
   .topbar > .topbar__inner > span { font-size: 11px; }
-  /* Layout */
-  .page-layout { padding: 8px 10px; gap: 10px; }
+  /* Layout bord à bord */
+  .page-layout { padding: 4px 2px; gap: 6px; }
   /* Cartes compactes sur petit écran */
   .card-body { padding: 8px 10px; }
   .card-footer { padding: 6px 10px 10px; }
@@ -1146,8 +1147,8 @@ ul { list-style: none; }
   }
 
   /* Finitions 360px */
-  .products-grid { gap: 6px; }
-  .page-layout { padding: 6px 8px; }
+  .products-grid { gap: 4px; }
+  .page-layout { padding: 2px 0; }
   .card-body { padding: 6px 8px; }
   .card-footer { padding: 4px 8px 8px; }
   .promo-banner { padding: 14px 10px; }
