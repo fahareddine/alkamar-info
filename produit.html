@@ -482,6 +482,19 @@
       document.getElementById('bc-product').textContent = p.name;
 
       // Galerie — gallery items can be strings or {src, alt} objects
+      const _PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 440 330">' +
+        '<rect width="440" height="330" fill="#f1f5f9"/>' +
+        '<rect x="180" y="105" width="80" height="65" rx="6" fill="#e2e8f0"/>' +
+        '<circle cx="200" cy="125" r="10" fill="#cbd5e1"/>' +
+        '<path d="M180 155 l24-18 18 14 18-12 20 16" stroke="#cbd5e1" stroke-width="4" fill="none"/>' +
+        '<text x="220" y="225" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#94a3b8">Image non disponible</text>' +
+        '</svg>'
+      );
+      const _BANNED = ['ldlc.com','/ldlc','ldlc-media','amazon.com','images-amazon','cdiscount.com','fnac.com','darty.com','boulanger.com'];
+      function _isSuspicious(url) { return url && _BANNED.some(d => url.toLowerCase().includes(d)); }
+      function _safeImg(url) { return _isSuspicious(url) ? _PLACEHOLDER : (url || _PLACEHOLDER); }
+
       const rawGallery = (p.gallery_urls && p.gallery_urls.length > 0)
         ? p.gallery_urls
         : ((p.gallery && p.gallery.length > 0) ? p.gallery : [p.main_image_url || p.image].filter(Boolean));
@@ -495,8 +508,8 @@
         })
         .filter(item => { if (!item?.src || _seen.has(item.src)) return false; _seen.add(item.src); return true; });
       const thumbsHTML = galleryItems.map((item, i) =>
-        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${item.src}','',this)">
-          <img src="${item.src}" alt="${item.alt}" loading="lazy">
+        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${_safeImg(item.src)}','${item.alt}',this)">
+          <img src="${_safeImg(item.src)}" alt="${item.alt}" loading="lazy" onerror="this.onerror=null;this.src='${_PLACEHOLDER}'">
         </div>`
       ).join('');
 
@@ -550,7 +563,7 @@
           <!-- Galerie images -->
           <div class="gallery">
             <div class="gallery__main">
-              <img src="${galleryItems[0].src}" alt="${galleryItems[0].alt}" id="main-img" loading="eager">
+              <img src="${_safeImg(galleryItems[0].src)}" alt="${galleryItems[0].alt}" id="main-img" loading="eager" onerror="this.onerror=null;this.src='${_PLACEHOLDER}'">
             </div>
             ${(galleryItems.length > 1) ? `<div class="gallery__thumbs">${thumbsHTML}</div>` : ''}
           </div>

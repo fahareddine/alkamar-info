@@ -3,6 +3,32 @@
 
 const CATALOG = (function () {
 
+  // ─── Image fallback & détection watermark ────────────────────────────────
+  const PLACEHOLDER_IMG = 'data:image/svg+xml,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 165">' +
+    '<rect width="220" height="165" fill="#f1f5f9"/>' +
+    '<rect x="90" y="52" width="40" height="32" rx="3" fill="#e2e8f0"/>' +
+    '<circle cx="100" cy="62" r="5" fill="#cbd5e1"/>' +
+    '<path d="M90 76 l12-9 9 7 9-6 10 8" stroke="#cbd5e1" stroke-width="2" fill="none"/>' +
+    '<text x="110" y="112" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94a3b8">Image non disponible</text>' +
+    '</svg>'
+  );
+
+  const BANNED_IMG_DOMAINS = ['ldlc.com', '/ldlc', 'ldlc-media', 'amazon.com', 'images-amazon', 'cdiscount.com', 'fnac.com', 'darty.com', 'boulanger.com'];
+
+  function hasSuspiciousUrl(url) {
+    if (!url) return false;
+    const u = url.toLowerCase();
+    return BANNED_IMG_DOMAINS.some(d => u.includes(d));
+  }
+
+  // Exposé globalement pour onerror HTML inline
+  window.imgFallback = function(el) {
+    el.onerror = null;
+    el.src = PLACEHOLDER_IMG;
+    el.closest('.card-img, .gallery__main, .gallery__thumb')?.classList.add('card-img--broken');
+  };
+
   // ─── Utilitaires ─────────────────────────────────────────────────────────
   function esc(s) {
     return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
@@ -37,8 +63,9 @@ const CATALOG = (function () {
   // opts.promoMode   : calcule le badge -XX% depuis price_old
   // opts.stockLabel  : remplace le stock_label DB (ex: "✅ Certifié et garanti")
   function productCard(p, opts = {}) {
-    const link   = p.legacy_id || p.id;
-    const imgSrc = p.main_image_url || p.image || '';
+    const link    = p.legacy_id || p.id;
+    const rawImg  = p.main_image_url || p.image || '';
+    const imgSrc  = hasSuspiciousUrl(rawImg) ? PLACEHOLDER_IMG : (rawImg || PLACEHOLDER_IMG);
     const ratingN = Number(p.rating_count) || 0;
 
     let badgeHtml;
@@ -61,7 +88,7 @@ const CATALOG = (function () {
       ${badgeHtml}
       <button class="card-wishlist" onclick="toggleWish(this)" aria-label="Ajouter aux favoris">\u2661</button>
       <div class="card-img">
-        <img src="${imgSrc}" alt="${esc(p.name || '')}" width="220" height="170" loading="lazy">
+        <img src="${imgSrc}" alt="${esc(p.name || '')}" width="220" height="170" loading="lazy" onerror="imgFallback(this)">
       </div>
       <div class="card-body">
         <div class="card-brand">${esc(p.brand || '')}</div>
