@@ -14,7 +14,8 @@ const CATALOG = (function () {
     '</svg>'
   );
 
-  const BANNED_IMG_DOMAINS = ['ldlc.com', '/ldlc', 'ldlc-media', 'amazon.com', 'images-amazon', 'cdiscount.com', 'fnac.com', 'darty.com', 'boulanger.com'];
+  // NB: m.media-amazon.com est un CDN légitime — ne pas bloquer
+  const BANNED_IMG_DOMAINS = ['ldlc.com', '/ldlc', 'ldlc-media', 'cdiscount.com', 'fnac.com', 'darty.com', 'boulanger.com'];
 
   function hasSuspiciousUrl(url) {
     if (!url) return false;

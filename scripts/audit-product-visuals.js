@@ -29,9 +29,9 @@ if (!SUPABASE_URL || !SUPABASE_KEY) {
 const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ── Config ──────────────────────────────────────────────────────────────────
+// NB: m.media-amazon.com est un CDN légitime — NE PAS bloquer
 const BANNED_DOMAINS = [
   'ldlc.com', '/ldlc', 'ldlc-media',
-  'amazon.com', 'images-amazon', 'amzn',
   'cdiscount.com', 'fnac.com', 'darty.com',
   'boulanger.com', 'materiel.net', 'rue-du-commerce'
 ];
