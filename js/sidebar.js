@@ -100,10 +100,9 @@
     }
     if (toWrap.length === 0) { wireSearch(); return; }
 
-    // Layout wrapper
+    // Layout wrapper — styles gérés par CSS .page-layout (pas d'inline pour ne pas bloquer les media queries)
     const layout = document.createElement('div');
     layout.className = 'page-layout';
-    layout.style.cssText = 'max-width:1320px;margin:0 auto;padding:20px;display:grid;grid-template-columns:240px 1fr;gap:20px;align-items:start';
 
     // Sidebar
     const sidebarWrap = document.createElement('div');
