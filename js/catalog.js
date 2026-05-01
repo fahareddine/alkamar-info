@@ -299,27 +299,37 @@ const CATALOG = (function () {
     const count = document.getElementById('promo-count');
     if (!grid) return;
 
-    const all   = await loadAllActive();
-    const withDiscount = all.filter(p => p.price_old && Number(p.price_old) > 0);
+    const all = await loadAllActive();
 
     function pct(p) {
+      if (!p.price_old || !Number(p.price_old)) return 0;
       return Math.round((1 - Number(p.price_eur) / Number(p.price_old)) * 100);
     }
 
-    // 1 meilleur deal par catégorie, jusqu'à 8 produits
+    // 1 produit par sous-catégorie (category_id) — prend le mieux noté
+    // Priorité : ceux avec price_old (déjà en promo) d'abord
     const byCat = {};
-    withDiscount.forEach(p => {
+    all.forEach(p => {
       const cat = p.category_id || 'other';
-      if (!byCat[cat] || pct(p) > pct(byCat[cat])) byCat[cat] = p;
+      const existing = byCat[cat];
+      if (!existing) { byCat[cat] = p; return; }
+      // Préfère celui avec une promo active
+      const hasPromo = p.price_old && Number(p.price_old) > 0;
+      const existHasPromo = existing.price_old && Number(existing.price_old) > 0;
+      if (hasPromo && !existHasPromo) { byCat[cat] = p; return; }
+      if (!hasPromo && existHasPromo) return;
+      // Si même statut, prend le mieux noté
+      if ((p.rating_count || 0) > (existing.rating_count || 0)) byCat[cat] = p;
     });
-    let promo = Object.values(byCat).sort((a, b) => pct(b) - pct(a)).slice(0, 8);
 
-    // Si moins de 8 par catégorie unique, complète avec les autres promos
-    if (promo.length < 8) {
-      const seen = new Set(promo.map(p => p.id));
-      const extra = withDiscount.filter(p => !seen.has(p.id)).sort((a,b) => pct(b)-pct(a));
-      promo = [...promo, ...extra].slice(0, 8);
-    }
+    // Trie : promos d'abord (par %) puis les autres (par note)
+    let promo = Object.values(byCat)
+      .sort((a, b) => {
+        const pa = pct(a), pb = pct(b);
+        if (pb !== pa) return pb - pa;
+        return (b.rating_count || 0) - (a.rating_count || 0);
+      })
+      .slice(0, 8);
 
     function renderPromo(list) {
       grid.innerHTML = list.map(p => productCard(p, { promoMode: true })).join('');
