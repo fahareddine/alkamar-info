@@ -67,7 +67,13 @@
       e.preventDefault(); document.getElementById('auth-error').style.display='none';
       const btn=document.getElementById('login-btn'); btn.disabled=true; btn.textContent='Connexion…';
       const {error}=await AuthClient.signIn(document.getElementById('email').value, document.getElementById('password').value);
-      if(error){ showError(error.message); btn.disabled=false; btn.textContent='Se connecter'; return; }
+      if(error){
+        let msg = error.message;
+        if(msg === 'Invalid login credentials') msg = 'Email ou mot de passe incorrect.';
+        else if(msg.includes('Email not confirmed')) msg = 'Email non confirmé. Vérifiez votre boîte mail.';
+        else if(msg.includes('rate limit') || msg.includes('over_email_send_rate_limit')) msg = 'Trop de tentatives. Réessayez dans quelques minutes.';
+        showError(msg); btn.disabled=false; btn.textContent='Se connecter'; return;
+      }
       const r=params.get('redirect');
       if(r==='checkout'||sessionStorage.getItem('checkout_pending')){ sessionStorage.removeItem('checkout_pending'); window.location.href='/index.html?checkout=1'; }
       else window.location.href='/compte.html';

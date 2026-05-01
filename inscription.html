@@ -78,7 +78,16 @@
       btn.disabled=true;btn.textContent='Création…';
       document.getElementById('auth-error').style.display='none';
       const {data:authData,error:authErr}=await AuthClient.signUp(email,pwd);
-      if(authErr){showError(authErr.message);btn.disabled=false;btn.textContent='Créer mon compte';return;}
+      if(authErr){
+        let msg = authErr.message;
+        if(msg.includes('rate limit') || msg.includes('over_email_send_rate_limit') || msg.includes('email rate')) {
+          msg = 'Trop de tentatives d\'inscription. Réessayez dans une heure ou <a href="/connexion.html" style="color:inherit;text-decoration:underline">connectez-vous avec Google</a>.';
+          const el=document.getElementById('auth-error'); el.innerHTML=msg; el.style.display='block'; el.scrollIntoView({behavior:'smooth',block:'nearest'});
+        } else {
+          showError(msg);
+        }
+        btn.disabled=false;btn.textContent='Créer mon compte';return;
+      }
       if(authData.session){
         try{
           await AuthClient.saveProfile({
