@@ -199,12 +199,12 @@
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <div class="toolbar-sort">
             <label>Trier par :</label>
-            <select>
-              <option>Pertinence</option>
-              <option>Prix croissant</option>
-              <option>Prix décroissant</option>
-              <option>Nouveautés</option>
-              <option>Meilleures ventes</option>
+            <select id="sort-select" onchange="applySort(this.value)">
+              <option value="">Pertinence</option>
+              <option value="price-asc">Prix croissant</option>
+              <option value="price-desc">Prix décroissant</option>
+              <option value="new">Nouveautés</option>
+              <option value="rating">Meilleures ventes</option>
             </select>
           </div>
           <div class="toolbar-view">
@@ -507,6 +507,33 @@
       renderPagination();
       document.getElementById('produits')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
+
+    // Tri catalogue
+    let _sortMode = '';
+    function applySort(mode) {
+      _sortMode = mode;
+      applyFiltersAndRender();
+    }
+
+    const _origApply = applyFiltersAndRender;
+    applyFiltersAndRender = function() {
+      _filtered = _allProducts.filter(p => {
+        const txt  = ((p.name||'')+(p.description||'')+(p.brand||'')).toLowerCase();
+        const cat  = (p.subcategory||p.category||'').toLowerCase();
+        const matchQ = !_searchQuery || txt.includes(_searchQuery);
+        const matchC = _activeCat === 'all' || cat.includes(_activeCat);
+        return matchQ && matchC;
+      });
+      // Applique le tri
+      if (_sortMode === 'price-asc')  _filtered.sort((a,b) => (a.price_eur||0)-(b.price_eur||0));
+      if (_sortMode === 'price-desc') _filtered.sort((a,b) => (b.price_eur||0)-(a.price_eur||0));
+      if (_sortMode === 'new')        _filtered.sort((a,b) => new Date(b.created_at||0)-new Date(a.created_at||0));
+      if (_sortMode === 'rating')     _filtered.sort((a,b) => (b.rating_count||0)-(a.rating_count||0));
+      if (countEl) countEl.textContent = _filtered.length;
+      _currentPage = 1;
+      renderPage();
+      renderPagination();
+    };
 
     // Override filterCat pour catalogue dynamique
     filterCat = function(e, cat) {
