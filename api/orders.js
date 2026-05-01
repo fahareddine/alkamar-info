@@ -4,8 +4,8 @@ const { setCors } = require('./_lib/cors');
 
 // ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
 async function handleStripeCheckout(req, res) {
-  const Stripe = require('stripe');
-  // Stripe SDK v22 — sans apiVersion forcée (utilise la version par défaut du SDK)
+  // Stripe SDK v22 — utilise import() dynamique (compatible CJS + ESM)
+  const { default: Stripe } = await import('stripe');
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const BASE = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://alkamar-info.vercel.app';
   const { items } = req.body || {};
