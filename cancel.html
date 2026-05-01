@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Paiement annulé — La Boutique</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .cancel-page { max-width: 600px; margin: 60px auto; padding: 0 20px; text-align: center; }
+    .cancel-icon { font-size: 64px; margin-bottom: 20px; }
+    .cancel-title { font-size: 2rem; font-weight: 900; color: #0f172a; margin-bottom: 10px; }
+    .cancel-text { font-size: 15px; color: #64748b; line-height: 1.7; margin-bottom: 28px; }
+    .btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+  <header class="header" style="position:relative">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">B</div>
+        <span class="logo__text">La <span>Boutique</span></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="cancel-page">
+    <div class="cancel-icon">🛒</div>
+    <h1 class="cancel-title">Paiement annulé</h1>
+    <p class="cancel-text">
+      Pas de problème — votre panier est toujours sauvegardé.<br>
+      Vous pouvez reprendre votre commande quand vous le souhaitez.
+    </p>
+    <div class="btns">
+      <button onclick="history.back()" class="btn-voir-tout">← Retour au panier</button>
+      <a href="index.html" class="btn-cart" style="display:inline-flex;align-items:center;text-decoration:none;padding:10px 24px">
+        Continuer les achats
+      </a>
+    </div>
+    <p style="margin-top:28px;font-size:13px;color:#94a3b8">
+      📞 Besoin d'aide ? <strong>+269 377 57 04</strong>
+    </p>
+  </main>
+</body>
+</html>

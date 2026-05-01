@@ -647,6 +647,25 @@
             <div class="prod-description">${p.description || 'Aucune description disponible.'}</div>
           </div>
         </div>`;
+
+      // Connecte sticky add-to-cart mobile
+      setTimeout(() => {
+        const mainBtn = document.querySelector('.btn-add-cart');
+        if (window._setupStickyAtc) window._setupStickyAtc(p, mainBtn);
+        // Connecte aussi le btn-add-cart au panier
+        if (mainBtn && typeof Cart !== 'undefined') {
+          mainBtn.addEventListener('click', () => {
+            Cart.add({
+              id: p.legacy_id || p.id,
+              name: p.name,
+              brand: p.brand,
+              price_eur: p.price_eur,
+              main_image_url: p.main_image_url || p.image,
+            });
+            if (typeof CartUI !== 'undefined') CartUI.open();
+          });
+        }
+      }, 100);
     })();
 
     /* ── Galerie ─────────────────────────────────────── */
@@ -689,8 +708,41 @@
       if (e.key === 'Enter') doSearch();
     });
   </script>
+  <script src="js/cart.js"></script>
+  <script src="js/cart-ui.js"></script>
   <script src="js/product-gallery.js"></script>
   <script src="js/nav.js" defer></script>
   <script src="js/sidebar.js" defer></script>
+
+  <!-- Sticky Add to Cart mobile -->
+  <div class="sticky-atc" id="sticky-atc">
+    <span class="sticky-price" id="sticky-price"></span>
+    <button class="btn-cart" id="sticky-add-btn">🛒 Ajouter au panier</button>
+  </div>
+  <script>
+    // Connecte sticky CTA après chargement produit
+    window._setupStickyAtc = function(product, mainBtn) {
+      const atc = document.getElementById('sticky-atc');
+      const priceEl = document.getElementById('sticky-price');
+      const btn = document.getElementById('sticky-add-btn');
+      if (!atc || !product) return;
+      if (priceEl) priceEl.textContent = ((product.price_eur||0).toFixed(2).replace('.',',')) + ' €';
+      if (btn) btn.onclick = () => {
+        if (typeof Cart !== 'undefined') Cart.add({
+          id   : product.legacy_id || product.id,
+          name : product.name,
+          brand: product.brand,
+          price_eur: product.price_eur,
+          main_image_url: product.main_image_url || product.image,
+        });
+        if (typeof CartUI !== 'undefined') CartUI.open();
+      };
+      if (mainBtn) {
+        new IntersectionObserver(entries => {
+          atc.style.display = entries[0].isIntersecting ? 'none' : 'flex';
+        }, { threshold: 0.5 }).observe(mainBtn);
+      }
+    };
+  </script>
 </body>
 </html>

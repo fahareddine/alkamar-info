@@ -252,13 +252,28 @@ const CATALOG = (function () {
 
   // ─── Panier / Wishlist / Recherche ────────────────────────────────────────
   function initPage() {
-    let cartCount = 0;
     window.addToCart = function (btn, id) {
-      cartCount++;
-      const badge = document.querySelector('.cart-badge');
-      if (badge) badge.textContent = cartCount;
-      const n = document.getElementById('cart-notif');
-      if (n) { n.style.display = 'flex'; setTimeout(() => n.style.display = 'none', 2500); }
+      // Récupère infos produit depuis la carte DOM
+      const card = btn?.closest('.product-card');
+      const name  = card?.querySelector('.card-title')?.textContent?.trim() || '';
+      const brand = card?.querySelector('.card-brand')?.textContent?.trim() || '';
+      const priceRaw = card?.querySelector('.price-main')?.childNodes[0]?.textContent?.trim().replace(/\s/g,'').replace(',','.') || '0';
+      const img   = card?.querySelector('.card-img img')?.src || '';
+      const product = {
+        id   : id || String(Date.now()),
+        name, brand,
+        price_eur: parseFloat(priceRaw) || 0,
+        main_image_url: img,
+      };
+      if (typeof Cart !== 'undefined') Cart.add(product);
+      if (typeof CartUI !== 'undefined') CartUI.open();
+      // Animation bouton
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✓ Ajouté';
+        btn.style.background = '#059669';
+        setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1600);
+      }
     };
     window.toggleWish = function (btn) {
       const liked = btn.textContent === '\u2665';

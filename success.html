@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Commande confirmée — La Boutique</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .success-page { max-width: 640px; margin: 60px auto; padding: 0 20px; text-align: center; }
+    .success-icon { font-size: 72px; margin-bottom: 20px; }
+    .success-title { font-size: 2rem; font-weight: 900; color: #059669; margin-bottom: 10px; }
+    .success-card {
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 16px;
+      padding: 28px; margin: 24px 0; text-align: left;
+    }
+    .success-card h3 { font-size: 14px; font-weight: 700; color: #064e3b; margin-bottom: 12px; }
+    .success-card p { font-size: 14px; color: #065f46; line-height: 1.7; margin: 0; }
+    .success-note {
+      font-size: 11px; color: #94a3b8; margin-top: 20px;
+      background: #fff7ed; border: 1px solid #fed7aa; border-radius: 8px;
+      padding: 8px 12px; display: inline-block;
+    }
+    .btn-home { margin-top: 20px; display: inline-flex; }
+  </style>
+</head>
+<body>
+  <header class="header" style="position:relative">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">B</div>
+        <span class="logo__text">La <span>Boutique</span></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="success-page">
+    <div class="success-icon">✅</div>
+    <h1 class="success-title">Commande confirmée !</h1>
+    <p style="font-size:16px;color:#64748b;margin-bottom:8px">
+      Merci pour votre commande. Notre équipe va vous contacter rapidement.
+    </p>
+
+    <div class="success-card">
+      <h3>📋 Prochaines étapes</h3>
+      <p>
+        1. Vous recevrez un email de confirmation sous peu.<br>
+        2. Notre équipe vérifie la disponibilité de vos articles.<br>
+        3. Nous vous contactons pour organiser la livraison aux Comores.<br><br>
+        <strong>📞 +269 377 57 04</strong> — Des questions ? Appelez-nous !<br>
+        <strong>💬 WhatsApp</strong> disponible pour le suivi de commande.
+      </p>
+    </div>
+
+    <a href="index.html" class="btn-cart btn-home">
+      ← Retour à la boutique
+    </a>
+
+    <p class="success-note">
+      ⚠️ Mode TEST Stripe — aucun vrai paiement n'a été débité
+    </p>
+  </main>
+
+  <script>
+    // Vide le panier après succès
+    try {
+      localStorage.removeItem('alkamar_cart');
+      window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: [] } }));
+    } catch {}
+  </script>
+</body>
+</html>
