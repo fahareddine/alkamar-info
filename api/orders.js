@@ -89,6 +89,20 @@ module.exports = async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
+  // Route client: GET /api/orders?my=1 — commandes de l'utilisateur connecté
+  if (req.method === 'GET' && req.query.my === '1') {
+    const { createClient: createSB } = require('@supabase/supabase-js');
+    const sbAuth = createSB(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, {auth:{persistSession:false}});
+    const token = (req.headers.authorization||'').replace('Bearer ','').trim();
+    const { data: userData } = await sbAuth.auth.getUser(token);
+    if (!userData?.user) return res.status(401).json({ error: 'Non authentifié' });
+    const { data: customer } = await supabase.from('customers').select('id').eq('user_id', userData.user.id).single();
+    if (!customer) return res.status(200).json([]);
+    const { data, error } = await supabase.from('orders').select('id,created_at,total_eur,total_kmf,status').eq('customer_id', customer.id).order('created_at',{ascending:false}).limit(50);
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
+
   // Stripe checkout public — pas d'auth requise
   if (req.method === 'POST' && req.query.action === 'checkout') {
     return handleStripeCheckout(req, res);

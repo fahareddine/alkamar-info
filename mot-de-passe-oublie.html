@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mot de passe oublié — La Boutique</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .auth-page{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;background:var(--light)}
+    .auth-card{background:#fff;border-radius:16px;box-shadow:0 8px 40px rgba(0,0,0,.10);padding:40px 36px;width:100%;max-width:420px}
+    .auth-title{font-size:1.4rem;font-weight:900;color:#0f172a;margin-bottom:6px;text-align:center}
+    .auth-sub{font-size:13px;color:var(--text-muted);text-align:center;margin-bottom:24px}
+    .auth-field{margin-bottom:16px}
+    .auth-field label{display:block;font-size:13px;font-weight:700;color:#334155;margin-bottom:5px}
+    .auth-field input{width:100%;padding:11px 14px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;box-sizing:border-box}
+    .auth-field input:focus{border-color:var(--primary)}
+    .auth-btn{width:100%;padding:13px;border:none;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;background:var(--primary);color:#fff}
+    .auth-links{text-align:center;margin-top:18px;font-size:13px;color:var(--text-muted)}
+    .auth-links a{color:var(--primary);font-weight:600}
+    .auth-msg{border-radius:8px;padding:12px 14px;font-size:13px;margin-bottom:14px;display:none}
+    .auth-msg.ok{background:#f0fdf4;border:1px solid #bbf7d0;color:#059669}
+    .auth-msg.err{background:#fef2f2;border:1px solid #fecaca;color:#dc2626}
+  </style>
+</head>
+<body>
+  <header class="header" style="position:relative"><div class="header__inner"><a href="index.html" class="logo"><div class="logo__icon">B</div><span class="logo__text">La <span>Boutique</span></span></a></div></header>
+  <div class="auth-page"><div class="auth-card">
+    <h1 class="auth-title">Mot de passe oublié</h1>
+    <p class="auth-sub">Entrez votre email pour recevoir un lien de réinitialisation</p>
+    <div id="msg" class="auth-msg"></div>
+    <div id="new-pwd-section" style="display:none">
+      <h2 style="font-size:1.1rem;font-weight:700;margin-bottom:14px">Nouveau mot de passe</h2>
+      <div class="auth-field"><label>Nouveau mot de passe</label><input type="password" id="new-pwd" minlength="8" placeholder="Min. 8 caractères"></div>
+      <button class="auth-btn" onclick="updatePwd()">Mettre à jour</button>
+    </div>
+    <form id="reset-form" onsubmit="sendReset(event)">
+      <div class="auth-field"><label>Email</label><input type="email" id="email" required placeholder="votre@email.com"></div>
+      <button type="submit" class="auth-btn" id="send-btn">Envoyer le lien</button>
+    </form>
+    <div class="auth-links"><a href="/connexion.html">← Retour à la connexion</a></div>
+  </div></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/auth-client.js"></script>
+  <script>
+    const params=new URLSearchParams(window.location.search);
+    if(params.get('reset')){document.getElementById('reset-form').style.display='none';document.getElementById('new-pwd-section').style.display='block';}
+    async function sendReset(e){
+      e.preventDefault();const btn=document.getElementById('send-btn');btn.disabled=true;btn.textContent='Envoi…';
+      const {error}=await AuthClient.resetPassword(document.getElementById('email').value);
+      const el=document.getElementById('msg');
+      if(error){el.className='auth-msg err';el.textContent=error.message;}
+      else{el.className='auth-msg ok';el.textContent='✅ Email envoyé ! Vérifiez votre boîte mail.';document.getElementById('reset-form').style.display='none';}
+      el.style.display='block';
+    }
+    async function updatePwd(){
+      const {error}=await AuthClient.updatePassword(document.getElementById('new-pwd').value);
+      const el=document.getElementById('msg');
+      if(error){el.className='auth-msg err';el.textContent=error.message;}
+      else{el.className='auth-msg ok';el.textContent='✅ Mot de passe mis à jour !';setTimeout(()=>window.location.href='/connexion.html',2000);}
+      el.style.display='block';
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mon Compte — La Boutique</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .account-page{max-width:960px;margin:32px auto;padding:0 20px}
+    .account-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+    .account-title{font-size:1.6rem;font-weight:900;color:#0f172a}
+    .account-tabs{display:flex;gap:4px;background:#f1f5f9;border-radius:10px;padding:4px;margin-bottom:28px;flex-wrap:wrap}
+    .account-tab{padding:9px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;background:none;font-family:inherit;color:var(--text-muted);transition:all .15s}
+    .account-tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.10)}
+    .account-panel{display:none}
+    .account-panel.active{display:block}
+    .profile-card{background:#fff;border-radius:12px;border:1px solid var(--border);padding:28px}
+    .profile-field{margin-bottom:16px}
+    .profile-field label{display:block;font-size:12px;font-weight:700;color:#64748b;margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+    .profile-field input,.profile-field select{width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-size:14px;font-family:inherit;outline:none;transition:border-color .15s;box-sizing:border-box}
+    .profile-field input:focus,.profile-field select:focus{border-color:var(--primary)}
+    .profile-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .profile-save{display:flex;gap:12px;align-items:center;margin-top:20px;flex-wrap:wrap}
+    .order-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px 20px;margin-bottom:12px}
+    .order-header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:8px}
+    .order-date{font-size:13px;font-weight:600;color:#0f172a}
+    .order-id{font-size:11px;color:var(--text-muted)}
+    .order-total{font-size:16px;font-weight:900;color:var(--primary)}
+    .order-status{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px}
+    .status-paid{background:#f0fdf4;color:#059669}
+    .status-pending{background:#fef9c3;color:#92400e}
+    .status-shipped{background:#eff6ff;color:#1e40af}
+    .alert-incomplete{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px 18px;font-size:14px;color:#92400e;margin-bottom:20px;display:none}
+    .btn-logout{padding:8px 16px;background:none;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#64748b;font-family:inherit;transition:all .15s}
+    .btn-logout:hover{border-color:var(--red);color:var(--red)}
+    @media(max-width:520px){.profile-row{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header class="header" style="position:relative"><div class="header__inner">
+    <a href="index.html" class="logo"><div class="logo__icon">B</div><span class="logo__text">La <span>Boutique</span></span></a>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px">
+      <span id="user-email" style="font-size:13px;color:#dbeafe;display:none"></span>
+      <button class="btn-logout" onclick="doSignOut()">Déconnexion</button>
+    </div>
+  </div></header>
+
+  <div class="account-page">
+    <div id="incomplete-alert" class="alert-incomplete">⚠️ Votre profil est incomplet. Complétez-le pour passer commande.</div>
+    <div class="account-header"><h1 class="account-title">Mon Compte</h1></div>
+    <div class="account-tabs">
+      <button class="account-tab active" onclick="showTab('profile',this)">👤 Mon Profil</button>
+      <button class="account-tab" onclick="showTab('orders',this)">📦 Mes Commandes</button>
+    </div>
+
+    <div id="panel-profile" class="account-panel active">
+      <div class="profile-card">
+        <div id="profile-msg" style="display:none;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px"></div>
+        <form id="profile-form" onsubmit="saveProfile(event)">
+          <div class="profile-row">
+            <div class="profile-field"><label>Prénom *</label><input id="p-first" type="text" required></div>
+            <div class="profile-field"><label>Nom *</label><input id="p-last" type="text" required></div>
+          </div>
+          <div class="profile-field"><label>Email</label><input id="p-email" type="email" readonly style="background:#f8fafc;color:#64748b"></div>
+          <div class="profile-field"><label>Téléphone *</label><input id="p-phone" type="tel" required></div>
+          <div class="profile-row">
+            <div class="profile-field"><label>Pays *</label>
+              <select id="p-country"><option value="KM">Comores 🇰🇲</option><option value="FR">France 🇫🇷</option><option value="RE">Réunion</option><option value="MG">Madagascar</option><option value="DJ">Djibouti</option></select>
+            </div>
+            <div class="profile-field"><label>Ville *</label><input id="p-city" type="text" required></div>
+          </div>
+          <div class="profile-field"><label>Adresse *</label><input id="p-address" type="text" required></div>
+          <div class="profile-field"><label>Code postal</label><input id="p-postal" type="text"></div>
+          <div class="profile-save">
+            <button type="submit" class="btn-cart" style="width:auto;padding:11px 28px">💾 Enregistrer</button>
+            <span id="save-spinner" style="font-size:13px;color:#64748b"></span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="panel-orders" class="account-panel">
+      <div id="orders-list"><p style="color:#6b7280;text-align:center;padding:40px">Chargement…</p></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/auth-client.js"></script>
+  <script>
+    (async()=>{
+      const session=await AuthClient.getSession();
+      if(!session){window.location.href='/connexion.html';return;}
+      document.getElementById('user-email').textContent=session.user.email;
+      document.getElementById('user-email').style.display='inline';
+      document.getElementById('p-email').value=session.user.email;
+      const profile=await AuthClient.getProfile();
+      if(profile){
+        document.getElementById('p-first').value=profile.first_name||'';
+        document.getElementById('p-last').value=profile.last_name||'';
+        document.getElementById('p-phone').value=profile.phone||'';
+        document.getElementById('p-city').value=profile.city||'';
+        document.getElementById('p-address').value=profile.address||'';
+        document.getElementById('p-postal').value=profile.postal_code||'';
+        if(profile.country)document.getElementById('p-country').value=profile.country;
+      } else {
+        document.getElementById('incomplete-alert').style.display='block';
+      }
+      const params=new URLSearchParams(window.location.search);
+      if(params.get('incomplete'))document.getElementById('incomplete-alert').style.display='block';
+    })();
+
+    function showTab(id,btn){
+      document.querySelectorAll('.account-panel').forEach(p=>p.classList.remove('active'));
+      document.querySelectorAll('.account-tab').forEach(b=>b.classList.remove('active'));
+      document.getElementById('panel-'+id).classList.add('active');
+      btn.classList.add('active');
+      if(id==='orders')loadOrders();
+    }
+
+    async function saveProfile(e){
+      e.preventDefault();
+      const msg=document.getElementById('profile-msg');
+      const spin=document.getElementById('save-spinner');
+      msg.style.display='none'; spin.textContent='Sauvegarde…';
+      try{
+        await AuthClient.saveProfile({
+          first_name:document.getElementById('p-first').value.trim(),
+          last_name:document.getElementById('p-last').value.trim(),
+          phone:document.getElementById('p-phone').value.trim(),
+          country:document.getElementById('p-country').value,
+          city:document.getElementById('p-city').value.trim(),
+          address:document.getElementById('p-address').value.trim(),
+          postal_code:document.getElementById('p-postal').value.trim(),
+          terms:true,privacy:true,
+        });
+        msg.style.cssText='display:block;background:#f0fdf4;border:1px solid #bbf7d0;color:#059669';
+        msg.textContent='✅ Profil sauvegardé';
+        document.getElementById('incomplete-alert').style.display='none';
+        spin.textContent='';
+        if(sessionStorage.getItem('checkout_pending')){sessionStorage.removeItem('checkout_pending');window.location.href='/index.html?checkout=1';}
+      }catch(err){
+        msg.style.cssText='display:block;background:#fef2f2;border:1px solid #fecaca;color:#dc2626';
+        msg.textContent=err.message; spin.textContent='';
+      }
+    }
+
+    async function loadOrders(){
+      const session=await AuthClient.getSession();
+      if(!session)return;
+      const res=await fetch('/api/orders?my=1',{headers:{'Authorization':'Bearer '+session.access_token}});
+      const orders=await res.json();
+      const c=document.getElementById('orders-list');
+      if(!Array.isArray(orders)||!orders.length){c.innerHTML='<p style="color:#6b7280;text-align:center;padding:40px">Aucune commande pour le moment.</p>';return;}
+      c.innerHTML=orders.map(o=>`<div class="order-card"><div class="order-header"><div><div class="order-date">${new Date(o.created_at).toLocaleDateString('fr-FR',{day:'2-digit',month:'long',year:'numeric'})}</div><div class="order-id">#${o.id.slice(0,8).toUpperCase()}</div></div><div style="text-align:right"><div class="order-total">${(o.total_eur||0).toFixed(2).replace('.',',')} €</div><span class="order-status ${o.status==='paid'?'status-paid':o.status==='shipped'?'status-shipped':'status-pending'}">${o.status==='paid'?'✅ Payé':o.status==='shipped'?'🚚 Expédié':'⏳ En attente'}</span></div></div></div>`).join('');
+    }
+
+    async function doSignOut(){await AuthClient.signOut();}
+  </script>
+</body>
+</html>

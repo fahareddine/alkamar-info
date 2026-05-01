@@ -131,6 +131,17 @@
   async function checkout() {
     const items = typeof Cart !== 'undefined' ? Cart.load() : [];
     if (!items.length) return;
+
+    // Gate auth — redirige vers connexion si non connecté
+    if (typeof AccountGuard !== 'undefined') {
+      let proceed = false;
+      await AccountGuard.requireAuth(() => { proceed = true; });
+      if (!proceed) return;
+    }
+    await _doCheckout(items);
+  }
+
+  async function _doCheckout(items) {
     const btn = document.querySelector('.btn-checkout');
     if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Chargement…'; }
 
@@ -139,9 +150,10 @@
     const timeout = setTimeout(() => controller.abort(), 15000);
 
     try {
+      const authHeaders = typeof AccountGuard !== 'undefined' ? await AccountGuard.getAuthHeaders() : {};
       const res = await fetch('/api/orders?action=checkout', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', ...authHeaders },
         body: JSON.stringify({ items }),
         signal: controller.signal,
       });

@@ -261,4 +261,19 @@
     document.head.appendChild(_s);
   }
 
+  /* ── Lien Mon Compte dynamique selon session ── */
+  (async () => {
+    try {
+      if (typeof supabase === 'undefined') return;
+      const SURL = 'https://ovjsinugxkuwsjnfxfgb.supabase.co';
+      const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92anNpbnVneGt1d3NqbmZ4ZmdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5ODkxMTMsImV4cCI6MjA5MTU2NTExM30.H45Z2tGvjTaXIpEj-gVpPKLEpNXEDKVZPFJWcoIzj0Y';
+      const sbClient = supabase.createClient(SURL, SKEY);
+      const { data } = await sbClient.auth.getSession();
+      document.querySelectorAll('.topbar__links a[href*="booking"], .topbar__links a[href="/connexion.html"]').forEach(l => {
+        if (data.session) { l.href = '/compte.html'; l.textContent = '👤 Mon compte'; }
+        else { l.href = '/connexion.html'; l.textContent = 'Connexion'; }
+      });
+    } catch {}
+  })();
+
 })();
