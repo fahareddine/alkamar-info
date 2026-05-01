@@ -81,8 +81,8 @@
       if(authErr){
         let msg = authErr.message;
         if(msg.includes('rate limit') || msg.includes('over_email_send_rate_limit') || msg.includes('email rate')) {
-          msg = 'Trop de tentatives d\'inscription. Réessayez dans une heure ou <a href="/connexion.html" style="color:inherit;text-decoration:underline">connectez-vous avec Google</a>.';
-          const el=document.getElementById('auth-error'); el.innerHTML=msg; el.style.display='block'; el.scrollIntoView({behavior:'smooth',block:'nearest'});
+          msg = 'Trop de tentatives d\'inscription. Réessayez dans une heure ou utilisez un autre email.';
+          showError(msg);
         } else {
           showError(msg);
         }
