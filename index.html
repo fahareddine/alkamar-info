@@ -75,7 +75,10 @@
     </div>
   </header>
 
-  <script src="js/nav.js"></script>
+  <script src="js/nav.js" defer></script>
+
+  <!-- ── CONTENU PRINCIPAL ────────────────────────────── -->
+  <main id="main-content" aria-label="Catalogue produits">
 
   <!-- ── BANNIÈRE PROMO ──────────────────────────────── -->
   <div class="promo-banner">
@@ -277,6 +280,8 @@
     </div>
   </div>
 
+  </main><!-- /#main-content -->
+
   <!-- ── FOOTER ─────────────────────────────────────── -->
   <footer class="footer">
     <div class="footer__inner">
@@ -448,7 +453,7 @@
         grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:#6b7280">Aucun produit trouvé.</div>';
         return;
       }
-      grid.innerHTML = items.map(p => CATALOG.productCard(p)).join('');
+      grid.innerHTML = items.map((p, i) => CATALOG.productCard(p, {}, i)).join('');
       // Réattache favoris
       grid.querySelectorAll('.card-wishlist').forEach(btn => {
         btn.addEventListener('click', function() {

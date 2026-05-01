@@ -63,11 +63,13 @@ const CATALOG = (function () {
   // ─── Carte produit ────────────────────────────────────────────────────────
   // opts.promoMode   : calcule le badge -XX% depuis price_old
   // opts.stockLabel  : remplace le stock_label DB (ex: "✅ Certifié et garanti")
-  function productCard(p, opts = {}) {
+  // cardIdx : position dans la grille (0-based) — les 4 premières cartes sont above-fold
+  function productCard(p, opts = {}, cardIdx = 99) {
     const link    = p.legacy_id || p.id;
     const rawImg  = p.main_image_url || p.image || '';
     const imgSrc  = hasSuspiciousUrl(rawImg) ? PLACEHOLDER_IMG : (rawImg || PLACEHOLDER_IMG);
     const ratingN = Number(p.rating_count) || 0;
+    const isLCP   = cardIdx < 4; // au-dessus de la ligne de flottaison
 
     let badgeHtml;
     if (opts.promoMode && p.price_old && Number(p.price_old) > 0) {
@@ -89,7 +91,7 @@ const CATALOG = (function () {
       ${badgeHtml}
       <button class="card-wishlist" onclick="toggleWish(this)" aria-label="Ajouter aux favoris">\u2661</button>
       <div class="card-img">
-        <img src="${imgSrc}" alt="${esc(p.name || '')}" width="220" height="170" loading="lazy" onerror="imgFallback(this)">
+        <img src="${imgSrc}" alt="${esc(p.name || '')}" width="220" height="170" ${isLCP ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} onerror="imgFallback(this)">
       </div>
       <div class="card-body">
         <div class="card-brand">${esc(p.brand || '')}</div>
@@ -172,7 +174,7 @@ const CATALOG = (function () {
       return;
     }
 
-    grid.innerHTML = visible.map(p => productCard(p, opts)).join('');
+    grid.innerHTML = visible.map((p, i) => productCard(p, opts, i)).join('');
     if (count) count.innerHTML = `<strong>${allList.length}</strong> produit${allList.length > 1 ? 's' : ''} disponible${allList.length > 1 ? 's' : ''}`;
 
     const btnId = 'voir-tout-' + subcategory;
