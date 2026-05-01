@@ -50,11 +50,12 @@
           <a href="peripheriques.html?tab=souris">🖱️ Souris</a>
           <a href="peripheriques.html?tab=casque">🎧 Casques / Enceintes</a>
           <a href="peripheriques.html?tab=webcam">📷 Webcams</a>
-          <a href="imprimantes.html?tab=jet-encre">🖨️ Jet d'encre</a>
-          <a href="imprimantes.html?tab=multifonction">🖨️ Multifonction</a>
-          <a href="imprimantes.html?tab=laser">🖨️ Laser</a>
-          <a href="imprimantes.html?tab=matricielle">🖨️ Matricielle</a>
-          <a href="imprimantes.html?tab=thermique">🖨️ Thermique</a>
+          <a href="imprimantes.html" style="font-weight:800;color:var(--primary)">🖨️ Imprimantes →</a>
+          <a href="imprimantes.html?tab=jet-encre" style="padding-left:24px;font-size:12px">↳ Jet d'encre</a>
+          <a href="imprimantes.html?tab=multifonction" style="padding-left:24px;font-size:12px">↳ Multifonction</a>
+          <a href="imprimantes.html?tab=laser" style="padding-left:24px;font-size:12px">↳ Laser</a>
+          <a href="imprimantes.html?tab=matricielle" style="padding-left:24px;font-size:12px">↳ Matricielle</a>
+          <a href="imprimantes.html?tab=thermique" style="padding-left:24px;font-size:12px">↳ Thermique</a>
           <a href="peripheriques.html?tab=onduleur">🔋 Onduleurs</a>
         </div>
       </div>
@@ -140,7 +141,8 @@
       <a href="composants.html" class="quick-cat"><span class="icon">⚡</span>Composants</a>
       <a href="reseau.html" class="quick-cat"><span class="icon">📡</span>Réseau</a>
       <a href="stockage.html" class="quick-cat"><span class="icon">💾</span>Stockage</a>
-      <a href="peripheriques.html" class="quick-cat"><span class="icon">🖨️</span>Périphériques</a>
+      <a href="peripheriques.html" class="quick-cat"><span class="icon">🖱️</span>Périphériques</a>
+      <a href="imprimantes.html" class="quick-cat"><span class="icon">🖨️</span>Imprimantes</a>
       <a href="ecrans.html" class="quick-cat"><span class="icon">📺</span>Écrans</a>
       <a href="protection.html" class="quick-cat"><span class="icon">🛡️</span>Protection</a>
       <a href="reconditionnes.html" class="quick-cat"><span class="icon">♻️</span>Reconditionnés</a>
