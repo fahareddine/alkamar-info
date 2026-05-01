@@ -5,7 +5,8 @@ const { setCors } = require('./_lib/cors');
 // ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
 async function handleStripeCheckout(req, res) {
   const Stripe = require('stripe');
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+  // Stripe SDK v22 — sans apiVersion forcée (utilise la version par défaut du SDK)
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
   const BASE = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://alkamar-info.vercel.app';
   const { items } = req.body || {};
   if (!Array.isArray(items) || !items.length) return res.status(400).json({ error: 'Panier vide' });
