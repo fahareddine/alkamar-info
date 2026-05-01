@@ -52,7 +52,7 @@ const AuthClient = {
   async getProfile() {
     const session = await this.getSession();
     if (!session) return null;
-    const res = await fetch('/api/customer-profile', {
+    const res = await fetch('/api/customers?profile=1', {
       headers: { 'Authorization': 'Bearer ' + session.access_token }
     });
     if (!res.ok) return null;
@@ -61,7 +61,7 @@ const AuthClient = {
   async saveProfile(data) {
     const session = await this.getSession();
     if (!session) throw new Error('Non connecté');
-    const res = await fetch('/api/customer-profile', {
+    const res = await fetch('/api/customers?profile=1', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + session.access_token },
       body: JSON.stringify(data)
