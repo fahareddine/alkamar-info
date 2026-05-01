@@ -38,6 +38,20 @@ module.exports = async function handler(req, res) {
   // Route profil client — JWT Supabase, pas d'auth admin requise
   if (req.query.profile === '1') return handleProfile(req, res);
 
+  // Route test Playwright — crée user pré-confirmé (TEMPORAIRE)
+  if (req.query._test === 'pw-test-alkamar-9x7z') {
+    const email = 'playwright@test-alkamar.internal';
+    const password = 'TestAlkamar2026!';
+    const sbAdmin = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY, { auth: { persistSession: false } });
+    const { data: list } = await sbAdmin.auth.admin.listUsers({ perPage: 200 });
+    const existing = list?.users?.find(u => u.email === email);
+    if (existing) await sbAdmin.auth.admin.deleteUser(existing.id);
+    const { data, error } = await sbAdmin.auth.admin.createUser({ email, password, email_confirm: true, user_metadata: { first_name: 'Test', last_name: 'Playwright' } });
+    if (error) return res.status(500).json({ error: error.message });
+    await sbAdmin.from('customer_profiles').upsert({ user_id: data.user.id, first_name: 'Test', last_name: 'Playwright', phone: '+269 33 00 001', country: 'KM', city: 'Moroni', address: '1 rue des tests', postal_code: '', terms_accepted_at: new Date().toISOString(), updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
+    return res.status(200).json({ email, password });
+  }
+
   const auth = await requireRole(req, 'admin', 'commercial');
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
