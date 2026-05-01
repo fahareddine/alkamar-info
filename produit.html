@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Détail produit — Alkamar Info</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://m.media-amazon.com">
+  <link rel="dns-prefetch" href="https://m.media-amazon.com">
   <link rel="stylesheet" href="style.css">
   <style>
     /* ── Page produit ─────────────────────────────────── */
@@ -493,7 +495,16 @@
       );
       const _BANNED = ['ldlc.com','/ldlc','ldlc-media','cdiscount.com','fnac.com','darty.com','boulanger.com'];
       function _isSuspicious(url) { return url && _BANNED.some(d => url.toLowerCase().includes(d)); }
-      function _safeImg(url) { return _isSuspicious(url) ? _PLACEHOLDER : (url || _PLACEHOLDER); }
+      function _optimAmazon(url, size) {
+        if (!url || !url.includes('m.media-amazon.com/images')) return url;
+        const [base, qs] = url.split('?');
+        const opt = base.replace(/\._[^.]+_(?=\.(jpg|jpeg|png))/gi, '').replace(/\.(jpg|jpeg|png)$/i, `._SL${size}_.$1`);
+        return qs ? `${opt}?${qs}` : opt;
+      }
+      function _safeImg(url, size) {
+        if (_isSuspicious(url)) return _PLACEHOLDER;
+        return _optimAmazon(url || _PLACEHOLDER, size || 1000);
+      }
 
       const rawGallery = (p.gallery_urls && p.gallery_urls.length > 0)
         ? p.gallery_urls
@@ -508,8 +519,8 @@
         })
         .filter(item => { if (!item?.src || _seen.has(item.src)) return false; _seen.add(item.src); return true; });
       const thumbsHTML = galleryItems.map((item, i) =>
-        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${_safeImg(item.src)}','${item.alt}',this)">
-          <img src="${_safeImg(item.src)}" alt="${item.alt}" loading="lazy" onerror="this.onerror=null;this.src='${_PLACEHOLDER}'">
+        `<div class="gallery__thumb${i===0?' active':''}" onclick="switchImg('${_safeImg(item.src,1000)}','${item.alt}',this)">
+          <img src="${_safeImg(item.src,200)}" alt="${item.alt}" loading="lazy" onerror="this.onerror=null;this.src='${_PLACEHOLDER}'">
         </div>`
       ).join('');
 
@@ -563,7 +574,7 @@
           <!-- Galerie images -->
           <div class="gallery">
             <div class="gallery__main">
-              <img src="${_safeImg(galleryItems[0].src)}" alt="${galleryItems[0].alt}" id="main-img" loading="eager" onerror="this.onerror=null;this.src='${_PLACEHOLDER}'">
+              <img src="${_safeImg(galleryItems[0].src,1000)}" alt="${galleryItems[0].alt}" id="main-img" loading="eager" fetchpriority="high" onerror="this.onerror=null;this.src='${_PLACEHOLDER}'">
             </div>
             ${(galleryItems.length > 1) ? `<div class="gallery__thumbs">${thumbsHTML}</div>` : ''}
           </div>
@@ -677,6 +688,6 @@
   </script>
   <script src="js/product-gallery.js"></script>
   <script src="js/nav.js" defer></script>
-  <script src="js/sidebar.js"></script>
+  <script src="js/sidebar.js" defer></script>
 </body>
 </html>

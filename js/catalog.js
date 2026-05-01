@@ -23,6 +23,17 @@ const CATALOG = (function () {
     return BANNED_IMG_DOMAINS.some(d => u.includes(d));
   }
 
+  // Réduit les images Amazon CDN à la taille affichée (économise ~95% de bande passante)
+  // _SL{N}_ = redimensionne côté CDN so que la plus grande dimension = N px
+  function optimizeAmazonImg(url, size) {
+    if (!url || !url.includes('m.media-amazon.com/images')) return url;
+    const [base, qs] = url.split('?');
+    const opt = base
+      .replace(/\._[^.]+_(?=\.(jpg|jpeg|png))/gi, '') // supprime modificateurs existants
+      .replace(/\.(jpg|jpeg|png)$/i, `._SL${size}_.$1`); // ajoute taille cible
+    return qs ? `${opt}?${qs}` : opt;
+  }
+
   // Exposé globalement pour onerror HTML inline
   window.imgFallback = function(el) {
     el.onerror = null;
@@ -67,7 +78,8 @@ const CATALOG = (function () {
   function productCard(p, opts = {}, cardIdx = 99) {
     const link    = p.legacy_id || p.id;
     const rawImg  = p.main_image_url || p.image || '';
-    const imgSrc  = hasSuspiciousUrl(rawImg) ? PLACEHOLDER_IMG : (rawImg || PLACEHOLDER_IMG);
+    // 380px = bon compromis pour un affichage carte 162px (2.3× Retina)
+    const imgSrc  = hasSuspiciousUrl(rawImg) ? PLACEHOLDER_IMG : optimizeAmazonImg(rawImg || PLACEHOLDER_IMG, 380);
     const ratingN = Number(p.rating_count) || 0;
     const isLCP   = cardIdx < 4; // au-dessus de la ligne de flottaison
 

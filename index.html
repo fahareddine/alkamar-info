@@ -6,6 +6,8 @@
   <title>La Boutique — Boutique Informatique en ligne</title>
   <meta name="description" content="La Boutique, votre boutique informatique en ligne. Ordinateurs, composants, périphériques, réseau, stockage. Livraison rapide, prix compétitifs.">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://m.media-amazon.com">
+  <link rel="dns-prefetch" href="https://m.media-amazon.com">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -528,7 +530,7 @@
     loadCatalog();
   </script>
 
-  <script src="js/sidebar.js"></script>
+  <script src="js/sidebar.js" defer></script>
   <script>
     // Branche la recherche sidebar sur le catalogue dynamique
     window.sidebarSearch = function(q) {
