@@ -68,10 +68,11 @@
       const btn=document.getElementById('login-btn'); btn.disabled=true; btn.textContent='Connexion…';
       const {error}=await AuthClient.signIn(document.getElementById('email').value, document.getElementById('password').value);
       if(error){
+        const raw = (error.message || error.code || '').toLowerCase();
         let msg = error.message;
-        if(msg === 'Invalid login credentials') msg = 'Email ou mot de passe incorrect.';
-        else if(msg.includes('Email not confirmed')) msg = 'Email non confirmé. Vérifiez votre boîte mail.';
-        else if(msg.includes('rate limit') || msg.includes('over_email_send_rate_limit')) msg = 'Trop de tentatives. Réessayez dans quelques minutes.';
+        if(raw.includes('invalid') && (raw.includes('credential') || raw.includes('login'))) msg = 'Email ou mot de passe incorrect.';
+        else if(raw.includes('not confirmed') || raw.includes('email_not_confirmed')) msg = 'Email non confirmé. Vérifiez votre boîte mail.';
+        else if(raw.includes('rate limit') || raw.includes('over_email_send_rate_limit')) msg = 'Trop de tentatives. Réessayez dans quelques minutes.';
         showError(msg); btn.disabled=false; btn.textContent='Se connecter'; return;
       }
       const r=params.get('redirect');
