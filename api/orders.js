@@ -1,12 +1,20 @@
 const { supabase } = require('./_lib/supabase');
 const { requireRole } = require('./_lib/auth');
 const { setCors } = require('./_lib/cors');
+// Stripe chargé au top-level pour que Vercel le bundle correctement
+let _stripe = null;
+function getStripe() {
+  if (_stripe) return _stripe;
+  const Stripe = require('stripe');
+  _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+  return _stripe;
+}
 
 // ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
 async function handleStripeCheckout(req, res) {
   const key = process.env.STRIPE_SECRET_KEY;
-  console.log('[checkout] key prefix:', key?.slice(0, 12) || 'MISSING');
-  if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY non configurée' });
+  console.log('[checkout] key:', key ? key.slice(0,15)+'...' : 'MISSING');
+  if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
 
   const BASE = 'https://alkamar-info.vercel.app';
   const { items } = req.body || {};
@@ -15,16 +23,16 @@ async function handleStripeCheckout(req, res) {
   const line_items = items.map(i => ({
     price_data: {
       currency: 'eur',
-      product_data: { name: (i.name || 'Produit').slice(0, 127) },
-      unit_amount: Math.round(Math.max(50, (i.price_eur || 0)) * 100),
+      product_data: { name: String(i.name || 'Produit').slice(0, 127) },
+      unit_amount: Math.round(Math.max(50, Number(i.price_eur) || 50) * 100),
     },
-    quantity: Math.max(1, i.qty || 1),
+    quantity: Math.max(1, Number(i.qty) || 1),
   }));
+  console.log('[checkout] line_items:', line_items.length, 'total:', line_items.reduce((s,l)=>s+l.price_data.unit_amount*l.quantity,0));
 
   try {
-    const Stripe = require('stripe');
-    const stripe = new Stripe(key);
-    console.log('[checkout] Stripe initialisé, création session...');
+    const stripe = getStripe();
+    console.log('[checkout] Stripe OK, appel API...');
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
@@ -32,11 +40,11 @@ async function handleStripeCheckout(req, res) {
       success_url: `${BASE}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${BASE}/cancel.html`,
     });
-    console.log('[checkout] Session créée:', session.id);
+    console.log('[checkout] Session OK:', session.id);
     return res.status(200).json({ url: session.url });
   } catch(err) {
-    console.error('[checkout] ERREUR:', err.type, err.message);
-    return res.status(500).json({ error: err.message, type: err.type });
+    console.error('[checkout] ERR type:', err.constructor?.name, '| msg:', err.message?.slice(0,200));
+    return res.status(500).json({ error: err.message });
   }
 }
 
