@@ -1,0 +1,15 @@
+<claude-code-hint v="1" type="plugin" value="vercel@claude-plugins-official" />
+WARNING! `--port` is deprecated, please use `--listen` instead
+Retrieving project…
+> Ready! Available at http://localhost:3000
+Error: supabaseUrl is required.
+Error: An unexpected error occurred!
+Error: Command failed: taskkill /pid 9684 /T /F
+Erreur�: le processus "9684" est introuvable.
+
+    at genericNodeError (node:internal/errors:985:15)
+    at wrappedFn (node:internal/errors:539:14)
+    at ChildProcess.exithandler (node:child_process:417:12)
+    at ChildProcess.emit (node:events:508:28)
+    at maybeClose (node:internal/child_process:1100:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:305:5)
