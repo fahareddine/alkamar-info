@@ -47,7 +47,8 @@ function stripeRequest(path, params, apiKey) {
 
 // ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
 async function handleStripeCheckout(req, res) {
-  const key = process.env.STRIPE_SECRET_KEY;
+  // Trim pour éviter espaces/sauts de ligne parasites dans la clé
+  const key = (process.env.STRIPE_SECRET_KEY || '').replace(/[\r\n\s]/g, '');
   if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
 
   const BASE = 'https://alkamar-info.vercel.app';
