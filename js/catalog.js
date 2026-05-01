@@ -310,7 +310,8 @@ const CATALOG = (function () {
     // Priorité : ceux avec price_old (déjà en promo) d'abord
     const byCat = {};
     all.forEach(p => {
-      const cat = p.category_id || 'other';
+      // L'API retourne categories(id,...) comme objet joint, pas category_id direct
+      const cat = p.categories?.id || p.categories?.slug || 'other';
       const existing = byCat[cat];
       if (!existing) { byCat[cat] = p; return; }
       // Préfère celui avec une promo active
