@@ -14,6 +14,12 @@ const AccountGuard = {
         window.location.href = '/connexion.html?redirect=checkout';
         return;
       }
+      const confirmed = await AuthClient.isEmailConfirmed();
+      if (!confirmed) {
+        sessionStorage.setItem('checkout_pending', '1');
+        window.location.href = '/compte.html?unconfirmed=1';
+        return;
+      }
       const complete = await AuthClient.isProfileComplete();
       if (!complete) {
         sessionStorage.setItem('checkout_pending', '1');

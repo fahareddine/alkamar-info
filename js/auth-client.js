@@ -69,6 +69,11 @@ const AuthClient = {
     if (!res.ok) throw new Error(await res.text());
     return res.json();
   },
+  async isEmailConfirmed() {
+    const user = await this.getUser();
+    if (!user) return false;
+    return !!user.email_confirmed_at;
+  },
   async isProfileComplete() {
     const p = await this.getProfile();
     if (!p) return false;

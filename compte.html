@@ -32,6 +32,7 @@
     .status-pending{background:#fef9c3;color:#92400e}
     .status-shipped{background:#eff6ff;color:#1e40af}
     .alert-incomplete{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px 18px;font-size:14px;color:#92400e;margin-bottom:20px;display:none}
+    .alert-unconfirmed{background:#fef2f2;border:1px solid #fecaca;border-radius:10px;padding:14px 18px;font-size:14px;color:#dc2626;margin-bottom:20px;display:none}
     .btn-logout{padding:8px 16px;background:none;border:1px solid #e5e7eb;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;color:#64748b;font-family:inherit;transition:all .15s}
     .btn-logout:hover{border-color:var(--red);color:var(--red)}
     @media(max-width:520px){.profile-row{grid-template-columns:1fr}}
@@ -47,6 +48,7 @@
   </div></header>
 
   <div class="account-page">
+    <div id="unconfirmed-alert" class="alert-unconfirmed">📧 <strong>Confirmez votre email</strong> — Un lien de confirmation vous a été envoyé. Vous ne pouvez pas commander tant que votre adresse n'est pas vérifiée.</div>
     <div id="incomplete-alert" class="alert-incomplete">⚠️ Votre profil est incomplet. Complétez-le pour passer commande.</div>
     <div class="account-header"><h1 class="account-title">Mon Compte</h1></div>
     <div class="account-tabs">
@@ -106,8 +108,11 @@
       } else {
         document.getElementById('incomplete-alert').style.display='block';
       }
+      const confirmed = await AuthClient.isEmailConfirmed();
+      if(!confirmed) document.getElementById('unconfirmed-alert').style.display='block';
       const params=new URLSearchParams(window.location.search);
       if(params.get('incomplete'))document.getElementById('incomplete-alert').style.display='block';
+      if(params.get('unconfirmed'))document.getElementById('unconfirmed-alert').style.display='block';
     })();
 
     function showTab(id,btn){
