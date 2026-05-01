@@ -300,13 +300,26 @@ const CATALOG = (function () {
     if (!grid) return;
 
     const all   = await loadAllActive();
-    let   promo = all.filter(p => p.price_old && Number(p.price_old) > 0);
+    const withDiscount = all.filter(p => p.price_old && Number(p.price_old) > 0);
 
     function pct(p) {
       return Math.round((1 - Number(p.price_eur) / Number(p.price_old)) * 100);
     }
-    promo.sort((a, b) => pct(b) - pct(a));
-    promo = promo.slice(0, 5);
+
+    // 1 meilleur deal par catégorie, jusqu'à 8 produits
+    const byCat = {};
+    withDiscount.forEach(p => {
+      const cat = p.category_id || 'other';
+      if (!byCat[cat] || pct(p) > pct(byCat[cat])) byCat[cat] = p;
+    });
+    let promo = Object.values(byCat).sort((a, b) => pct(b) - pct(a)).slice(0, 8);
+
+    // Si moins de 8 par catégorie unique, complète avec les autres promos
+    if (promo.length < 8) {
+      const seen = new Set(promo.map(p => p.id));
+      const extra = withDiscount.filter(p => !seen.has(p.id)).sort((a,b) => pct(b)-pct(a));
+      promo = [...promo, ...extra].slice(0, 8);
+    }
 
     function renderPromo(list) {
       grid.innerHTML = list.map(p => productCard(p, { promoMode: true })).join('');
