@@ -133,23 +133,68 @@
     if (!items.length) return;
     const btn = document.querySelector('.btn-checkout');
     if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Chargement…'; }
+
+    // Timeout 15s — évite skeleton infini
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 15000);
+
     try {
       const res = await fetch('/api/orders?action=checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items }),
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       const data = await res.json();
+
       if (data.url) {
-        window.location.href = data.url;
+        // ── Redirect Checkout Stripe ─────────────────────────────────────────
+        // Si le site est dans une iframe (ex: info-experts.fr), on redirige
+        // la fenêtre parente pour éviter le blocage Stripe dans l'iframe.
+        const stripeUrl = data.url;
+        try {
+          if (window.top && window.top !== window.self) {
+            // Contexte iframe → redirige la fenêtre parente
+            window.top.location.href = stripeUrl;
+          } else {
+            window.location.href = stripeUrl;
+          }
+        } catch(crossOriginError) {
+          // Cross-origin restriction → ouvre dans un nouvel onglet
+          window.open(stripeUrl, '_blank', 'noopener');
+          if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = '🔗 Cliquez ici si la page ne s\'ouvre pas';
+            btn.onclick = () => window.open(stripeUrl, '_blank', 'noopener');
+          }
+        }
       } else {
-        alert('Erreur : ' + (data.error || 'paiement impossible'));
-        if (btn) { btn.disabled = false; btn.innerHTML = '🔒 Payer maintenant'; }
+        _showCheckoutError(btn, data.error || 'Erreur paiement');
       }
     } catch(e) {
-      alert('Erreur réseau. Vérifiez votre connexion.');
-      if (btn) { btn.disabled = false; btn.innerHTML = '🔒 Payer maintenant'; }
+      clearTimeout(timeout);
+      const msg = e.name === 'AbortError'
+        ? 'Le paiement n\'a pas répondu à temps. Réessayez.'
+        : 'Erreur réseau. Vérifiez votre connexion.';
+      _showCheckoutError(btn, msg);
     }
+  }
+
+  function _showCheckoutError(btn, msg) {
+    // Efface le skeleton/loading, affiche l'erreur avec bouton Réessayer
+    const footer = document.getElementById('cart-drawer-footer');
+    if (footer) {
+      footer.insertAdjacentHTML('afterbegin',
+        `<div style="background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:12px;margin-bottom:12px;font-size:13px;color:#dc2626">
+          ⚠️ ${msg}
+          <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+            <button onclick="CartUI.checkout()" style="background:#dc2626;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:inherit">↻ Réessayer</button>
+          </div>
+        </div>`
+      );
+    }
+    if (btn) { btn.disabled = false; btn.innerHTML = '🔒 Payer maintenant'; }
   }
 
   if (document.readyState === 'loading') {
