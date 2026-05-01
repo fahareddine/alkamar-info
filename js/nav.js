@@ -50,7 +50,11 @@
           <a href="peripheriques.html?tab=souris">🖱️ Souris</a>
           <a href="peripheriques.html?tab=casque">🎧 Casques / Enceintes</a>
           <a href="peripheriques.html?tab=webcam">📷 Webcams</a>
-          <a href="peripheriques.html?tab=imprimante">🖨️ Imprimantes</a>
+          <a href="imprimantes.html?tab=jet-encre">🖨️ Jet d'encre</a>
+          <a href="imprimantes.html?tab=multifonction">🖨️ Multifonction</a>
+          <a href="imprimantes.html?tab=laser">🖨️ Laser</a>
+          <a href="imprimantes.html?tab=matricielle">🖨️ Matricielle</a>
+          <a href="imprimantes.html?tab=thermique">🖨️ Thermique</a>
           <a href="peripheriques.html?tab=onduleur">🔋 Onduleurs</a>
         </div>
       </div>

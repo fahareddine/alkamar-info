@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Imprimantes — Alkamar Info</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://m.media-amazon.com">
+  <link rel="dns-prefetch" href="https://m.media-amazon.com">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar__inner">
+      <span>📦 Livraison gratuite dès 150 € · Paiement mobile money accepté</span>
+      <div class="topbar__links">
+        <a href="https://info-experts.fr/booking.html">Mon compte</a>
+        <a href="https://wa.me/33667491345?text=Bonjour%2C+je+voudrais+suivre+ma+commande">Mes commandes</a>
+        <a href="tel:+2693775704">+269 377 57 04</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">B</div>
+        <span class="logo__text">La <span>Boutique</span></span>
+      </a>
+      <div class="search-bar">
+        <select class="search-bar__select"><option>Toutes catégories</option><option selected>Imprimantes</option></select>
+        <input class="search-bar__input" type="text" placeholder="Rechercher une imprimante…" id="searchInput">
+        <button class="search-bar__btn" onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__actions">
+        <a href="index.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Accueil</span>
+        </a>
+        <a href="peripheriques.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8H3m2 4H3m18-4h-2M7 20H5a2 2 0 01-2-2v-2"/></svg>
+          <span>Périphériques</span>
+        </a>
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Panier</span>
+          <span class="cart-badge">0</span>
+        </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="Fil d'Ariane">
+    <a href="index.html">Accueil</a>
+    <span class="sep">›</span>
+    <a href="peripheriques.html">Périphériques</a>
+    <span class="sep">›</span>
+    <span>🖨️ Imprimantes</span>
+  </nav>
+
+  <!-- Onglets sous-catégories -->
+  <div class="cat-tabs">
+    <div class="cat-tabs__inner">
+      <button class="cat-tab active"  onclick="showTab('jet-encre',this)">🖨️ Jet d'encre</button>
+      <button class="cat-tab"         onclick="showTab('multifonction',this)">🖨️ Multifonction</button>
+      <button class="cat-tab"         onclick="showTab('laser',this)">🖨️ Laser</button>
+      <button class="cat-tab"         onclick="showTab('matricielle',this)">🖨️ Matricielle</button>
+      <button class="cat-tab"         onclick="showTab('thermique',this)">🖨️ Thermique</button>
+    </div>
+  </div>
+
+  <!-- ══ JET D'ENCRE ══════════════════════════════════════ -->
+  <div class="subcat-section active" id="tab-jet-encre">
+    <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%)">
+      <div class="subcat-header__inner">
+        <h2>🖨️ Imprimantes Jet d'encre</h2>
+        <p>HP, Canon, Epson, Brother — entrée de gamme, photo et EcoTank longue durée</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-jet-encre">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label><select onchange="CATALOG.sortGrid('jet-encre',this.value)"><option value="">Pertinence</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="rating">Meilleures notes</option></select></div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-jet-encre"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MULTIFONCTION ════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-multifonction">
+    <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#7c3aed 100%)">
+      <div class="subcat-header__inner">
+        <h2>🖨️ Imprimantes Multifonction</h2>
+        <p>Impression, copie, scan et fax — tout-en-un pour la maison et le bureau</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-multifonction">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label><select onchange="CATALOG.sortGrid('multifonction',this.value)"><option value="">Pertinence</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="rating">Meilleures notes</option></select></div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-multifonction"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ LASER ════════════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-laser">
+    <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#059669 100%)">
+      <div class="subcat-header__inner">
+        <h2>🖨️ Imprimantes Laser</h2>
+        <p>Monochrome et couleur — vitesse, coût à la page et robustesse professionnelle</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-laser">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label><select onchange="CATALOG.sortGrid('laser',this.value)"><option value="">Pertinence</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="rating">Meilleures notes</option></select></div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-laser"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MATRICIELLE ══════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-matricielle">
+    <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#b45309 100%)">
+      <div class="subcat-header__inner">
+        <h2>🖨️ Imprimantes Matricielle</h2>
+        <p>Aiguilles, papier continu et multicouches — fiabilité industrielle et logistique</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-matricielle">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label><select onchange="CATALOG.sortGrid('matricielle',this.value)"><option value="">Pertinence</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="rating">Meilleures notes</option></select></div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-matricielle"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ THERMIQUE ════════════════════════════════════════ -->
+  <div class="subcat-section" id="tab-thermique">
+    <div class="subcat-header" style="background:linear-gradient(135deg,#0f172a 0%,#dc2626 100%)">
+      <div class="subcat-header__inner">
+        <h2>🖨️ Imprimantes Thermique</h2>
+        <p>Étiquettes, codes-barres et tickets — Brother, DYMO, Zebra, Epson</p>
+      </div>
+    </div>
+    <div class="page-layout" style="grid-template-columns:1fr">
+      <div class="products-zone">
+        <div class="products-toolbar">
+          <div class="products-toolbar__count" id="count-thermique">Chargement…</div>
+          <div class="toolbar-sort"><label>Trier :</label><select onchange="CATALOG.sortGrid('thermique',this.value)"><option value="">Pertinence</option><option value="price-asc">Prix croissant</option><option value="price-desc">Prix décroissant</option><option value="rating">Meilleures notes</option></select></div>
+        </div>
+        <div class="products-grid products-grid--5" id="grid-thermique"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer__inner footer__inner--3col">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo__icon">B</div>
+          <span class="logo__text">La <span>Boutique</span></span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7">Votre boutique informatique aux Comores.<br>Matériel neuf et reconditionné, service local.</p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Imprimantes</div>
+        <ul class="footer-links">
+          <li><a href="imprimantes.html?tab=jet-encre">Jet d'encre</a></li>
+          <li><a href="imprimantes.html?tab=multifonction">Multifonction</a></li>
+          <li><a href="imprimantes.html?tab=laser">Laser</a></li>
+          <li><a href="imprimantes.html?tab=matricielle">Matricielle</a></li>
+          <li><a href="imprimantes.html?tab=thermique">Thermique</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Contact</div>
+        <ul class="footer-links">
+          <li>📞 +269 377 57 04</li>
+          <li>✉️ contact@info-experts.fr</li>
+          <li>📍 Moroni, Comores</li>
+          <li>⏰ Lun–Sam 8h–19h</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2026 La Boutique — Tous droits réservés</div>
+  </footer>
+
+  <div id="cart-notif" style="position:fixed;bottom:24px;right:24px;background:#1a3a8f;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25);z-index:9999">✅ Produit ajouté au panier</div>
+
+  <script src="js/catalog.js"></script>
+  <script src="js/nav.js" defer></script>
+  <script>
+    CATALOG.init(['jet-encre','multifonction','laser','matricielle','thermique']);
+  </script>
+  <script src="js/sidebar.js" defer></script>
+</body>
+</html>
