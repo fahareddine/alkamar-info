@@ -2,9 +2,44 @@ const { supabase } = require('./_lib/supabase');
 const { requireRole } = require('./_lib/auth');
 const { setCors } = require('./_lib/cors');
 
+// ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
+async function handleStripeCheckout(req, res) {
+  const Stripe = require('stripe');
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, { apiVersion: '2024-06-20' });
+  const BASE = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://alkamar-info.vercel.app';
+  const { items } = req.body || {};
+  if (!Array.isArray(items) || !items.length) return res.status(400).json({ error: 'Panier vide' });
+  const line_items = items.map(i => ({
+    price_data: {
+      currency: 'eur',
+      product_data: { name: (i.name||'Produit').slice(0,127), description: i.brand||undefined,
+        images: i.main_image_url?.startsWith('http') ? [i.main_image_url] : [] },
+      unit_amount: Math.round(Math.max(0, i.price_eur||0) * 100),
+    },
+    quantity: Math.max(1, i.qty||1),
+  })).filter(l => l.price_data.unit_amount > 0);
+  if (!line_items.length) return res.status(400).json({ error: 'Prix invalide' });
+  try {
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment', line_items, locale: 'fr', payment_method_types: ['card'],
+      success_url: `${BASE}/success.html?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE}/cancel.html`,
+      custom_text: { submit: { message: '🔒 TEST Stripe — carte: 4242 4242 4242 4242 · 12/28 · 123' } },
+    });
+    return res.status(200).json({ url: session.url });
+  } catch(err) {
+    return res.status(500).json({ error: err.message });
+  }
+}
+
 module.exports = async function handler(req, res) {
   setCors(res);
   if (req.method === 'OPTIONS') return res.status(200).end();
+
+  // Stripe checkout public — pas d'auth requise
+  if (req.method === 'POST' && req.query.action === 'checkout') {
+    return handleStripeCheckout(req, res);
+  }
 
   if (req.method === 'GET') {
     const auth = await requireRole(req, 'admin', 'commercial');

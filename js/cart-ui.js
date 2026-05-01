@@ -134,7 +134,7 @@
     const btn = document.querySelector('.btn-checkout');
     if (btn) { btn.disabled = true; btn.innerHTML = '⏳ Chargement…'; }
     try {
-      const res = await fetch('/api/checkout', {
+      const res = await fetch('/api/orders?action=checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ items }),
