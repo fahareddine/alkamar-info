@@ -1,26 +1,60 @@
+const https = require('https');
 const { supabase } = require('./_lib/supabase');
 const { requireRole } = require('./_lib/auth');
 const { setCors } = require('./_lib/cors');
-// Stripe chargé au top-level pour que Vercel le bundle correctement
-let _stripe = null;
-function getStripe() {
-  if (_stripe) return _stripe;
-  const Stripe = require('stripe');
-  _stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  return _stripe;
+
+// ── Raw HTTPS call to Stripe API (no SDK dependency) ─────────────────────────
+function stripeRequest(path, params, apiKey) {
+  // Encode nested objects in Stripe's format: line_items[0][price_data][currency]=eur
+  const entries = [];
+  function encode(prefix, val) {
+    if (Array.isArray(val)) {
+      val.forEach((v, i) => encode(`${prefix}[${i}]`, v));
+    } else if (val !== null && typeof val === 'object') {
+      Object.keys(val).forEach(k => encode(`${prefix}[${k}]`, val[k]));
+    } else if (val !== undefined && val !== null) {
+      entries.push(`${encodeURIComponent(prefix)}=${encodeURIComponent(val)}`);
+    }
+  }
+  Object.keys(params).forEach(k => encode(k, params[k]));
+  const body = entries.join('&');
+
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'api.stripe.com',
+      path: `/v1/${path}`,
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(body),
+        'Stripe-Version': '2024-06-20',
+      },
+    }, (res) => {
+      let d = '';
+      res.on('data', c => d += c);
+      res.on('end', () => {
+        try { resolve({ status: res.statusCode, data: JSON.parse(d) }); }
+        catch(e) { reject(new Error('JSON parse: ' + d.slice(0, 200))); }
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(15000, () => { req.destroy(); reject(new Error('Timeout connexion Stripe')); });
+    req.write(body);
+    req.end();
+  });
 }
 
 // ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
 async function handleStripeCheckout(req, res) {
   const key = process.env.STRIPE_SECRET_KEY;
-  console.log('[checkout] key:', key ? key.slice(0,15)+'...' : 'MISSING');
   if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
 
   const BASE = 'https://alkamar-info.vercel.app';
   const { items } = req.body || {};
   if (!Array.isArray(items) || !items.length) return res.status(400).json({ error: 'Panier vide' });
 
-  const line_items = items.map(i => ({
+  const line_items = items.map((i, idx) => ({
     price_data: {
       currency: 'eur',
       product_data: { name: String(i.name || 'Produit').slice(0, 127) },
@@ -28,22 +62,24 @@ async function handleStripeCheckout(req, res) {
     },
     quantity: Math.max(1, Number(i.qty) || 1),
   }));
-  console.log('[checkout] line_items:', line_items.length, 'total:', line_items.reduce((s,l)=>s+l.price_data.unit_amount*l.quantity,0));
 
   try {
-    const stripe = getStripe();
-    console.log('[checkout] Stripe OK, appel API...');
-    const session = await stripe.checkout.sessions.create({
+    const result = await stripeRequest('checkout/sessions', {
       mode: 'payment',
       line_items,
       locale: 'fr',
       success_url: `${BASE}/success.html?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${BASE}/cancel.html`,
-    });
-    console.log('[checkout] Session OK:', session.id);
-    return res.status(200).json({ url: session.url });
+    }, key);
+
+    if (result.status !== 200 || !result.data.url) {
+      console.error('[checkout] Stripe error:', JSON.stringify(result.data).slice(0, 300));
+      return res.status(result.status).json({ error: result.data?.error?.message || 'Stripe error' });
+    }
+    console.log('[checkout] Session créée:', result.data.id);
+    return res.status(200).json({ url: result.data.url });
   } catch(err) {
-    console.error('[checkout] ERR type:', err.constructor?.name, '| msg:', err.message?.slice(0,200));
+    console.error('[checkout] Erreur raw HTTP:', err.message);
     return res.status(500).json({ error: err.message });
   }
 }
