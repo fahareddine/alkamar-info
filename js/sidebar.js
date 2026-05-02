@@ -183,33 +183,41 @@
     const brandChecks = document.querySelectorAll('#shared-sidebar .filter-brand input[data-brand]');
     const activeBrands = [...brandChecks].filter(c => c.checked).map(c => c.dataset.brand);
 
-    document.querySelectorAll('.product-card').forEach(card => {
+    const cards = [...document.querySelectorAll('.product-card')];
+
+    function processCard(card) {
       const title  = (card.querySelector('h3, .card-title')?.textContent || '').toLowerCase();
       const desc   = (card.querySelector('.card-subtitle, .text-sm, p')?.textContent || '').toLowerCase();
       const brand  = (card.querySelector('.card-brand, .product-badge')?.textContent || '').toLowerCase();
-
-      // Prix — cherche .price-main ou première occurrence chiffre€
       const priceRaw = card.querySelector('.price-main, [class*="price-main"]')?.childNodes[0]?.textContent?.trim() || '0';
       const price = parseFloat(priceRaw.replace(/\s/g, '').replace(',', '.')) || 0;
-
-      // Condition
       const isReco   = brand.includes('reco') || title.includes('reco') || card.dataset.cat === 'reconditionnes';
       const isGradeA = (brand + title).includes('grade a');
       const isGradeB = (brand + title).includes('grade b');
       const isNeuf   = !isReco;
-
       const matchQuery = !query || title.includes(query) || desc.includes(query) || brand.includes(query);
       const matchPrice = price === 0 || price <= maxPrice;
-      const matchState = (isNeuf && allowNeuf) ||
-                         (isGradeA && allowGradeA) ||
-                         (isGradeB && allowGradeB) ||
-                         (isReco && !isGradeA && !isGradeB && allowGradeA);
-
+      const matchState = (isNeuf && allowNeuf) || (isGradeA && allowGradeA) ||
+                         (isGradeB && allowGradeB) || (isReco && !isGradeA && !isGradeB && allowGradeA);
       const matchBrand = activeBrands.length === 0 ||
                          activeBrands.some(b => brand.includes(b) || title.includes(b));
-
       card.style.display = (matchQuery && matchPrice && matchState && matchBrand) ? '' : 'none';
-    });
+    }
+
+    // Chunk processing — évite long tasks (234 cartes × DOM reads)
+    let i = 0;
+    function chunk() {
+      const end = Math.min(i + 30, cards.length);
+      for (; i < end; i++) processCard(cards[i]);
+      if (i < cards.length) {
+        if (typeof requestIdleCallback !== 'undefined') {
+          requestIdleCallback(chunk, { timeout: 500 });
+        } else {
+          setTimeout(chunk, 0);
+        }
+      }
+    }
+    chunk();
   };
 
   if (document.readyState === 'loading') {

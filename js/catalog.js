@@ -81,9 +81,9 @@ const CATALOG = (function () {
     const isBanned   = hasSuspiciousUrl(rawImg);
     const imgSrc     = isBanned ? PLACEHOLDER_IMG : optimizeAmazonImg(rawImg || PLACEHOLDER_IMG, 380);
     const isAmazon   = !isBanned && rawImg && rawImg.includes('media-amazon.com');
-    // 240w=1x, 380w=1.7x, 400w=DPR1.75 mobile (220×1.75=385<400), 450w=2x (220×2=440<450)
+    // sizes=200px mobile (réel ~193px) → DPR1.75: 200×1.75=350<380 → picks 380w au lieu de 400w
     const srcsetAttr = isAmazon
-      ? `srcset="${optimizeAmazonImg(rawImg, 240)} 240w, ${imgSrc} 380w, ${optimizeAmazonImg(rawImg, 400)} 400w, ${optimizeAmazonImg(rawImg, 450)} 450w" sizes="(min-width: 1200px) 162px, 220px"`
+      ? `srcset="${optimizeAmazonImg(rawImg, 240)} 240w, ${imgSrc} 380w, ${optimizeAmazonImg(rawImg, 400)} 400w, ${optimizeAmazonImg(rawImg, 450)} 450w" sizes="(min-width: 1200px) 162px, 200px"`
       : '';
     const ratingN    = Number(p.rating_count) || 0;
     const isLCP      = cardIdx < 4; // au-dessus de la ligne de flottaison
