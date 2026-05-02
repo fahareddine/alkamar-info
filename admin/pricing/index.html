@@ -77,6 +77,29 @@
       </table>
     </div>
 
+    <!-- Section règles par catégorie -->
+    <div style="margin-top:32px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="font-size:18px;font-weight:700">📂 Règles de marge par catégorie</h2>
+        <span style="font-size:12px;color:var(--admin-muted)">Priorité sur le taux global</span>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="cat-rules-table">
+          <thead><tr>
+            <th>Catégorie</th>
+            <th>Marge défaut</th>
+            <th>Marge min</th>
+            <th>Douane</th>
+            <th>Taxes locales</th>
+            <th>Actions</th>
+          </tr></thead>
+          <tbody id="cat-rules-tbody">
+            <tr><td colspan="6" style="text-align:center;padding:30px;color:var(--admin-muted)">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
   </main>
 </div>
 
@@ -263,6 +286,55 @@ function showStatus(type, msg) {
 function _set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
 function _esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ── Règles par catégorie ──────────────────────────────────────────────────────
+async function loadCatRules() {
+  try {
+    const rules = await api.get('/api/pricing/category-rules');
+    renderCatRules(rules || []);
+  } catch(e) { /* silencieux */ }
+}
+
+function renderCatRules(rules) {
+  const tbody = document.getElementById('cat-rules-tbody');
+  if (!tbody) return;
+  if (!rules.length) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:30px;color:var(--admin-muted)">Aucune règle — les taux globaux s\'appliquent partout</td></tr>';
+    return;
+  }
+  const pct = v => v != null ? (Number(v) * 100).toFixed(0) + '%' : '<span style="color:var(--admin-muted)">global</span>';
+  tbody.innerHTML = rules.map(r => {
+    const cat = r.categories;
+    return '<tr>'
+      + '<td><strong>' + _esc(cat?.name || r.category_id) + '</strong>'
+        + '<br><span style="font-size:11px;color:var(--admin-muted)">' + _esc(cat?.slug || '') + '</span></td>'
+      + '<td><strong>' + pct(r.default_margin_rate) + '</strong></td>'
+      + '<td>' + pct(r.min_margin_rate) + '</td>'
+      + '<td>' + pct(r.customs_rate) + '</td>'
+      + '<td>' + pct(r.local_tax_rate) + '</td>'
+      + '<td>'
+        + '<button class="btn btn--ghost btn--sm" onclick="editCatRule(\'' + r.category_id + '\',\'' + _esc(cat?.name || '') + '\',' + r.default_margin_rate + ',' + r.min_margin_rate + ',' + (r.customs_rate||'null') + ',' + (r.local_tax_rate||'null') + ')">✏</button>'
+      + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function editCatRule(catId, catName, margin, minMargin, customs, localTax) {
+  const m  = prompt('Marge défaut % pour "' + catName + '" (actuel: ' + Math.round(margin*100) + '%)', Math.round(margin*100));
+  if (m === null) return;
+  const mm = prompt('Marge minimum % (actuel: ' + Math.round(minMargin*100) + '%)', Math.round(minMargin*100));
+  if (mm === null) return;
+  api.put('/api/pricing/category-rules', {
+    category_id:         catId,
+    default_margin_rate: Number(m)  / 100,
+    min_margin_rate:     Number(mm) / 100,
+  }).then(() => { loadCatRules(); showStatus('success', 'Règle "' + catName + '" mise à jour'); })
+    .catch(e => showStatus('error', 'Erreur: ' + e.message));
+}
+
+async function init() {
+  await adminAuth.requireAuth();
+  await Promise.all([loadSettings(), loadProducts(), loadCatRules()]);
+}
 init();
 </script>
 </body>
