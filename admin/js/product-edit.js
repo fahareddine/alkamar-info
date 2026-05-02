@@ -389,6 +389,9 @@ async function loadProduct(id) {
     const tag = allTags.find(t => t.id === tagId);
     if (tag) { selectedTagIds.add(tag.id); renderTagPill(tag.id, tag.name); }
   });
+
+  // Sourcing fournisseur (admin uniquement)
+  if (typeof sourcingInit === 'function') sourcingInit(id, p);
 }
 
 // --- Save ---
@@ -427,6 +430,9 @@ async function saveProduct(statusOverride = null) {
 
   // Status override (brouillon)
   if (statusOverride) body.status = statusOverride;
+
+  // Sourcing fournisseur (admin uniquement)
+  if (typeof sourcingCollectData === 'function') Object.assign(body, sourcingCollectData());
 
   // Specs (avec SEO et tags)
   const specs = getSpecs();
