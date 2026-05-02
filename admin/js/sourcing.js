@@ -117,8 +117,8 @@
   /* ── Recherche automatique meilleur prix via SerpAPI ── */
   window.sourcingSearch = async function () {
     if (!_productId) { _showStatus('error', 'Sauvegardez d\'abord le produit.'); return; }
-    const name  = document.getElementById('name')?.value?.trim()  || '';
-    const brand = document.getElementById('brand')?.value?.trim() || '';
+    const name  = (document.querySelector('[name="name"]') || document.getElementById('name'))?.value?.trim()  || '';
+    const brand = (document.querySelector('[name="brand"]') || document.getElementById('brand'))?.value?.trim() || '';
     if (!name) { _showStatus('error', 'Nom du produit manquant.'); return; }
 
     _showStatus('loading', '🔍 Recherche des meilleures offres en cours…');
