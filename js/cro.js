@@ -14,7 +14,7 @@
   function processChunked(items, processFn, done) {
     let i = 0;
     function step() {
-      const end = Math.min(i + 20, items.length);
+      const end = Math.min(i + 5, items.length);
       for (; i < end; i++) processFn(items[i]);
       if (i < items.length) {
         schedule(step);

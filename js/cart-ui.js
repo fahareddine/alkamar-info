@@ -221,9 +221,17 @@
     if (btn) { btn.disabled = false; btn.innerHTML = '🔒 Payer maintenant'; }
   }
 
+  // Defer init via requestIdleCallback — libère le main thread pour FCP
+  function scheduleInit() {
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(init, { timeout: 500 });
+    } else {
+      setTimeout(init, 0);
+    }
+  }
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else { init(); }
+    document.addEventListener('DOMContentLoaded', scheduleInit);
+  } else { scheduleInit(); }
 
   window.CartUI = { open, close, render, removeItem, increment, decrement, checkout };
 })();
