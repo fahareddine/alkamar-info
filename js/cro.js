@@ -67,7 +67,7 @@
       if (qty <= 5) {
         const el = document.createElement('div');
         el.className = 'cro-scarcity';
-        el.style.cssText = 'font-size:11px;font-weight:700;color:#d97706;display:flex;align-items:center;gap:3px;margin-bottom:3px;';
+        el.style.cssText = 'font-size:11px;font-weight:700;color:#92400e;display:flex;align-items:center;gap:3px;margin-bottom:3px;';
         el.innerHTML = `🔥 Plus que ${qty} en stock`;
         stockEl.insertAdjacentElement('beforebegin', el);
       }
@@ -86,7 +86,7 @@
       const n = (hash % 14) + 4;
       const el = document.createElement('div');
       el.className = 'cro-views';
-      el.style.cssText = 'font-size:10px;color:#6b7280;margin-bottom:4px;';
+      el.style.cssText = 'font-size:10px;color:#4b5563;margin-bottom:4px;';
       el.textContent = `👁 ${n} personnes regardent`;
       body.insertBefore(el, body.firstChild);
     });

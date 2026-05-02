@@ -128,11 +128,11 @@ const CATALOG = (function () {
         <div class="card-stock ${stockClass}">${stockLabel}</div>
       </div>
       <div class="card-footer">
-        <button class="btn-cart" onclick="addToCart(this,'${link}')">
-          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        <button class="btn-cart" onclick="addToCart(this,'${link}')" aria-label="Ajouter ${esc(p.name || '')} au panier">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
           Ajouter
         </button>
-        <a href="produit.html?id=${link}" class="btn-detail">Voir le d\u00e9tail</a>
+        <a href="produit.html?id=${link}" class="btn-detail" aria-label="Voir le d\u00e9tail de ${esc(p.name || '')}">Voir le d\u00e9tail</a>
       </div>
     </div>`;
   }
