@@ -83,26 +83,39 @@
       return;
     }
     tbody.innerHTML = _offers.map(o => {
-      const avail = { in_stock: '🟢 En stock', out_of_stock: '🔴 Rupture', unknown: '⚪ Inconnu' }[o.availability] || '⚪';
+      const avail = { in_stock: '🟢 En stock', out_of_stock: '🔴 Rupture', unknown: '⚪' }[o.availability] || '⚪';
       const score = o.score != null
         ? '<span class="score-badge score-' + (o.score >= 80 ? 'high' : o.score >= 60 ? 'med' : 'low') + '">' + Math.round(o.score) + '</span>'
         : '—';
       const conf    = o.confidence ? '<span class="conf-badge">' + o.confidence + '%</span>' : '—';
-      const primary = o.is_primary ? '<span class="badge badge--best" style="font-size:10px;margin-left:4px">Principal</span>' : '';
-      const titleTxt = (o.title || '').substring(0, 40) + ((o.title || '').length > 40 ? '…' : '');
+      const primary = o.is_primary ? ' <span style="font-size:10px;background:rgba(59,130,246,.2);color:#93c5fd;padding:1px 5px;border-radius:3px">✓ Principal</span>' : '';
+      const titleFull = o.title || '';
+      const titleTxt = titleFull.length > 45 ? titleFull.substring(0, 45) + '…' : titleFull;
+      // Lien cliquable sur le nom du fournisseur
+      const supplierCell = o.supplier_url
+        ? '<a href="' + _esc(o.supplier_url) + '" target="_blank" rel="noopener" class="sourcing-supplier-link">' + _esc(o.supplier_name) + ' ↗</a>' + primary
+        : '<strong>' + _esc(o.supplier_name) + '</strong>' + primary;
+      // Lien cliquable sur le titre
+      const titleCell = titleFull && o.supplier_url
+        ? '<a href="' + _esc(o.supplier_url) + '" target="_blank" rel="noopener" class="sourcing-title-link" title="' + _esc(titleFull) + '">' + _esc(titleTxt) + '</a>'
+        : _esc(titleTxt) || '—';
+      // Prix total
+      const priceTotal = (o.price || 0) + (o.shipping_price || 0);
+      const priceCell = o.price ? o.price.toFixed(2) + ' €' : '—';
+      const shippingCell = o.shipping_price != null ? (o.shipping_price === 0 ? '<span style="color:#86efac">Gratuit</span>' : o.shipping_price.toFixed(2) + ' €') : '—';
+
       return '<tr class="' + (o.is_primary ? 'sourcing-row--primary' : '') + '">'
-        + '<td><strong>' + _esc(o.supplier_name) + '</strong>' + primary + '</td>'
-        + '<td class="sourcing-title" title="' + _esc(o.title || '') + '">' + _esc(titleTxt) + '</td>'
-        + '<td>' + (o.price ? o.price.toFixed(2) + '€' : '—') + '</td>'
-        + '<td>' + (o.shipping_price != null ? (o.shipping_price > 0 ? o.shipping_price.toFixed(2) + '€' : 'Gratuit') : '—') + '</td>'
+        + '<td>' + supplierCell + '</td>'
+        + '<td>' + titleCell + '</td>'
+        + '<td style="font-weight:700">' + priceCell + '</td>'
+        + '<td>' + shippingCell + '</td>'
         + '<td>' + _esc(o.delivery_estimate || '—') + '</td>'
         + '<td>' + avail + '</td>'
         + '<td>' + score + '</td>'
         + '<td>' + conf + '</td>'
         + '<td class="sourcing-actions-cell">'
-          + '<button class="btn btn--ghost btn--xs" onclick="window.open(\'' + _esc(o.supplier_url) + '\',\'_blank\',\'noopener\')" title="Ouvrir">↗</button>'
-          + '<button class="btn btn--secondary btn--xs" onclick="sourcingSetPrimary(\'' + o.id + '\')" title="Définir principal">★</button>'
-          + '<button class="btn btn--ghost btn--xs" onclick="sourcingDeleteOffer(\'' + o.id + '\')" title="Supprimer" style="color:#ef4444">🗑</button>'
+          + '<button class="btn btn--secondary btn--xs" onclick="sourcingSetPrimary(\'' + o.id + '\')" title="Définir comme principal" style="font-size:11px">★ Principal</button>'
+          + '<button class="btn btn--ghost btn--xs" onclick="sourcingDeleteOffer(\'' + o.id + '\')" title="Supprimer" style="color:#fca5a5;font-size:11px">🗑</button>'
         + '</td>'
         + '</tr>';
     }).join('');
