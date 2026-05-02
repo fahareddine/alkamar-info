@@ -40,17 +40,31 @@
       </div>`);
   }
 
+  function preventBodyScroll(e) {
+    // Autorise scroll uniquement dans la zone scrollable du panier
+    if (!e.target.closest('.cart-drawer__body')) e.preventDefault();
+  }
+
   function open() {
     render();
+    const scrollY = window.scrollY;
+    document.body.dataset.cartScrollY = scrollY;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('cart-open');
+    // Bloque touchmove sur tout sauf le body du drawer (Android Chrome)
+    document.addEventListener('touchmove', preventBodyScroll, { passive: false });
     drawerEl?.classList.add('open');
     overlayEl?.classList.add('open');
-    document.body.style.overflow = 'hidden';
   }
 
   function close() {
+    const scrollY = parseInt(document.body.dataset.cartScrollY || '0', 10);
+    document.body.classList.remove('cart-open');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollY);
+    document.removeEventListener('touchmove', preventBodyScroll);
     drawerEl?.classList.remove('open');
     overlayEl?.classList.remove('open');
-    document.body.style.overflow = '';
   }
 
   function render() {
