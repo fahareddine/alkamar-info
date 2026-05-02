@@ -77,11 +77,16 @@ const CATALOG = (function () {
   // cardIdx : position dans la grille (0-based) — les 4 premières cartes sont above-fold
   function productCard(p, opts = {}, cardIdx = 99) {
     const link    = p.legacy_id || p.id;
-    const rawImg  = p.main_image_url || p.image || '';
-    // 380px = bon compromis pour un affichage carte 162px (2.3× Retina)
-    const imgSrc  = hasSuspiciousUrl(rawImg) ? PLACEHOLDER_IMG : optimizeAmazonImg(rawImg || PLACEHOLDER_IMG, 380);
-    const ratingN = Number(p.rating_count) || 0;
-    const isLCP   = cardIdx < 4; // au-dessus de la ligne de flottaison
+    const rawImg     = p.main_image_url || p.image || '';
+    const isBanned   = hasSuspiciousUrl(rawImg);
+    const imgSrc     = isBanned ? PLACEHOLDER_IMG : optimizeAmazonImg(rawImg || PLACEHOLDER_IMG, 380);
+    const isAmazon   = !isBanned && rawImg && rawImg.includes('media-amazon.com');
+    // srcset: 200w pour desktop (162px affiché), 380w pour mobile (220px affiché)
+    const srcsetAttr = isAmazon
+      ? `srcset="${optimizeAmazonImg(rawImg, 200)} 200w, ${imgSrc} 380w" sizes="(min-width: 1200px) 162px, 220px"`
+      : '';
+    const ratingN    = Number(p.rating_count) || 0;
+    const isLCP      = cardIdx < 4; // au-dessus de la ligne de flottaison
 
     let badgeHtml;
     if (opts.promoMode && p.price_old && Number(p.price_old) > 0) {
@@ -103,7 +108,7 @@ const CATALOG = (function () {
       ${badgeHtml}
       <button class="card-wishlist" onclick="toggleWish(this)" aria-label="Ajouter aux favoris">\u2661</button>
       <div class="card-img">
-        <img src="${imgSrc}" alt="${esc(p.name || '')}" width="220" height="170" ${isLCP ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} onerror="imgFallback(this)">
+        <img src="${imgSrc}" ${srcsetAttr} alt="${esc(p.name || '')}" width="220" height="170" ${isLCP ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} onerror="imgFallback(this)">
       </div>
       <div class="card-body">
         <div class="card-brand">${esc(p.brand || '')}</div>

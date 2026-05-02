@@ -1218,9 +1218,9 @@ ul { list-style: none; }
 .search-bar__clear:hover { background: #9ca3af; color: #fff; }
 
 /* ── CLS prevention — réservation espace produits ── */
-/* Évite le saut du bloc .reassurance quand la grille se remplit */
-.products-zone    { min-height: 560px; }
-#products-grid    { min-height: 460px; align-content: start; }
+/* Desktop: grille 5 col, ~5 rangées × 320px = 1600px pour éviter CLS */
+.products-zone    { min-height: 1600px; }
+#products-grid    { min-height: 1400px; align-content: start; }
 
 @media (max-width: 768px) {
   .products-zone  { min-height: 420px; }
