@@ -104,7 +104,8 @@ const CATALOG = (function () {
     const stockLabel = opts.stockLabel || p.stock_label || 'En stock';
     const stockClass = opts.stockLabel ? 'in-stock' : (p.stock_class || 'in-stock');
 
-    return `<div class="product-card">
+    const _hasBadge = badgeHtml.includes('<span class="badge');
+    return `<div class="product-card${_hasBadge ? ' has-badge' : ''}">
       ${badgeHtml}
       <button class="card-wishlist" onclick="toggleWish(this)" aria-label="Ajouter aux favoris">\u2661</button>
       <div class="card-img">

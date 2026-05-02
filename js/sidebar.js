@@ -183,6 +183,9 @@
     const brandChecks = document.querySelectorAll('#shared-sidebar .filter-brand input[data-brand]');
     const activeBrands = [...brandChecks].filter(c => c.checked).map(c => c.dataset.brand);
 
+    // Early-return si tous les filtres sont à leurs valeurs par défaut — pas de travail nécessaire
+    if (!query && maxPrice >= 3000 && allowNeuf && allowGradeA && allowGradeB && activeBrands.length === 0) return;
+
     const cards = [...document.querySelectorAll('.product-card')];
 
     function processCard(card) {
