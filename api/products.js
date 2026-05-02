@@ -268,6 +268,38 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(result);
   }
 
+  // ─── Route : /api/pricing/category-rules ────────────────────────────────────
+  if (req.query._route === 'pricing_category_rules') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    if (req.method === 'GET') {
+      const { data } = await supabase
+        .from('category_pricing_rules')
+        .select('*, categories(id, name, slug)')
+        .order('categories(name)');
+      return res.status(200).json(data || []);
+    }
+    if (req.method === 'PUT') {
+      const { category_id, default_margin_rate, min_margin_rate, customs_rate, local_tax_rate, risk_rate, notes } = req.body || {};
+      if (!category_id) return res.status(400).json({ error: 'category_id requis' });
+      const updates = { updated_at: new Date().toISOString() };
+      if (default_margin_rate != null) updates.default_margin_rate = Number(default_margin_rate);
+      if (min_margin_rate     != null) updates.min_margin_rate     = Number(min_margin_rate);
+      if (customs_rate        != null) updates.customs_rate        = Number(customs_rate);
+      if (local_tax_rate      != null) updates.local_tax_rate      = Number(local_tax_rate);
+      if (risk_rate           != null) updates.risk_rate           = Number(risk_rate);
+      if (notes               != null) updates.notes               = notes;
+      const { data, error } = await supabase
+        .from('category_pricing_rules')
+        .upsert({ category_id, ...updates }, { onConflict: 'category_id' })
+        .select()
+        .single();
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json(data);
+    }
+    return res.status(405).json({ error: 'GET ou PUT requis' });
+  }
+
   // ─── Route : /api/pricing/settings ──────────────────────────────────────────
   if (req.query._route === 'pricing_settings') {
     const auth = await requireRole(req, 'admin', 'editor');
@@ -301,7 +333,25 @@ module.exports = async function handler(req, res) {
     if (!product_id) return res.status(400).json({ error: 'product_id requis' });
     const { data: settings, error: sErr } = await supabase.from('pricing_settings').select('*').limit(1).single();
     if (sErr) return res.status(500).json({ error: 'pricing_settings manquants' });
-    const result = calculateComorosPrice(input, settings);
+
+    // Récupérer la règle de catégorie si le produit a une catégorie
+    const { data: product } = await supabase.from('products').select('category_id').eq('id', product_id).single();
+    let catRule = null;
+    if (product?.category_id) {
+      const { data: cr } = await supabase.from('category_pricing_rules').select('*').eq('category_id', product.category_id).single();
+      catRule = cr;
+    }
+
+    // Fusionner : règle catégorie > override input > settings global
+    const mergedSettings = {
+      ...settings,
+      default_margin_rate:   catRule?.default_margin_rate ?? settings.default_margin_rate,
+      default_customs_rate:  catRule?.customs_rate        ?? settings.default_customs_rate,
+      default_local_tax_rate: catRule?.local_tax_rate    ?? settings.default_local_tax_rate,
+    };
+
+    const result = calculateComorosPrice(input, mergedSettings);
+    result.categoryRule = catRule ? { margin: catRule.default_margin_rate, source: 'category' } : { source: 'global' };
     const hasWeightIssue = result.warnings.includes('weight_missing') || result.warnings.includes('purchase_price_missing');
     const pricingRow = {
       product_id,
