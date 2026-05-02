@@ -122,70 +122,113 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const { name, brand, specs } = req.body;
+    const { name, brand, asin, sku, legacy_id, specs, price_eur } = req.body;
     if (!name) return res.status(400).json({ error: 'name requis' });
 
-    // Construire la requête de recherche
-    const query = [brand, name].filter(Boolean).join(' ');
+    // Extraire le numéro de modèle depuis le nom (ex: "i5-13600K", "MX500", "RX 6600")
+    const modelMatch = name.match(/\b([A-Z]{1,4}[-\s]?[\dA-Z]{2,}[-\s]?[\dA-Z]*)\b/g) || [];
+    const modelRef = modelMatch.filter(m => m.length >= 3)[0] || '';
+
+    // Extraire des termes clés des specs (capacité, mémoire, taille écran, etc.)
+    const specKeywords = [];
+    if (specs && typeof specs === 'object') {
+      const usefulKeys = ['Capacité','Stockage','Mémoire','RAM','Écran','Fréquence','Format','Socket'];
+      usefulKeys.forEach(k => {
+        const v = specs[k] || specs[k.toLowerCase()];
+        if (v && typeof v === 'string' && v.length < 20) specKeywords.push(v);
+      });
+    }
+
+    const trustedSources = ['amazon', 'ldlc', 'fnac', 'darty', 'boulanger', 'cdiscount',
+                            'rueducommerce', 'materiel.net', 'grosbill', 'cybertek'];
+
+    // Fonction de scoring d'un résultat SerpAPI
+    function scoreResult(item, isExactSearch) {
+      const priceStr = (item.price || '').replace(/[^\d,\.]/g, '').replace(',', '.');
+      const price = parseFloat(priceStr) || null;
+      const deliveryText = (item.delivery || '').toLowerCase();
+      const shippingFree = /gratuit|free|offert/i.test(deliveryText);
+      const shipping = shippingFree ? 0 : null;
+      const inStock = !/rupture|indisponible|unavailable/i.test(deliveryText);
+      const sourceLower = (item.source || '').toLowerCase();
+      const isTrusted = trustedSources.some(s => sourceLower.includes(s));
+      const titleLower = (item.title || '').toLowerCase();
+      const nameLower  = name.toLowerCase();
+      const brandLower = (brand || '').toLowerCase();
+
+      // Confiance : correspondance exacte de référence
+      let confidence = 30;
+      // +25 si le modèle exact est dans le titre
+      if (modelRef && titleLower.includes(modelRef.toLowerCase())) confidence += 35;
+      // +15 si la marque est dans le titre
+      if (brandLower && titleLower.includes(brandLower)) confidence += 15;
+      // +20 selon le ratio de mots du nom présents dans le titre
+      const nameWords = nameLower.split(/\s+/).filter(w => w.length > 3);
+      const matched = nameWords.filter(w => titleLower.includes(w));
+      confidence += Math.round((matched.length / Math.max(nameWords.length, 1)) * 20);
+      // +5 si specs key words présents
+      const specMatches = specKeywords.filter(k => titleLower.includes(k.toLowerCase()));
+      confidence += Math.min(10, specMatches.length * 5);
+      confidence = Math.min(100, confidence);
+
+      // Score global
+      let score = 0;
+      score += (confidence / 100) * 50;   // Correspondance : 50%
+      if (price && price > 0) score += 20; // Prix présent : 20%
+      if (inStock) score += 15;            // En stock : 15%
+      if (isTrusted) score += 10;          // Vendeur fiable : 10%
+      if (isExactSearch) score += 5;       // Résultat de la recherche exacte : bonus 5%
+      score = Math.min(100, Math.round(score));
+
+      return {
+        supplier_name:     item.source || 'Inconnu',
+        supplier_url:      item.link || item.product_link || '',
+        title:             item.title || '',
+        price, currency: 'EUR',
+        shipping_price:    shipping,
+        delivery_estimate: item.delivery || null,
+        availability:      inStock ? 'in_stock' : 'unknown',
+        score, confidence,
+        source: 'serpapi', country: 'FR',
+      };
+    }
 
     try {
-      const serpUrl = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(query)}&gl=fr&hl=fr&num=10&api_key=${SERPAPI_KEY}`;
-      const serpResp = await fetch(serpUrl);
-      if (!serpResp.ok) throw new Error('SerpAPI error ' + serpResp.status);
-      const serpData = await serpResp.json();
+      // ── Requête 1 : EXACTE — référence stricte (modèle + marque)
+      const exactTerms = [brand, modelRef || name].filter(Boolean).join(' ').trim();
+      const exactUrl = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(exactTerms)}&gl=fr&hl=fr&num=8&api_key=${SERPAPI_KEY}`;
+      const [resp1, resp2] = await Promise.all([
+        fetch(exactUrl).then(r => r.ok ? r.json() : { shopping_results: [] }),
+        // ── Requête 2 : LARGE — nom complet + specs clés
+        (exactTerms !== [brand, name].join(' ').trim())
+          ? fetch(`https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent([brand, name, specKeywords[0] || ''].join(' ').trim())}&gl=fr&hl=fr&num=6&api_key=${SERPAPI_KEY}`).then(r => r.ok ? r.json() : { shopping_results: [] })
+          : Promise.resolve({ shopping_results: [] }),
+      ]);
 
-      const results = (serpData.shopping_results || []).slice(0, 8).map(item => {
-        // Nettoyer le prix
-        const priceStr = (item.price || '').replace(/[^\d,\.]/g, '').replace(',', '.');
-        const price = parseFloat(priceStr) || null;
-        // Frais de livraison
-        const deliveryText = (item.delivery || '').toLowerCase();
-        const shippingFree = deliveryText.includes('gratuit') || deliveryText.includes('free') || deliveryText.includes('offert');
-        const shipping = shippingFree ? 0 : null;
-        // Disponibilité
-        const inStock = !deliveryText.includes('rupture') && !deliveryText.includes('indisponible');
-        // Score fiabilité fournisseur
-        const trustedSources = ['amazon', 'ldlc', 'fnac', 'darty', 'boulanger', 'cdiscount', 'rueducommerce', 'materiel.net'];
-        const sourceLower = (item.source || '').toLowerCase();
-        const isTrusted = trustedSources.some(s => sourceLower.includes(s));
-        // Confiance correspondance produit (title matching)
-        const titleLower = (item.title || '').toLowerCase();
-        const nameLower  = name.toLowerCase();
-        const brandLower = (brand || '').toLowerCase();
-        let confidence = 50;
-        if (brandLower && titleLower.includes(brandLower)) confidence += 20;
-        const nameWords = nameLower.split(/\s+/).filter(w => w.length > 3);
-        const matchedWords = nameWords.filter(w => titleLower.includes(w));
-        confidence += Math.min(30, Math.round((matchedWords.length / Math.max(nameWords.length, 1)) * 30));
-        confidence = Math.min(100, confidence);
-        // Score global
-        let score = 0;
-        if (price && price > 0) score += 35;
-        if (inStock) score += 20;
-        if (isTrusted) score += 15;
-        score += (confidence / 100) * 30;
-        score = Math.min(100, Math.round(score));
+      // Combiner et dédupliquer par URL
+      const exactResults = (resp1.shopping_results || []).map(i => scoreResult(i, true));
+      const broadResults = (resp2.shopping_results || []).map(i => scoreResult(i, false));
 
-        return {
-          supplier_name:     item.source || 'Inconnu',
-          supplier_url:      item.link || item.product_link || '',
-          title:             item.title || '',
-          price,
-          currency:          'EUR',
-          shipping_price:    shipping,
-          delivery_estimate: item.delivery || null,
-          availability:      inStock ? 'in_stock' : 'unknown',
-          score,
-          confidence,
-          source:            'serpapi',
-          country:           'FR',
-        };
+      const seen = new Set();
+      const all = [...exactResults, ...broadResults].filter(r => {
+        if (!r.supplier_url || seen.has(r.supplier_url)) return false;
+        seen.add(r.supplier_url);
+        return true;
       });
 
-      // Trier par score décroissant
-      results.sort((a, b) => b.score - a.score);
+      // Trier : d'abord par confiance (≥80 = correspondance exacte), puis par score
+      all.sort((a, b) => {
+        const aExact = a.confidence >= 80 ? 1 : 0;
+        const bExact = b.confidence >= 80 ? 1 : 0;
+        if (aExact !== bExact) return bExact - aExact; // Exacts en premier
+        return b.score - a.score;
+      });
 
-      return res.status(200).json({ offers: results, query });
+      return res.status(200).json({
+        offers: all.slice(0, 10),
+        query: exactTerms,
+        exact_count: all.filter(r => r.confidence >= 80).length,
+      });
     } catch (e) {
       return res.status(500).json({ error: 'Recherche échouée : ' + e.message });
     }

@@ -5,12 +5,14 @@
 
   /* ── État ────────────────────────────────────────────────────────── */
   let _productId   = null;
+  let _productData = {};  // Stocke name, brand, specs, legacy_id pour la recherche
   let _offers      = [];
   let _editOfferId = null;
 
   /* ── Init : appelée par product-edit.js après chargement du produit ── */
   window.sourcingInit = function (productId, productData) {
-    _productId = productId;
+    _productId   = productId;
+    _productData = productData || {};  // Conserve name, brand, specs, legacy_id
 
     const fields = ['supplier_url','supplier_name','supplier_price',
                     'supplier_shipping','supplier_delivery',
@@ -139,7 +141,16 @@
     if (btnSearch) btnSearch.disabled = true;
 
     try {
-      const result = await api.post('/api/suppliers/search', { name, brand });
+      // Envoie toutes les données disponibles pour une recherche précise
+      const result = await api.post('/api/suppliers/search', {
+        name,
+        brand,
+        legacy_id:  _productData.legacy_id || null,
+        asin:       _productData.specs?._asin || null,
+        sku:        _productData.sku || null,
+        specs:      _productData.specs || {},
+        price_eur:  _productData.price_eur || null,
+      });
 
       if (!result || !result.offers || !result.offers.length) {
         _showStatus('info', 'Aucune offre trouvée pour <strong>' + _esc(brand + ' ' + name) + '</strong>. Essayez d\'ajuster le nom du produit.');
@@ -162,6 +173,7 @@
 
       // Auto-remplir la meilleure offre dans les champs si confidence >= 70
       const best = offers[0];
+      const exactCount = result.exact_count || offers.filter(o => o.confidence >= 80).length;
       if (best && best.confidence >= 70) {
         const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
         set('supplier_url',      best.supplier_url);
@@ -174,12 +186,13 @@
 
         const total = (best.price || 0) + (best.shipping_price || 0);
         _showStatus('success',
-          '✅ <strong>' + saved + ' offre(s) trouvée(s)</strong> pour <em>' + _esc(brand + ' ' + name) + '</em>.<br>'
+          '✅ <strong>' + saved + ' offre(s) trouvée(s)</strong>'
+          + (exactCount > 0 ? ' dont <strong>' + exactCount + ' correspondance(s) exacte(s)</strong>' : '') + '.<br>'
           + 'Meilleure offre auto-remplie : <strong>' + _esc(best.supplier_name) + '</strong>'
           + (best.price ? ' — ' + best.price.toFixed(2) + ' €' : '')
           + (best.shipping_price === 0 ? ' · livraison gratuite' : '')
           + ' (confiance ' + best.confidence + '%).<br>'
-          + '<small>N\'oubliez pas de sauvegarder le produit.</small>'
+          + '<small>⬇ Les 4 premiers résultats du tableau sont les correspondances les plus exactes.</small>'
         );
       } else {
         _showStatus('info',
