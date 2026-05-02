@@ -26,15 +26,81 @@
   }
 
   async function _loadExistingPricing() {
-    // Tenter de récupérer les données de pricing existantes via supabase anon
-    // On utilise l'API interne pour rester sécurisé
+    if (!_productId) return;
     try {
-      const r = await fetch('/api/pricing/calculate?_peek=1&product_id=' + _productId, {
+      const r = await fetch('/api/pricing/get?product_id=' + _productId, {
         headers: { 'Authorization': 'Bearer ' + _getToken() }
       });
-      // Si des données existent, elles ont été précalculées
-      // On ne précharge pas automatiquement pour éviter les données périmées
+      if (!r.ok) return;
+      const { pricing, history } = await r.json();
+
+      if (pricing) {
+        // Pré-remplir les champs avec les données sauvegardées
+        const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+        set('pricing-purchase-price',    pricing.purchase_price);
+        set('pricing-supplier-shipping', pricing.supplier_shipping_price);
+        set('pricing-weight',            pricing.weight_kg);
+        if (pricing.customs_rate    != null) set('pricing-customs-rate',   (pricing.customs_rate    * 100).toFixed(1));
+        if (pricing.target_margin_rate != null) set('pricing-margin-rate', (pricing.target_margin_rate * 100).toFixed(0));
+        set('pricing-competitor-kmf', pricing.local_competitor_price_kmf);
+        set('pricing-notes',          pricing.pricing_notes);
+
+        // Afficher les résultats si déjà calculés
+        if (pricing.total_landed_cost_eur && pricing.recommended_price_kmf) {
+          _lastResult = pricing.calculation_details || {
+            totalLandedCost: pricing.total_landed_cost_eur,
+            recommendedEur:  pricing.recommended_price_eur,
+            recommendedKmf:  pricing.recommended_price_kmf,
+            marginAmount:    pricing.margin_amount_eur,
+            marginRate:      pricing.margin_rate,
+            marginPercent:   pricing.margin_rate ? (pricing.margin_rate * 100).toFixed(1) : 0,
+            competitivenessStatus: pricing.competitiveness_status || 'no_data',
+            warnings: [],
+          };
+          _renderResults(_lastResult, pricing.local_competitor_price_kmf);
+          _updateStatusBadge(_lastResult);
+        }
+
+        // Badge statut
+        const badge = document.getElementById('pricing-status-badge');
+        if (badge && pricing.price_status) {
+          const labels = {
+            pending:    ['Non calculé', 'rgba(148,163,184,.12)', 'var(--admin-muted)'],
+            calculated: ['✓ Calculé',   'rgba(34,197,94,.1)',    '#4ade80'],
+            validated:  ['✓ Validé',    'rgba(34,197,94,.15)',   '#4ade80'],
+            manual:     ['✏ Manuel',    'rgba(245,158,11,.15)',  '#fcd34d'],
+            to_verify:  ['⚠️ À vérifier','rgba(245,158,11,.12)', '#fcd34d'],
+          };
+          const [label, bg, color] = labels[pricing.price_status] || labels.pending;
+          badge.textContent = label; badge.style.background = bg; badge.style.color = color;
+        }
+      }
+
+      // Afficher l'historique
+      if (history && history.length > 0) _renderHistory(history);
     } catch (e) { /* silencieux */ }
+  }
+
+  function _renderHistory(history) {
+    const hist = document.getElementById('pricing-history');
+    const list = document.getElementById('pricing-history-list');
+    if (!hist || !list) return;
+    const fmtKmf = v => v != null ? Number(v).toLocaleString('fr-FR') + ' KMF' : '—';
+    const srcLabels = {
+      recommended_apply_single: 'Prix recommandé appliqué',
+      manual_update:            'Prix manuel',
+      global_validation:        'Validation globale',
+      rollback:                 'Restauration',
+    };
+    list.innerHTML = history.map(h => {
+      const date = new Date(h.created_at).toLocaleDateString('fr-FR', { day:'2-digit', month:'2-digit', year:'2-digit', hour:'2-digit', minute:'2-digit' });
+      return '<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid rgba(42,53,69,.4);gap:8px">'
+        + '<span style="color:var(--admin-muted);font-size:11px">' + date + '</span>'
+        + '<span style="font-size:11px">' + (srcLabels[h.source] || h.source || '—') + '</span>'
+        + '<span style="font-weight:700;font-size:12px">' + fmtKmf(h.new_price_kmf) + '</span>'
+        + '</div>';
+    }).join('');
+    hist.style.display = '';
   }
 
   /* ── Calculer le prix ── */

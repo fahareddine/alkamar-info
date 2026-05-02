@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Validation des prix Comores — Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="admin-sidebar" id="sidebar"></aside>
+  <main class="admin-main">
+
+    <div class="page-header">
+      <div>
+        <h1>💰 Validation des prix Comores</h1>
+        <p style="color:var(--admin-muted);font-size:13px;margin-top:4px">Calculer, vérifier et valider les prix de vente pour le marché comorien</p>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center">
+        <button class="btn btn--secondary" id="btn-recalc-all" onclick="recalcAll()">🔄 Recalculer tous</button>
+        <button class="btn btn--primary" id="btn-validate-all" onclick="validateAll()">✓ Valider les prix du site</button>
+      </div>
+    </div>
+
+    <!-- Résumé -->
+    <div class="stats-grid" id="pricing-stats" style="grid-template-columns:repeat(auto-fill,minmax(160px,1fr))">
+      <div class="stat-card"><div class="stat-card__label">Total produits</div><div class="stat-card__value" id="stat-total">—</div></div>
+      <div class="stat-card"><div class="stat-card__label">Prêts à valider</div><div class="stat-card__value" style="color:#4ade80" id="stat-ready">—</div></div>
+      <div class="stat-card"><div class="stat-card__label">À vérifier</div><div class="stat-card__value" style="color:#fcd34d" id="stat-verify">—</div></div>
+      <div class="stat-card"><div class="stat-card__label">Non calculés</div><div class="stat-card__value" style="color:var(--admin-muted)" id="stat-pending">—</div></div>
+      <div class="stat-card"><div class="stat-card__label">Prix manuels</div><div class="stat-card__value" style="color:#93c5fd" id="stat-manual">—</div></div>
+    </div>
+
+    <!-- Status bar -->
+    <div id="status-bar" style="display:none;padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:13px"></div>
+
+    <!-- Paramètres globaux rapides -->
+    <details class="form-card" style="cursor:pointer;margin-bottom:16px">
+      <summary style="font-size:14px;font-weight:700;cursor:pointer;padding:2px 0">⚙ Paramètres pricing (taux actuels)</summary>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-top:14px" id="settings-display">
+        <div style="font-size:13px;color:var(--admin-muted)">Chargement…</div>
+      </div>
+    </details>
+
+    <!-- Tableau de validation -->
+    <div class="admin-table-wrap">
+      <div style="padding:14px 16px;border-bottom:1px solid var(--admin-border);display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <input type="text" id="filter-search" class="form-control" placeholder="Filtrer par nom…" style="width:220px" oninput="filterTable()">
+        <select id="filter-status" class="form-control" style="width:160px" onchange="filterTable()">
+          <option value="">Tous les statuts</option>
+          <option value="calculated">Calculé</option>
+          <option value="validated">Validé</option>
+          <option value="manual">Prix manuel</option>
+          <option value="to_verify">À vérifier</option>
+          <option value="pending">Non calculé</option>
+        </select>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;cursor:pointer">
+          <input type="checkbox" id="filter-only-ready" onchange="filterTable()"> Prêts seulement
+        </label>
+        <span style="margin-left:auto;font-size:12px;color:var(--admin-muted)" id="filter-count"></span>
+      </div>
+      <table class="admin-table" id="pricing-table">
+        <thead>
+          <tr>
+            <th>Produit</th>
+            <th>Prix actuel public</th>
+            <th>Prix recommandé</th>
+            <th>Marge</th>
+            <th>Statut</th>
+            <th>Compétitivité</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="pricing-tbody">
+          <tr><td colspan="7" style="text-align:center;padding:40px;color:var(--admin-muted)">Chargement…</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </main>
+</div>
+
+<script src="/admin/js/config.js"></script>
+<script src="/admin/js/auth.js"></script>
+<script src="/admin/js/api.js"></script>
+<script src="/admin/js/layout.js"></script>
+<script>
+'use strict';
+
+let _allProducts = [];
+let _settings    = null;
+
+async function init() {
+  await adminAuth.requireAuth();
+  await Promise.all([loadSettings(), loadProducts()]);
+}
+
+async function loadSettings() {
+  try {
+    const s = await api.get('/api/pricing/settings');
+    _settings = s;
+    const el = document.getElementById('settings-display');
+    if (el) el.innerHTML = [
+      ['EUR → KMF', s.eur_to_kmf_rate],
+      ['Transport/kg', s.transport_per_kg_eur + ' €'],
+      ['Frais fixes', s.fixed_fee_per_product_eur + ' €'],
+      ['Douane défaut', (s.default_customs_rate * 100).toFixed(1) + '%'],
+      ['Taxes locales', (s.default_local_tax_rate * 100).toFixed(1) + '%'],
+      ['Marge défaut', (s.default_margin_rate * 100).toFixed(0) + '%'],
+    ].map(([k,v]) => '<div><div style="font-size:11px;color:var(--admin-muted);margin-bottom:2px">' + k + '</div><div style="font-weight:700;font-size:14px">' + v + '</div></div>').join('');
+  } catch(e) { /* silencieux */ }
+}
+
+async function loadProducts() {
+  try {
+    const products = await api.get('/api/pricing/all');
+    _allProducts = products || [];
+    updateStats();
+    renderTable(_allProducts);
+  } catch(e) {
+    showStatus('error', 'Erreur chargement : ' + e.message);
+  }
+}
+
+function updateStats() {
+  const counts = { calculated: 0, validated: 0, manual: 0, to_verify: 0, pending: 0 };
+  _allProducts.forEach(p => {
+    const status = p.pricing?.price_status || 'pending';
+    counts[status] = (counts[status] || 0) + 1;
+  });
+  const ready = (counts.calculated || 0) + (counts.validated || 0) + (counts.manual || 0);
+  _set('stat-total',   _allProducts.length);
+  _set('stat-ready',   ready);
+  _set('stat-verify',  counts.to_verify || 0);
+  _set('stat-pending', counts.pending || 0);
+  _set('stat-manual',  counts.manual || 0);
+}
+
+function renderTable(products) {
+  const tbody = document.getElementById('pricing-tbody');
+  if (!tbody) return;
+  _set('filter-count', products.length + ' produit(s)');
+
+  if (!products.length) {
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--admin-muted)">Aucun produit trouvé</td></tr>';
+    return;
+  }
+
+  const compLabels = {
+    very_competitive: ['🟢', '#4ade80'],
+    competitive:      ['🟡', '#fcd34d'],
+    expensive:        ['🟠', '#fb923c'],
+    too_expensive:    ['🔴', '#fca5a5'],
+    no_data:          ['⚪', 'var(--admin-muted)'],
+  };
+  const statusBadges = {
+    calculated: ['Calculé',   'rgba(34,197,94,.12)',   '#4ade80'],
+    validated:  ['Validé',    'rgba(34,197,94,.15)',   '#4ade80'],
+    manual:     ['Manuel',    'rgba(245,158,11,.15)',  '#fcd34d'],
+    to_verify:  ['À vérifier','rgba(245,158,11,.12)', '#fcd34d'],
+    pending:    ['Non calculé','rgba(148,163,184,.1)', 'var(--admin-muted)'],
+  };
+  const fmtKmf = v => v ? Number(v).toLocaleString('fr-FR') + ' KMF' : '—';
+  const fmtEur = v => v ? Number(v).toFixed(2) + ' €' : '—';
+
+  tbody.innerHTML = products.map(p => {
+    const pp = p.pricing;
+    const status = pp?.price_status || 'pending';
+    const [sl, sbg, sc] = statusBadges[status] || statusBadges.pending;
+    const badge = '<span style="font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:' + sbg + ';color:' + sc + '">' + sl + '</span>';
+    const [compIcon, compColor] = compLabels[pp?.competitiveness_status || 'no_data'] || ['⚪','var(--admin-muted)'];
+    const marginPct = pp?.margin_rate ? (pp.margin_rate * 100).toFixed(0) + '%' : '—';
+    const marginColor = pp?.margin_rate < 0.15 ? '#fca5a5' : pp?.margin_rate < 0.20 ? '#fcd34d' : '#4ade80';
+    const canApply = status !== 'pending' && pp?.recommended_price_kmf > 0;
+    return '<tr>'
+      + '<td><strong>' + _esc(p.name) + '</strong><br><span style="font-size:11px;color:var(--admin-muted)">' + _esc(p.brand || '') + '</span></td>'
+      + '<td>' + fmtKmf(p.price_kmf) + '<br><span style="font-size:11px;color:var(--admin-muted)">' + fmtEur(p.price_eur) + '</span></td>'
+      + '<td>' + (pp ? '<strong>' + fmtKmf(pp.recommended_price_kmf) + '</strong><br><span style="font-size:11px;color:var(--admin-muted)">' + fmtEur(pp.recommended_price_eur) + '</span>' : '—') + '</td>'
+      + '<td style="color:' + marginColor + ';font-weight:700">' + marginPct + '</td>'
+      + '<td>' + badge + '</td>'
+      + '<td style="font-size:18px;color:' + compColor + '">' + compIcon + '</td>'
+      + '<td style="display:flex;gap:6px;align-items:center">'
+        + '<a href="/admin/products/edit.html?id=' + p.id + '" class="btn btn--ghost btn--sm" title="Éditer">✏</a>'
+        + (canApply ? '<button class="btn btn--success btn--sm" onclick="applyPrice(\'' + p.id + '\')" title="Appliquer prix recommandé">✓</button>' : '')
+      + '</td>'
+      + '</tr>';
+  }).join('');
+}
+
+function filterTable() {
+  const q      = (document.getElementById('filter-search')?.value || '').toLowerCase();
+  const status = document.getElementById('filter-status')?.value || '';
+  const ready  = document.getElementById('filter-only-ready')?.checked;
+  const readyStatuses = ['calculated','validated','manual'];
+  const filtered = _allProducts.filter(p => {
+    if (q && !p.name.toLowerCase().includes(q) && !(p.brand || '').toLowerCase().includes(q)) return false;
+    if (status && (p.pricing?.price_status || 'pending') !== status) return false;
+    if (ready && !readyStatuses.includes(p.pricing?.price_status)) return false;
+    return true;
+  });
+  renderTable(filtered);
+}
+
+async function applyPrice(productId) {
+  if (!confirm('Appliquer le prix recommandé pour ce produit ?')) return;
+  try {
+    const r = await api.post('/api/pricing/apply', { product_id: productId, use_manual: false });
+    showStatus('success', '✅ Prix appliqué : ' + (r.newPriceKmf?.toLocaleString('fr-FR') || '') + ' KMF');
+    await loadProducts();
+  } catch(e) { showStatus('error', 'Erreur : ' + e.message); }
+}
+
+async function validateAll() {
+  const eligible = _allProducts.filter(p => ['calculated','manual'].includes(p.pricing?.price_status) && (p.pricing?.margin_rate || 0) >= 0);
+  if (!eligible.length) { showStatus('error', 'Aucun produit éligible (calculé + marge positive).'); return; }
+  if (!confirm('Cette action va mettre à jour les prix publics de ' + eligible.length + ' produits.\n\nLes produits "à vérifier", "non calculés" et à marge négative seront ignorés.\n\nContinuer ?')) return;
+  showStatus('loading', '⏳ Validation en cours…');
+  try {
+    const r = await api.post('/api/pricing/validate-all', { confirmed: true });
+    showStatus('success', '✅ ' + r.updated + ' produit(s) mis à jour, ' + r.ignored + ' ignoré(s).');
+    await loadProducts();
+  } catch(e) { showStatus('error', 'Erreur : ' + e.message); }
+}
+
+async function recalcAll() {
+  showStatus('loading', '⏳ Cette action doit être faite produit par produit depuis chaque fiche. Ouvrez les fiches produits pour recalculer.');
+  setTimeout(() => { const el = document.getElementById('status-bar'); if (el) el.style.display = 'none'; }, 4000);
+}
+
+function showStatus(type, msg) {
+  const el = document.getElementById('status-bar');
+  if (!el) return;
+  const styles = {
+    success: 'background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80',
+    error:   'background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:#fca5a5',
+    loading: 'background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.25);color:#93c5fd',
+  };
+  el.style.cssText = (styles[type] || styles.loading) + ';padding:12px 16px;border-radius:10px;margin-bottom:16px;font-size:13px';
+  el.textContent = msg;
+  el.style.display = '';
+  if (type === 'success') setTimeout(() => { el.style.display = 'none'; }, 5000);
+}
+
+function _set(id, val) { const el = document.getElementById(id); if (el) el.textContent = val; }
+function _esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+init();
+</script>
+</body>
+</html>
