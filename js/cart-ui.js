@@ -44,12 +44,6 @@
     if (!e.target.closest('.cart-drawer__body')) e.preventDefault();
   }
 
-  // visualViewport = vraie hauteur visible sur Android (exclut barre gesture)
-  function syncDrawerHeight() {
-    if (!drawerEl) return;
-    drawerEl.style.height = (window.visualViewport ? window.visualViewport.height : window.innerHeight) + 'px';
-  }
-
   function open() {
     render();
     const scrollY = window.scrollY;
@@ -57,8 +51,6 @@
     document.body.style.top = `-${scrollY}px`;
     document.body.classList.add('cart-open');
     document.addEventListener('touchmove', preventBodyScroll, { passive: false });
-    syncDrawerHeight();
-    window.visualViewport?.addEventListener('resize', syncDrawerHeight);
     drawerEl?.classList.add('open');
     overlayEl?.classList.add('open');
   }
@@ -69,8 +61,6 @@
     document.body.style.top = '';
     window.scrollTo(0, scrollY);
     document.removeEventListener('touchmove', preventBodyScroll);
-    window.visualViewport?.removeEventListener('resize', syncDrawerHeight);
-    if (drawerEl) drawerEl.style.height = '';
     drawerEl?.classList.remove('open');
     overlayEl?.classList.remove('open');
   }
