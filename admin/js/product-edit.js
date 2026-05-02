@@ -392,6 +392,8 @@ async function loadProduct(id) {
 
   // Sourcing fournisseur (admin uniquement)
   if (typeof sourcingInit === 'function') sourcingInit(id, p);
+  // Pricing Comores (admin uniquement)
+  if (typeof pricingInit === 'function') pricingInit(id, p);
 }
 
 // --- Save ---

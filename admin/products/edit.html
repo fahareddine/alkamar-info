@@ -403,6 +403,123 @@
             </div>
             <!-- ── FIN SOURCING ────────────────────────────────────────────── -->
 
+            <!-- ── PRICING COMORES (admin uniquement) ─────────────────────── -->
+            <div class="form-card" id="section-pricing">
+              <h2>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Prix Comores
+                <span id="pricing-status-badge" style="margin-left:auto;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:rgba(148,163,184,.12);color:var(--admin-muted)">Non calculé</span>
+              </h2>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="form-group">
+                  <label>Prix achat fournisseur (€)</label>
+                  <input type="number" id="pricing-purchase-price" class="form-control" placeholder="0.00" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                  <label>Frais livraison fournisseur (€)</label>
+                  <input type="number" id="pricing-supplier-shipping" class="form-control" placeholder="0.00" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                  <label>Poids produit (kg)</label>
+                  <input type="number" id="pricing-weight" class="form-control" placeholder="ex: 0.5" step="0.001" min="0">
+                </div>
+                <div class="form-group">
+                  <label>Taux douane (%)</label>
+                  <input type="number" id="pricing-customs-rate" class="form-control" placeholder="défaut 15%" step="0.1" min="0" max="100">
+                </div>
+                <div class="form-group">
+                  <label>Marge souhaitée (%)</label>
+                  <input type="number" id="pricing-margin-rate" class="form-control" placeholder="défaut 30%" step="1" min="0">
+                </div>
+                <div class="form-group">
+                  <label>Prix concurrent local (KMF)</label>
+                  <input type="number" id="pricing-competitor-kmf" class="form-control" placeholder="optionnel" min="0">
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Notes internes</label>
+                <textarea id="pricing-notes" class="form-control" rows="2" placeholder="Observations, source prix…"></textarea>
+              </div>
+
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+                <button type="button" class="btn btn--primary btn--sm" id="btn-pricing-calc" onclick="pricingCalculate()">⚡ Calculer le prix</button>
+                <button type="button" class="btn btn--ghost btn--sm" onclick="pricingOpenSettings()">⚙ Paramètres</button>
+              </div>
+
+              <!-- Résultats -->
+              <div id="pricing-results" style="display:none">
+                <div style="background:rgba(255,255,255,.03);border:1px solid var(--admin-border);border-radius:10px;padding:14px;margin-bottom:12px;font-size:13px">
+                  <div style="display:grid;grid-template-columns:1fr auto;gap:4px 12px;row-gap:6px">
+                    <span style="color:var(--admin-muted)">Prix achat total</span>       <span id="pr-purchase" style="font-weight:600;text-align:right">—</span>
+                    <span style="color:var(--admin-muted)">Transport</span>              <span id="pr-transport" style="font-weight:600;text-align:right">—</span>
+                    <span style="color:var(--admin-muted)">Douane</span>                 <span id="pr-customs" style="font-weight:600;text-align:right">—</span>
+                    <span style="color:var(--admin-muted)">Taxes locales</span>          <span id="pr-taxes" style="font-weight:600;text-align:right">—</span>
+                    <span style="color:var(--admin-muted)">Frais fixes + risque</span>  <span id="pr-fees" style="font-weight:600;text-align:right">—</span>
+                    <span style="border-top:1px solid var(--admin-border);padding-top:6px;font-weight:700;color:var(--admin-text)">Coût total rendu</span>
+                    <span id="pr-total" style="border-top:1px solid var(--admin-border);padding-top:6px;font-weight:800;text-align:right;font-size:14px;color:var(--admin-text)">—</span>
+                  </div>
+                </div>
+
+                <div style="background:var(--admin-accent-subtle);border:1px solid rgba(59,130,246,.25);border-radius:10px;padding:14px;margin-bottom:12px;text-align:center">
+                  <div style="font-size:10.5px;color:#93c5fd;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Prix recommandé</div>
+                  <div id="pr-recommended-kmf" style="font-size:26px;font-weight:800;color:#fff">—</div>
+                  <div id="pr-recommended-eur" style="font-size:13px;color:#93c5fd;margin-top:2px">—</div>
+                  <div id="pr-margin" style="font-size:12px;color:#93c5fd;margin-top:3px">Marge : —</div>
+                  <div id="pr-competitiveness" style="margin-top:6px"></div>
+                </div>
+
+                <div id="pr-competitor-block" style="display:none;font-size:13px;padding:10px 14px;border-radius:8px;margin-bottom:10px;background:rgba(148,163,184,.07);border:1px solid var(--admin-border)">
+                  <div id="pr-competitor-text"></div>
+                </div>
+
+                <div id="pr-warnings" style="display:none;margin-bottom:10px"></div>
+
+                <div style="display:flex;gap:8px;flex-wrap:wrap">
+                  <button type="button" class="btn btn--success btn--sm" id="btn-pricing-apply" onclick="pricingApply(false)">✓ Appliquer prix recommandé</button>
+                  <button type="button" class="btn btn--warning btn--sm" onclick="pricingOpenManual()">✏ Prix manuel</button>
+                </div>
+              </div>
+            </div><!-- /section-pricing -->
+
+            <!-- Modal prix manuel -->
+            <div id="pricing-manual-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center">
+              <div style="background:var(--admin-surface);border-radius:14px;padding:24px;width:380px;max-width:95vw;position:relative">
+                <button onclick="document.getElementById('pricing-manual-modal').style.display='none'" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--admin-muted);font-size:20px;cursor:pointer">×</button>
+                <h3 style="margin:0 0 16px;font-size:15px">Prix manuel</h3>
+                <div class="form-group"><label>Prix final (€)</label><input type="number" id="pricing-manual-eur" class="form-control" step="0.01" min="0"></div>
+                <div class="form-group"><label>Prix final (KMF)</label><input type="number" id="pricing-manual-kmf" class="form-control" min="0"></div>
+                <div class="form-group"><label>Note</label><input type="text" id="pricing-manual-note" class="form-control" placeholder="Raison du prix manuel"></div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+                  <button class="btn btn--ghost btn--sm" onclick="document.getElementById('pricing-manual-modal').style.display='none'">Annuler</button>
+                  <button class="btn btn--primary btn--sm" onclick="pricingApply(true)">Appliquer</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal paramètres pricing -->
+            <div id="pricing-settings-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:300;align-items:center;justify-content:center">
+              <div style="background:var(--admin-surface);border-radius:14px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;position:relative">
+                <button onclick="document.getElementById('pricing-settings-modal').style.display='none'" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--admin-muted);font-size:20px;cursor:pointer">×</button>
+                <h3 style="margin:0 0 16px;font-size:15px">⚙ Paramètres pricing Comores</h3>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div class="form-group"><label>EUR → KMF</label><input type="number" id="ps-eur-kmf" class="form-control" step="1"></div>
+                  <div class="form-group"><label>Transport / kg (€)</label><input type="number" id="ps-transport-kg" class="form-control" step="0.1"></div>
+                  <div class="form-group"><label>Frais fixes / produit (€)</label><input type="number" id="ps-fixed-fee" class="form-control" step="0.5"></div>
+                  <div class="form-group"><label>Douane défaut (%)</label><input type="number" id="ps-customs" class="form-control" step="0.5"></div>
+                  <div class="form-group"><label>Taxes locales (%)</label><input type="number" id="ps-local-tax" class="form-control" step="0.5"></div>
+                  <div class="form-group"><label>Marge défaut (%)</label><input type="number" id="ps-margin" class="form-control" step="1"></div>
+                  <div class="form-group"><label>Marge minimum (%)</label><input type="number" id="ps-min-margin" class="form-control" step="1"></div>
+                  <div class="form-group"><label>Coeff. sécurité (%)</label><input type="number" id="ps-safety" class="form-control" step="0.5"></div>
+                </div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+                  <button class="btn btn--ghost btn--sm" onclick="document.getElementById('pricing-settings-modal').style.display='none'">Annuler</button>
+                  <button class="btn btn--primary btn--sm" onclick="pricingSaveSettings()">Sauvegarder</button>
+                </div>
+              </div>
+            </div>
+            <!-- ── FIN PRICING ───────────────────────────────────────────────── -->
+
           </div><!-- /product-col-side -->
 
         </div><!-- /product-layout -->
@@ -458,5 +575,6 @@
   <script src="/admin/js/layout.js"></script>
   <script src="/admin/js/product-edit.js"></script>
   <script src="/admin/js/sourcing.js"></script>
+  <script src="/admin/js/pricing.js"></script>
 </body>
 </html>

@@ -15,6 +15,10 @@
     { "source": "/api/stock/movements", "destination": "/api/products?_route=stock" },
     { "source": "/api/invoices/:id", "destination": "/api/invoices?id=:id" },
     { "source": "/api/suppliers/offers", "destination": "/api/products?_route=supplier_offers" },
-    { "source": "/api/suppliers/search", "destination": "/api/products?_route=supplier_search" }
+    { "source": "/api/suppliers/search",       "destination": "/api/products?_route=supplier_search"       },
+    { "source": "/api/pricing/settings",      "destination": "/api/products?_route=pricing_settings"      },
+    { "source": "/api/pricing/calculate",     "destination": "/api/products?_route=pricing_calculate"     },
+    { "source": "/api/pricing/apply",         "destination": "/api/products?_route=pricing_apply"         },
+    { "source": "/api/pricing/validate-all",  "destination": "/api/products?_route=pricing_validate_all"  }
   ]
 }
