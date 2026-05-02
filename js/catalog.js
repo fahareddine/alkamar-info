@@ -27,9 +27,6 @@ const CATALOG = (function () {
   // _SL{N}_ = redimensionne côté CDN so que la plus grande dimension = N px
   function optimizeAmazonImg(url, size) {
     if (!url || !url.includes('m.media-amazon.com/images')) return url;
-    // N'applique le resize QUE si l'URL a déjà un modificateur (._AC_SL1500_. etc.)
-    // Les IDs plain (ex: 61lN0YzusnL.jpg) sont laissés intacts pour éviter les 404
-    if (!url.match(/\._[A-Z]{2}[A-Z0-9_,]+_\./)) return url;
     const [base, qs] = url.split('?');
     const opt = base
       .replace(/\._[^.]+_(?=\.(jpg|jpeg|png))/gi, '')
