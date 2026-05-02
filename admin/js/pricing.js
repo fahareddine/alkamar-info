@@ -278,6 +278,31 @@
     }
   };
 
+  /* ── Rollback — restaurer le prix précédent ── */
+  window.pricingRollback = async function () {
+    if (!_productId) { alert('Sauvegardez d\'abord le produit.'); return; }
+    if (!confirm('Restaurer le prix précédent pour ce produit ?\nL\'état actuel sera sauvegardé dans l\'historique.')) return;
+    try {
+      const r = await fetch('/api/pricing/rollback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + _getToken() },
+        body: JSON.stringify({ product_id: _productId }),
+      });
+      const data = await r.json();
+      if (!r.ok) throw new Error(data.error || 'Erreur rollback');
+      // Met à jour les champs prix
+      const priceEurEl = document.querySelector('[name="price_eur"]');
+      const priceKmfEl = document.querySelector('[name="price_kmf"]');
+      if (priceEurEl) priceEurEl.value = data.restoredEur;
+      if (priceKmfEl) priceKmfEl.value = data.restoredKmf;
+      alert('↩ Prix restauré : ' + (data.restoredKmf?.toLocaleString('fr-FR') || '') + ' KMF\nN\'oubliez pas de sauvegarder le produit.');
+      // Recharger l'historique
+      await _loadExistingPricing();
+    } catch (e) {
+      alert('Erreur : ' + e.message);
+    }
+  };
+
   /* ── Modal manuel ── */
   window.pricingOpenManual = function () {
     if (_lastResult) {

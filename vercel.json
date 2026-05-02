@@ -21,6 +21,8 @@
     { "source": "/api/pricing/apply",         "destination": "/api/products?_route=pricing_apply"         },
     { "source": "/api/pricing/validate-all",  "destination": "/api/products?_route=pricing_validate_all"  },
     { "source": "/api/pricing/get",           "destination": "/api/products?_route=pricing_get"           },
-    { "source": "/api/pricing/all",           "destination": "/api/products?_route=pricing_all"           }
+    { "source": "/api/pricing/all",             "destination": "/api/products?_route=pricing_all"             },
+    { "source": "/api/pricing/recalculate-all","destination": "/api/products?_route=pricing_recalculate_all"},
+    { "source": "/api/pricing/rollback",       "destination": "/api/products?_route=pricing_rollback"       }
   ]
 }

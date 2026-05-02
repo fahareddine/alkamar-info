@@ -388,6 +388,111 @@ module.exports = async function handler(req, res) {
     return res.status(200).json({ updated, ignored, total: eligibles.length });
   }
 
+  // ─── Route : /api/pricing/recalculate-all ───────────────────────────────────
+  if (req.query._route === 'pricing_recalculate_all') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST requis' });
+
+    const { calculateComorosPrice } = require('./_lib/pricing');
+    const { data: settings } = await supabase.from('pricing_settings').select('*').limit(1).single();
+    if (!settings) return res.status(500).json({ error: 'pricing_settings manquants' });
+
+    // Récupérer tous les product_pricing qui ont un prix d'achat
+    const { data: pricings } = await supabase
+      .from('product_pricing')
+      .select('*')
+      .not('purchase_price', 'is', null)
+      .gt('purchase_price', 0);
+
+    if (!pricings?.length) return res.status(200).json({ recalculated: 0, message: 'Aucun produit avec prix d\'achat' });
+
+    let recalculated = 0, errors = 0;
+    for (const pp of pricings) {
+      try {
+        const result = calculateComorosPrice({
+          purchasePrice:           pp.purchase_price,
+          purchaseCurrency:        pp.purchase_currency || 'EUR',
+          supplierShipping:        pp.supplier_shipping_price || 0,
+          weightKg:                pp.weight_kg || 0,
+          customsRate:             pp.customs_rate,
+          localTaxRate:            pp.local_tax_rate,
+          targetMarginRate:        pp.target_margin_rate,
+          riskRate:                pp.risk_rate || 0.05,
+          localCompetitorPriceKmf: pp.local_competitor_price_kmf,
+        }, settings);
+
+        const hasIssue = result.warnings.includes('weight_missing') || result.warnings.includes('purchase_price_missing');
+        await supabase.from('product_pricing').update({
+          total_landed_cost_eur:   result.totalLandedCost,
+          recommended_price_eur:   result.recommendedEur,
+          recommended_price_kmf:   result.recommendedKmf,
+          margin_amount_eur:       result.marginAmount,
+          margin_rate:             result.marginRate,
+          price_status:            pp.is_manual_price ? 'manual' : (hasIssue ? 'to_verify' : 'calculated'),
+          competitiveness_status:  result.competitivenessStatus,
+          calculation_details:     result,
+          calculated_at:           new Date().toISOString(),
+          updated_at:              new Date().toISOString(),
+        }).eq('product_id', pp.product_id);
+        recalculated++;
+      } catch (e) { errors++; }
+    }
+    return res.status(200).json({ recalculated, errors, total: pricings.length });
+  }
+
+  // ─── Route : /api/pricing/rollback ──────────────────────────────────────────
+  if (req.query._route === 'pricing_rollback') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST requis' });
+
+    const { product_id } = req.body || {};
+    if (!product_id) return res.status(400).json({ error: 'product_id requis' });
+
+    // Récupérer la dernière entrée de l'historique
+    const { data: last } = await supabase
+      .from('product_price_history')
+      .select('*')
+      .eq('product_id', product_id)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (!last) return res.status(404).json({ error: 'Aucun historique disponible pour ce produit' });
+    if (!last.old_price_eur || last.old_price_eur <= 0) return res.status(400).json({ error: 'Ancien prix invalide' });
+
+    // Sauvegarder l'état actuel dans l'historique avant rollback
+    const { data: current } = await supabase.from('products').select('price_eur, price_kmf').eq('id', product_id).single();
+    await supabase.from('product_price_history').insert({
+      product_id,
+      old_price_eur: current?.price_eur,
+      old_price_kmf: current?.price_kmf,
+      new_price_eur: last.old_price_eur,
+      new_price_kmf: last.old_price_kmf,
+      source:        'rollback',
+      pricing_notes: 'Restauration au prix du ' + new Date(last.created_at).toLocaleDateString('fr-FR'),
+    });
+
+    // Restaurer l'ancien prix
+    const { error: pErr } = await supabase.from('products').update({
+      price_eur:  last.old_price_eur,
+      price_kmf:  last.old_price_kmf,
+      updated_at: new Date().toISOString(),
+    }).eq('id', product_id);
+    if (pErr) return res.status(500).json({ error: pErr.message });
+
+    await supabase.from('product_pricing').update({
+      final_price_eur: last.old_price_eur,
+      final_price_kmf: last.old_price_kmf,
+      price_status:    'manual',
+      is_manual_price: true,
+      updated_at:      new Date().toISOString(),
+    }).eq('product_id', product_id);
+
+    return res.status(200).json({ success: true, restoredEur: last.old_price_eur, restoredKmf: last.old_price_kmf });
+  }
+
   // GET — lecture publique avec filtres
   if (req.method === 'GET') {
     const { category, subcategory, status, search, limit = '100', offset = '0' } = req.query;

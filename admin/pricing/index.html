@@ -179,9 +179,10 @@ function renderTable(products) {
       + '<td style="color:' + marginColor + ';font-weight:700">' + marginPct + '</td>'
       + '<td>' + badge + '</td>'
       + '<td style="font-size:18px;color:' + compColor + '">' + compIcon + '</td>'
-      + '<td style="display:flex;gap:6px;align-items:center">'
+      + '<td style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">'
         + '<a href="/admin/products/edit.html?id=' + p.id + '" class="btn btn--ghost btn--sm" title="Éditer">✏</a>'
-        + (canApply ? '<button class="btn btn--success btn--sm" onclick="applyPrice(\'' + p.id + '\')" title="Appliquer prix recommandé">✓</button>' : '')
+        + (canApply ? '<button class="btn btn--success btn--sm" onclick="applyPrice(\'' + p.id + '\')" title="Appliquer prix recommandé">✓ Appliquer</button>' : '')
+        + (p.price_kmf ? '<button class="btn btn--ghost btn--sm" onclick="rollbackPrice(\'' + p.id + '\')" title="Restaurer prix précédent" style="color:var(--admin-muted)">↩</button>' : '')
       + '</td>'
       + '</tr>';
   }).join('');
@@ -223,8 +224,26 @@ async function validateAll() {
 }
 
 async function recalcAll() {
-  showStatus('loading', '⏳ Cette action doit être faite produit par produit depuis chaque fiche. Ouvrez les fiches produits pour recalculer.');
-  setTimeout(() => { const el = document.getElementById('status-bar'); if (el) el.style.display = 'none'; }, 4000);
+  const withPrice = _allProducts.filter(p => p.pricing?.recommended_price_eur || p.pricing?.total_landed_cost_eur).length;
+  if (!confirm('Recalculer les prix de tous les produits qui ont un prix d\'achat enregistré (' + withPrice + ' produits avec données) ?\n\nLes paramètres actuels (taux douane, transport, marge) seront utilisés.')) return;
+  const btn = document.getElementById('btn-recalc-all');
+  if (btn) { btn.disabled = true; btn.textContent = '⏳ Recalcul…'; }
+  showStatus('loading', '⏳ Recalcul des prix en cours…');
+  try {
+    const r = await api.post('/api/pricing/recalculate-all', {});
+    showStatus('success', '✅ ' + r.recalculated + ' produit(s) recalculé(s)' + (r.errors > 0 ? ', ' + r.errors + ' erreur(s)' : '') + '.');
+    await loadProducts();
+  } catch(e) { showStatus('error', 'Erreur : ' + e.message); }
+  finally { if (btn) { btn.disabled = false; btn.textContent = '🔄 Recalculer tous'; } }
+}
+
+async function rollbackPrice(productId) {
+  if (!confirm('Restaurer le prix précédent de ce produit ?\nL\'état actuel sera sauvegardé dans l\'historique.')) return;
+  try {
+    const r = await api.post('/api/pricing/rollback', { product_id: productId });
+    showStatus('success', '↩ Prix restauré : ' + (r.restoredKmf?.toLocaleString('fr-FR') || '') + ' KMF = ' + r.restoredEur + ' €');
+    await loadProducts();
+  } catch(e) { showStatus('error', 'Erreur rollback : ' + e.message); }
 }
 
 function showStatus(type, msg) {
