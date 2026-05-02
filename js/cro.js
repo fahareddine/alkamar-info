@@ -2,6 +2,29 @@
 (function () {
   'use strict';
 
+  // Découpe le travail en chunks pour éviter les long tasks (> 50ms)
+  function schedule(fn) {
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(fn, { timeout: 2000 });
+    } else {
+      setTimeout(fn, 50);
+    }
+  }
+
+  function processChunked(items, processFn, done) {
+    let i = 0;
+    function step() {
+      const end = Math.min(i + 20, items.length);
+      for (; i < end; i++) processFn(items[i]);
+      if (i < items.length) {
+        schedule(step);
+      } else if (done) {
+        done();
+      }
+    }
+    schedule(step);
+  }
+
   // ── Compte à rebours 24h ─────────────────────────────
   function injectCountdown() {
     const target = document.querySelector('.promo-banner__inner, .subcat-header__inner');
@@ -33,8 +56,9 @@
 
   // ── Rareté : "X en stock" ────────────────────────────
   function injectScarcity() {
-    document.querySelectorAll('.product-card').forEach(card => {
-      if (card.querySelector('.cro-scarcity')) return;
+    const cards = [...document.querySelectorAll('.product-card:not(.cro-done-scarcity)')];
+    processChunked(cards, card => {
+      card.classList.add('cro-done-scarcity');
       const stockEl = card.querySelector('.card-stock');
       if (!stockEl || stockEl.textContent.includes('limité') || stockEl.textContent.includes('out')) return;
       const name = card.querySelector('.card-title')?.textContent || Math.random().toString();
@@ -52,8 +76,9 @@
 
   // ── Social proof : vues simulées ─────────────────────
   function injectSocialProof() {
-    document.querySelectorAll('.product-card').forEach(card => {
-      if (card.querySelector('.cro-views')) return;
+    const cards = [...document.querySelectorAll('.product-card:not(.cro-done-views)')];
+    processChunked(cards, card => {
+      card.classList.add('cro-done-views');
       const body = card.querySelector('.card-body');
       if (!body) return;
       const name = card.querySelector('.card-title')?.textContent || '';
@@ -79,21 +104,28 @@
   }
 
   // ── Observer pour produits chargés dynamiquement ─────
+  let _pending = false;
+  function runAll() {
+    if (_pending) return;
+    _pending = true;
+    schedule(() => {
+      _pending = false;
+      injectScarcity();
+      injectSocialProof();
+      injectBestSeller();
+    });
+  }
+
   function observe() {
     document.querySelectorAll(
       '.products-grid,.products-grid--5,.products-grid--4,#grid-promo'
     ).forEach(grid => {
-      new MutationObserver(() => {
-        setTimeout(() => { injectScarcity(); injectSocialProof(); injectBestSeller(); }, 150);
-      }).observe(grid, { childList: true });
+      new MutationObserver(() => runAll()).observe(grid, { childList: true });
     });
   }
 
   function init() {
     injectCountdown();
-    injectScarcity();
-    injectSocialProof();
-    injectBestSeller();
     observe();
   }
 
@@ -101,5 +133,5 @@
     document.addEventListener('DOMContentLoaded', init);
   } else { init(); }
 
-  window.addEventListener('catalog:rendered', init);
+  window.addEventListener('catalog:rendered', runAll);
 })();
