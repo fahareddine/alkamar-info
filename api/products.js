@@ -234,6 +234,40 @@ module.exports = async function handler(req, res) {
     }
   }
 
+  // ─── Route : /api/pricing/get → données pricing existantes d'un produit ─────
+  if (req.query._route === 'pricing_get') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    if (req.method !== 'GET') return res.status(405).json({ error: 'GET requis' });
+    const { product_id } = req.query;
+    if (!product_id) return res.status(400).json({ error: 'product_id requis' });
+    const [{ data: pp }, { data: history }] = await Promise.all([
+      supabase.from('product_pricing').select('*').eq('product_id', product_id).single(),
+      supabase.from('product_price_history').select('*').eq('product_id', product_id)
+        .order('created_at', { ascending: false }).limit(5),
+    ]);
+    return res.status(200).json({ pricing: pp || null, history: history || [] });
+  }
+
+  // ─── Route : /api/pricing/all → liste tous produits avec leur status pricing ─
+  if (req.query._route === 'pricing_all') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    if (req.method !== 'GET') return res.status(405).json({ error: 'GET requis' });
+    const { data: products } = await supabase
+      .from('products')
+      .select('id, name, brand, price_eur, price_kmf, status')
+      .eq('status', 'active')
+      .order('name');
+    const { data: pricings } = await supabase
+      .from('product_pricing')
+      .select('product_id, price_status, recommended_price_eur, recommended_price_kmf, final_price_eur, final_price_kmf, margin_rate, is_manual_price, calculated_at, validated_at, competitiveness_status');
+    const pMap = {};
+    (pricings || []).forEach(p => { pMap[p.product_id] = p; });
+    const result = (products || []).map(p => ({ ...p, pricing: pMap[p.id] || null }));
+    return res.status(200).json(result);
+  }
+
   // ─── Route : /api/pricing/settings ──────────────────────────────────────────
   if (req.query._route === 'pricing_settings') {
     const auth = await requireRole(req, 'admin', 'editor');
