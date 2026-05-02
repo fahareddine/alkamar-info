@@ -296,8 +296,8 @@
       return `
         <div class="product-card${p.badge ? ' has-badge' : ''}">
           ${badge}
-          <button class="card-wishlist" onclick="toggleWish(this)">♡</button>
           <div class="card-img">
+            <button class="card-wishlist" onclick="toggleWish(this)">♡</button>
             <img src="${p.main_image_url || p.image || ''}" alt="${p.name}" width="220" height="170" loading="lazy">
           </div>
           <div class="card-body">

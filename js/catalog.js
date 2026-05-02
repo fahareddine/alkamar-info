@@ -107,8 +107,8 @@ const CATALOG = (function () {
     const _hasBadge = badgeHtml.includes('<span class="badge');
     return `<div class="product-card${_hasBadge ? ' has-badge' : ''}">
       ${badgeHtml}
-      <button class="card-wishlist" onclick="toggleWish(this)" aria-label="Ajouter aux favoris">\u2661</button>
       <div class="card-img">
+        <button class="card-wishlist" onclick="toggleWish(this)" aria-label="Ajouter aux favoris">\u2661</button>
         <img src="${imgSrc}" ${srcsetAttr} alt="${esc(p.name || '')}" width="220" height="170" ${isLCP ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} onerror="imgFallback(this)">
       </div>
       <div class="card-body">
