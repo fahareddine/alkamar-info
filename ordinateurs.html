@@ -294,7 +294,7 @@
         : '';
       const ratingCount = Number(p.rating_count) || 0;
       return `
-        <div class="product-card">
+        <div class="product-card${p.badge ? ' has-badge' : ''}">
           ${badge}
           <button class="card-wishlist" onclick="toggleWish(this)">♡</button>
           <div class="card-img">
