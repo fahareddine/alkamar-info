@@ -119,7 +119,12 @@
     anchor.insertAdjacentElement('afterend', layout);
 
     // MutationObserver : ré-applique filtres quand produits chargés dynamiquement
-    const observer = new MutationObserver(() => sidebarApplyFilters());
+    // Debounce 200ms — évite les appels répétés quand CRO/catalog insèrent des éléments
+    let _sidebarTimer;
+    const observer = new MutationObserver(() => {
+      clearTimeout(_sidebarTimer);
+      _sidebarTimer = setTimeout(sidebarApplyFilters, 200);
+    });
     observer.observe(content, { childList: true, subtree: true });
 
     wireSearch();

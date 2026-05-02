@@ -81,9 +81,9 @@ const CATALOG = (function () {
     const isBanned   = hasSuspiciousUrl(rawImg);
     const imgSrc     = isBanned ? PLACEHOLDER_IMG : optimizeAmazonImg(rawImg || PLACEHOLDER_IMG, 380);
     const isAmazon   = !isBanned && rawImg && rawImg.includes('media-amazon.com');
-    // srcset: 200w pour desktop (162px affiché), 380w pour mobile (220px affiché)
+    // srcset: 240w couvre 220px mobile 1x DPR, 380w pour 2x DPR
     const srcsetAttr = isAmazon
-      ? `srcset="${optimizeAmazonImg(rawImg, 200)} 200w, ${imgSrc} 380w" sizes="(min-width: 1200px) 162px, 220px"`
+      ? `srcset="${optimizeAmazonImg(rawImg, 240)} 240w, ${imgSrc} 380w" sizes="(min-width: 1200px) 162px, 220px"`
       : '';
     const ratingN    = Number(p.rating_count) || 0;
     const isLCP      = cardIdx < 4; // au-dessus de la ligne de flottaison
