@@ -42,15 +42,22 @@
 
   function open() {
     render();
+    // Sauvegarde la position de scroll avant de fixer le body (iOS Safari)
+    const scrollY = window.scrollY;
+    document.body.dataset.cartScrollY = scrollY;
+    document.body.style.top = `-${scrollY}px`;
+    document.body.classList.add('cart-open');
     drawerEl?.classList.add('open');
     overlayEl?.classList.add('open');
-    document.body.style.overflow = 'hidden';
   }
 
   function close() {
+    const scrollY = parseInt(document.body.dataset.cartScrollY || '0', 10);
+    document.body.classList.remove('cart-open');
+    document.body.style.top = '';
+    window.scrollTo(0, scrollY);
     drawerEl?.classList.remove('open');
     overlayEl?.classList.remove('open');
-    document.body.style.overflow = '';
   }
 
   function render() {

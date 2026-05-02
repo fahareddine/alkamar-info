@@ -444,13 +444,21 @@
     }
 
     /* ── Panier ──────────────────────────────────────── */
-    let cartCount = 0;
     function addToCart(btn, id) {
-      cartCount++;
-      document.querySelector('.cart-badge').textContent = cartCount;
-      const n = document.getElementById('cart-notif');
-      n.style.display = 'flex';
-      setTimeout(() => n.style.display = 'none', 2500);
+      const card = btn?.closest('.product-card');
+      const name      = card?.querySelector('.card-title')?.textContent?.trim() || '';
+      const brand     = card?.querySelector('.card-brand')?.textContent?.trim() || '';
+      const priceRaw  = card?.querySelector('.price-main')?.childNodes[0]?.textContent?.trim().replace(/\s/g,'').replace(',','.') || '0';
+      const img       = card?.querySelector('.card-img img')?.src || '';
+      const product   = { id: id || String(Date.now()), name, brand, price_eur: parseFloat(priceRaw) || 0, main_image_url: img };
+      if (typeof Cart !== 'undefined') Cart.add(product);
+      if (typeof CartUI !== 'undefined') CartUI.open();
+      if (btn) {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✓ Ajouté';
+        btn.style.background = '#059669';
+        setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1600);
+      }
     }
 
     /* ── Wishlist ────────────────────────────────────── */
@@ -472,6 +480,8 @@
     });
   </script>
 
+  <script src="js/cart.js"></script>
+  <script src="js/cart-ui.js"></script>
   <script src="js/cro.js" defer></script>
   <script src="js/sidebar.js" defer></script>
 </body>
