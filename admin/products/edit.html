@@ -276,6 +276,133 @@
               <div id="badge-preview-wrap" style="margin-top:8px"></div>
             </div>
 
+            <!-- ── SOURCING FOURNISSEUR (admin uniquement) ─────────────────── -->
+            <div class="form-card" id="section-sourcing">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+                <h2 style="margin:0;display:flex;align-items:center;gap:8px">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                  Sourcing fournisseur
+                </h2>
+                <span style="font-size:10px;font-weight:700;text-transform:uppercase;background:#fef3c7;color:#d97706;border:1px solid #fde68a;border-radius:4px;padding:2px 6px">Admin seulement</span>
+              </div>
+
+              <div class="form-group">
+                <label>Lien fournisseur principal</label>
+                <div style="display:flex;gap:8px;align-items:center">
+                  <input type="url" id="supplier_url" class="form-control" placeholder="https://www.amazon.fr/dp/...">
+                  <button type="button" class="btn btn-primary btn-sm" id="btn-acheter" onclick="sourcingBuyNow()" disabled style="white-space:nowrap;display:flex;align-items:center;gap:5px">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+                    Acheter
+                  </button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Fournisseur</label>
+                <input type="text" id="supplier_name" class="form-control" placeholder="Amazon, Cdiscount, LDLC…">
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="form-group">
+                  <label>Prix fournisseur (€)</label>
+                  <input type="number" id="supplier_price" class="form-control" placeholder="0.00" step="0.01" min="0">
+                </div>
+                <div class="form-group">
+                  <label>Frais livraison (€)</label>
+                  <input type="number" id="supplier_shipping" class="form-control" placeholder="0.00" step="0.01" min="0">
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="form-group">
+                  <label>Délai livraison</label>
+                  <input type="text" id="supplier_delivery" class="form-control" placeholder="2-3 jours, J+1…">
+                </div>
+                <div class="form-group">
+                  <label>Disponibilité</label>
+                  <select id="supplier_availability" class="form-control">
+                    <option value="unknown">Inconnu</option>
+                    <option value="in_stock">En stock</option>
+                    <option value="out_of_stock">Rupture</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Notes internes</label>
+                <textarea id="supplier_notes" class="form-control" rows="2" placeholder="Contact, conditions, notes…"></textarea>
+              </div>
+
+              <div id="sourcing-meta" style="display:none;font-size:12px;color:var(--admin-muted);margin-bottom:10px">
+                <span id="sourcing-last-checked"></span>
+              </div>
+
+              <!-- Actions -->
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="sourcingSearch()" style="display:flex;align-items:center;gap:5px">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                  Chercher meilleur prix
+                </button>
+                <button type="button" class="btn btn-outline btn-sm" onclick="sourcingToggleOffers()" style="display:flex;align-items:center;gap:5px">
+                  <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+                  Offres (<span id="offers-count">0</span>)
+                </button>
+              </div>
+
+              <!-- Status -->
+              <div id="sourcing-status" class="sourcing-status" style="display:none"></div>
+
+              <!-- Tableau offres -->
+              <div id="sourcing-offers-panel" style="display:none;margin-top:14px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+                  <strong style="font-size:13px">Offres comparées</strong>
+                  <button type="button" class="btn btn-outline btn-sm" onclick="sourcingAddOffer()" style="font-size:12px;padding:3px 8px">+ Ajouter</button>
+                </div>
+                <div style="overflow-x:auto">
+                  <table class="sourcing-table" id="sourcing-table">
+                    <thead><tr>
+                      <th>Fournisseur</th><th>Prix</th><th>Livraison</th>
+                      <th>Délai</th><th>Dispo</th><th>Score</th><th>Actions</th>
+                    </tr></thead>
+                    <tbody id="sourcing-offers-body">
+                      <tr><td colspan="7" style="text-align:center;color:#9ca3af;padding:16px">Aucune offre</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div><!-- /sourcing -->
+
+            <!-- Modal ajout offre -->
+            <div id="sourcing-add-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;align-items:center;justify-content:center">
+              <div style="background:var(--admin-surface);border-radius:12px;padding:24px;width:480px;max-width:95vw;max-height:90vh;overflow-y:auto;position:relative">
+                <button onclick="sourcingCloseModal()" style="position:absolute;top:12px;right:12px;background:none;border:none;color:var(--admin-muted);font-size:20px;cursor:pointer">×</button>
+                <h3 style="margin:0 0 16px;font-size:15px">Ajouter une offre fournisseur</h3>
+                <div class="form-group"><label>Fournisseur *</label><input type="text" id="modal-supplier-name" class="form-control" placeholder="Amazon, Cdiscount…"></div>
+                <div class="form-group"><label>URL *</label><input type="url" id="modal-supplier-url" class="form-control" placeholder="https://…"></div>
+                <div class="form-group"><label>Titre produit trouvé</label><input type="text" id="modal-title" class="form-control"></div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div class="form-group"><label>Prix (€)</label><input type="number" id="modal-price" class="form-control" step="0.01"></div>
+                  <div class="form-group"><label>Livraison (€)</label><input type="number" id="modal-shipping" class="form-control" step="0.01"></div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                  <div class="form-group"><label>Délai</label><input type="text" id="modal-delivery" class="form-control" placeholder="2-3 jours"></div>
+                  <div class="form-group"><label>Disponibilité</label>
+                    <select id="modal-availability" class="form-control">
+                      <option value="unknown">Inconnu</option>
+                      <option value="in_stock">En stock</option>
+                      <option value="out_of_stock">Rupture</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group"><label>Confiance produit (0-100)</label><input type="number" id="modal-confidence" class="form-control" min="0" max="100" value="80"></div>
+                <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:16px">
+                  <button type="button" class="btn btn-outline" onclick="sourcingCloseModal()">Annuler</button>
+                  <button type="button" class="btn btn-primary" onclick="sourcingSaveOffer()">Enregistrer</button>
+                </div>
+              </div>
+            </div>
+            <!-- ── FIN SOURCING ────────────────────────────────────────────── -->
+
           </div><!-- /product-col-side -->
 
         </div><!-- /product-layout -->
@@ -330,5 +457,6 @@
   <script src="/admin/js/api.js"></script>
   <script src="/admin/js/layout.js"></script>
   <script src="/admin/js/product-edit.js"></script>
+  <script src="/admin/js/sourcing.js"></script>
 </body>
 </html>
