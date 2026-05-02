@@ -282,8 +282,8 @@
         <div class="sidebar-block__title">Prix</div>
         <div class="sidebar-block__body">
           <div class="filter-price">
-            <label>Budget maximum : <strong id="price-val">1 500 €</strong></label>
-            <input type="range" min="0" max="3000" value="1500" step="50" oninput="document.getElementById('price-val').textContent=this.value+' €'">
+            <label for="price-range">Budget maximum : <strong id="price-val">1 500 €</strong></label>
+            <input id="price-range" type="range" min="0" max="3000" value="1500" step="50" aria-valuemin="0" aria-valuemax="3000" aria-valuenow="1500" oninput="document.getElementById('price-val').textContent=this.value+' €';this.setAttribute('aria-valuenow',this.value)">
             <div class="filter-price__vals"><span>0 €</span><span>3 000 €</span></div>
           </div>
         </div>
@@ -335,8 +335,8 @@
         <div class="products-toolbar__count"><strong id="product-count">24</strong> produits trouvés</div>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <div class="toolbar-sort">
-            <label>Trier par :</label>
-            <select id="sort-select" onchange="applySort(this.value)">
+            <label for="sort-select">Trier par :</label>
+            <select id="sort-select" aria-label="Trier les produits" onchange="applySort(this.value)">
               <option value="">Pertinence</option>
               <option value="price-asc">Prix croissant</option>
               <option value="price-desc">Prix décroissant</option>
