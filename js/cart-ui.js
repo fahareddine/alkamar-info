@@ -41,8 +41,14 @@
   }
 
   function preventBodyScroll(e) {
-    // Autorise scroll uniquement dans la zone scrollable du panier
     if (!e.target.closest('.cart-drawer__body')) e.preventDefault();
+  }
+
+  // visualViewport garantit la vraie hauteur visible sur Android (barre gesture incluse)
+  function syncDrawerHeight() {
+    if (!drawerEl) return;
+    const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+    drawerEl.style.height = vh + 'px';
   }
 
   function open() {
@@ -51,8 +57,9 @@
     document.body.dataset.cartScrollY = scrollY;
     document.body.style.top = `-${scrollY}px`;
     document.body.classList.add('cart-open');
-    // Bloque touchmove sur tout sauf le body du drawer (Android Chrome)
     document.addEventListener('touchmove', preventBodyScroll, { passive: false });
+    syncDrawerHeight();
+    window.visualViewport?.addEventListener('resize', syncDrawerHeight);
     drawerEl?.classList.add('open');
     overlayEl?.classList.add('open');
   }
@@ -63,6 +70,8 @@
     document.body.style.top = '';
     window.scrollTo(0, scrollY);
     document.removeEventListener('touchmove', preventBodyScroll);
+    window.visualViewport?.removeEventListener('resize', syncDrawerHeight);
+    if (drawerEl) drawerEl.style.height = '';
     drawerEl?.classList.remove('open');
     overlayEl?.classList.remove('open');
   }
