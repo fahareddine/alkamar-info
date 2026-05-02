@@ -16,5 +16,6 @@ const api = {
   get: (path) => api._fetch(path),
   post: (path, body) => api._fetch(path, { method: 'POST', body: JSON.stringify(body) }),
   put: (path, body) => api._fetch(path, { method: 'PUT', body: JSON.stringify(body) }),
+  patch: (path, body) => api._fetch(path, { method: 'PATCH', body: JSON.stringify(body) }),
   delete: (path) => api._fetch(path, { method: 'DELETE' }),
 };

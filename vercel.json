@@ -14,6 +14,7 @@
     { "source": "/api/logs", "destination": "/api/stats?_route=logs" },
     { "source": "/api/stock/movements", "destination": "/api/products?_route=stock" },
     { "source": "/api/invoices/:id", "destination": "/api/invoices?id=:id" },
-    { "source": "/api/suppliers/offers", "destination": "/api/products?_route=supplier_offers" }
+    { "source": "/api/suppliers/offers", "destination": "/api/products?_route=supplier_offers" },
+    { "source": "/api/suppliers/search", "destination": "/api/products?_route=supplier_search" }
   ]
 }

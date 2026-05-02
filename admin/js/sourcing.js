@@ -114,29 +114,84 @@
     if (panel) panel.style.display = panel.style.display === 'none' ? '' : 'none';
   };
 
-  /* ── Recherche meilleur prix (Phase 1 : liens préparés manuellement) ── */
-  window.sourcingSearch = function () {
+  /* ── Recherche automatique meilleur prix via SerpAPI ── */
+  window.sourcingSearch = async function () {
     if (!_productId) { _showStatus('error', 'Sauvegardez d\'abord le produit.'); return; }
     const name  = document.getElementById('name')?.value?.trim()  || '';
     const brand = document.getElementById('brand')?.value?.trim() || '';
     if (!name) { _showStatus('error', 'Nom du produit manquant.'); return; }
 
-    const q = encodeURIComponent((brand + ' ' + name).trim());
-    const sources = [
-      { label: 'Amazon FR',  url: 'https://www.amazon.fr/s?k=' + q },
-      { label: 'Cdiscount',  url: 'https://www.cdiscount.com/search/10/' + q + '.html' },
-      { label: 'FNAC',       url: 'https://www.fnac.com/SearchResult/ResultList.aspx?query=' + q },
-      { label: 'LDLC',       url: 'https://www.ldlc.com/recherche/' + q + '/' },
-      { label: 'Boulanger',  url: 'https://www.boulanger.com/recherche?q=' + q },
-    ];
-    const links = sources.map(s => '<a href="' + s.url + '" target="_blank" rel="noopener" style="margin-right:8px">' + s.label + '</a>').join('');
-    _showStatus('info',
-      'Recherche pour <strong>' + _esc(brand + ' ' + name) + '</strong> :<br>'
-      + links
-      + '<br><small>Ajoutez les offres trouvées via "+ Ajouter manuellement"</small>'
-    );
-    const panel = document.getElementById('sourcing-offers-panel');
-    if (panel) panel.style.display = '';
+    _showStatus('loading', '🔍 Recherche des meilleures offres en cours…');
+    const btnSearch = document.getElementById('btn-search-price');
+    if (btnSearch) btnSearch.disabled = true;
+
+    try {
+      const result = await api.post('/api/suppliers/search', { name, brand });
+
+      if (!result || !result.offers || !result.offers.length) {
+        _showStatus('info', 'Aucune offre trouvée pour <strong>' + _esc(brand + ' ' + name) + '</strong>. Essayez d\'ajuster le nom du produit.');
+        return;
+      }
+
+      const offers = result.offers;
+
+      // Sauvegarder toutes les offres dans la base
+      let saved = 0;
+      for (const offer of offers) {
+        try {
+          await api.post('/api/suppliers/offers', { product_id: _productId, ...offer });
+          saved++;
+        } catch (e) { /* ignore doublons */ }
+      }
+
+      // Recharger les offres depuis la base
+      await _loadOffers();
+
+      // Auto-remplir la meilleure offre dans les champs si confidence >= 70
+      const best = offers[0];
+      if (best && best.confidence >= 70) {
+        const set = (id, val) => { const el = document.getElementById(id); if (el && val != null) el.value = val; };
+        set('supplier_url',      best.supplier_url);
+        set('supplier_name',     best.supplier_name);
+        set('supplier_price',    best.price ?? '');
+        set('supplier_shipping', best.shipping_price ?? '');
+        set('supplier_delivery', best.delivery_estimate ?? '');
+        set('supplier_availability', best.availability || 'unknown');
+        _updateBuyButton();
+
+        const total = (best.price || 0) + (best.shipping_price || 0);
+        _showStatus('success',
+          '✅ <strong>' + saved + ' offre(s) trouvée(s)</strong> pour <em>' + _esc(brand + ' ' + name) + '</em>.<br>'
+          + 'Meilleure offre auto-remplie : <strong>' + _esc(best.supplier_name) + '</strong>'
+          + (best.price ? ' — ' + best.price.toFixed(2) + ' €' : '')
+          + (best.shipping_price === 0 ? ' · livraison gratuite' : '')
+          + ' (confiance ' + best.confidence + '%).<br>'
+          + '<small>N\'oubliez pas de sauvegarder le produit.</small>'
+        );
+      } else {
+        _showStatus('info',
+          '<strong>' + saved + ' offre(s) trouvée(s)</strong> pour <em>' + _esc(brand + ' ' + name) + '</em>. '
+          + 'Confiance insuffisante pour l\'auto-remplissage — vérifiez le tableau et sélectionnez l\'offre souhaitée.'
+        );
+      }
+
+      // Afficher le tableau
+      const panel = document.getElementById('sourcing-offers-panel');
+      if (panel) panel.style.display = '';
+
+    } catch (e) {
+      if (e.message && e.message.includes('SERPAPI_KEY')) {
+        _showStatus('error',
+          '🔑 <strong>Clé SerpAPI manquante.</strong><br>'
+          + 'Ajoute <code>SERPAPI_KEY</code> dans les variables d\'environnement Vercel.<br>'
+          + '<a href="https://serpapi.com" target="_blank" rel="noopener">Obtenir une clé gratuite (100 req/mois)</a>'
+        );
+      } else {
+        _showStatus('error', 'Erreur recherche : ' + e.message);
+      }
+    } finally {
+      if (btnSearch) btnSearch.disabled = false;
+    }
   };
 
   /* ── Modal ajout/édition manuelle ── */

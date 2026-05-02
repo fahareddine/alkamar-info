@@ -108,6 +108,89 @@ module.exports = async function handler(req, res) {
     return res.status(405).json({ error: 'Méthode non supportée' });
   }
 
+  // Route fusionnée : /api/suppliers/search → /api/products?_route=supplier_search
+  if (req.query._route === 'supplier_search') {
+    const auth = await requireRole(req, 'admin', 'editor');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    if (req.method !== 'POST') return res.status(405).json({ error: 'POST requis' });
+
+    const SERPAPI_KEY = process.env.SERPAPI_KEY;
+    if (!SERPAPI_KEY) {
+      return res.status(402).json({
+        error: 'SERPAPI_KEY manquante',
+        setup: 'Ajoute SERPAPI_KEY dans Vercel env vars (https://serpapi.com — 100 requêtes/mois gratuites)',
+      });
+    }
+
+    const { name, brand, specs } = req.body;
+    if (!name) return res.status(400).json({ error: 'name requis' });
+
+    // Construire la requête de recherche
+    const query = [brand, name].filter(Boolean).join(' ');
+
+    try {
+      const serpUrl = `https://serpapi.com/search.json?engine=google_shopping&q=${encodeURIComponent(query)}&gl=fr&hl=fr&num=10&api_key=${SERPAPI_KEY}`;
+      const serpResp = await fetch(serpUrl);
+      if (!serpResp.ok) throw new Error('SerpAPI error ' + serpResp.status);
+      const serpData = await serpResp.json();
+
+      const results = (serpData.shopping_results || []).slice(0, 8).map(item => {
+        // Nettoyer le prix
+        const priceStr = (item.price || '').replace(/[^\d,\.]/g, '').replace(',', '.');
+        const price = parseFloat(priceStr) || null;
+        // Frais de livraison
+        const deliveryText = (item.delivery || '').toLowerCase();
+        const shippingFree = deliveryText.includes('gratuit') || deliveryText.includes('free') || deliveryText.includes('offert');
+        const shipping = shippingFree ? 0 : null;
+        // Disponibilité
+        const inStock = !deliveryText.includes('rupture') && !deliveryText.includes('indisponible');
+        // Score fiabilité fournisseur
+        const trustedSources = ['amazon', 'ldlc', 'fnac', 'darty', 'boulanger', 'cdiscount', 'rueducommerce', 'materiel.net'];
+        const sourceLower = (item.source || '').toLowerCase();
+        const isTrusted = trustedSources.some(s => sourceLower.includes(s));
+        // Confiance correspondance produit (title matching)
+        const titleLower = (item.title || '').toLowerCase();
+        const nameLower  = name.toLowerCase();
+        const brandLower = (brand || '').toLowerCase();
+        let confidence = 50;
+        if (brandLower && titleLower.includes(brandLower)) confidence += 20;
+        const nameWords = nameLower.split(/\s+/).filter(w => w.length > 3);
+        const matchedWords = nameWords.filter(w => titleLower.includes(w));
+        confidence += Math.min(30, Math.round((matchedWords.length / Math.max(nameWords.length, 1)) * 30));
+        confidence = Math.min(100, confidence);
+        // Score global
+        let score = 0;
+        if (price && price > 0) score += 35;
+        if (inStock) score += 20;
+        if (isTrusted) score += 15;
+        score += (confidence / 100) * 30;
+        score = Math.min(100, Math.round(score));
+
+        return {
+          supplier_name:     item.source || 'Inconnu',
+          supplier_url:      item.link || item.product_link || '',
+          title:             item.title || '',
+          price,
+          currency:          'EUR',
+          shipping_price:    shipping,
+          delivery_estimate: item.delivery || null,
+          availability:      inStock ? 'in_stock' : 'unknown',
+          score,
+          confidence,
+          source:            'serpapi',
+          country:           'FR',
+        };
+      });
+
+      // Trier par score décroissant
+      results.sort((a, b) => b.score - a.score);
+
+      return res.status(200).json({ offers: results, query });
+    } catch (e) {
+      return res.status(500).json({ error: 'Recherche échouée : ' + e.message });
+    }
+  }
+
   // GET — lecture publique avec filtres
   if (req.method === 'GET') {
     const { category, subcategory, status, search, limit = '100', offset = '0' } = req.query;
