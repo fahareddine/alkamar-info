@@ -134,14 +134,26 @@ module.exports = async function handler(req, res) {
       errors.push('Le panier est vide.');
     if (errors.length) return res.status(400).json({ errors });
 
-    // Recalcul serveur des prix (ne jamais faire confiance au frontend)
+    // Recalcul serveur des prix — lookup par id (UUID) OU legacy_id (slug)
     const productIds = cart_items.map(i => i.id).filter(Boolean);
-    const { data: products, error: prodErr } = await supabase
-      .from('products').select('id, name, price_eur, price_kmf').in('id', productIds).eq('status', 'active');
-    if (prodErr) return res.status(500).json({ error: prodErr.message });
+    const uuidRe     = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const uuids      = productIds.filter(id => uuidRe.test(id));
+    const legacyIds  = productIds.filter(id => !uuidRe.test(id));
+
+    let allProducts = [];
+    if (uuids.length) {
+      const { data, error } = await supabase.from('products').select('id, legacy_id, name, price_eur, price_kmf').in('id', uuids).eq('status', 'active');
+      if (error) return res.status(500).json({ error: error.message });
+      allProducts = allProducts.concat(data || []);
+    }
+    if (legacyIds.length) {
+      const { data, error } = await supabase.from('products').select('id, legacy_id, name, price_eur, price_kmf').in('legacy_id', legacyIds).eq('status', 'active');
+      if (error) return res.status(500).json({ error: error.message });
+      allProducts = allProducts.concat(data || []);
+    }
 
     const productMap = {};
-    (products || []).forEach(p => { productMap[p.id] = p; });
+    allProducts.forEach(p => { productMap[p.id] = p; if (p.legacy_id) productMap[p.legacy_id] = p; });
 
     let subtotal_eur = 0;
     const validItems = [];
