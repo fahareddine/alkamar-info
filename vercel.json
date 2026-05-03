@@ -1,4 +1,8 @@
 {
+  "redirects": [
+    { "source": "/defaultsite", "destination": "/", "permanent": true },
+    { "source": "/defaultsite/(.*)", "destination": "/", "permanent": true }
+  ],
   "headers": [
     {
       "source": "/(.*)",
@@ -9,6 +13,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/og/:id", "destination": "/api/products/:id?_og=1" },
     { "source": "/api/tags", "destination": "/api/categories?_route=tags" },
     { "source": "/api/coupons/validate", "destination": "/api/coupons?_route=validate" },
     { "source": "/api/logs", "destination": "/api/stats?_route=logs" },
