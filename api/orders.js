@@ -186,29 +186,50 @@ module.exports = async function handler(req, res) {
       if (nc) customer_id = nc.id;
     }
 
-    // Créer la commande
-    const { data: order, error: orderErr } = await supabase.from('orders').insert({
-      customer_id,
+    // Données guest à stocker
+    const guestData = {
+      name: String(customer_name).trim(),
+      email: emailOk ? emailTrimmed : null,
+      whatsapp: waOk ? waRaw : null,
+      phone: customer_phone || null,
+      delivery: delivery_method,
+      delivery_fee,
+      city: delivery_city || null,
+      address: delivery_address || null,
+      delivery_notes: delivery_notes || null,
+      payment: payment_method,
+      guest: true,
+    };
+    const notesJson = `[GUEST] ${JSON.stringify(guestData)}${notes ? '\n' + notes : ''}`;
+
+    // Tentative 1 : insert avec nouvelles colonnes (migration appliquée)
+    let order, orderErr;
+    ({ data: order, error: orderErr } = await supabase.from('orders').insert({
+      customer_id, total_eur, total_kmf,
+      status: 'pending', notes: notesJson,
       customer_name:    String(customer_name).trim(),
       customer_email:   emailOk ? emailTrimmed : null,
       customer_whatsapp: waOk ? waRaw : null,
       customer_phone:   customer_phone || null,
       preferred_contact: emailOk ? 'email' : 'whatsapp',
-      delivery_method,
-      delivery_fee,
-      delivery_city:    delivery_city || null,
+      delivery_method, delivery_fee,
+      delivery_city: delivery_city || null,
       delivery_address: delivery_address || null,
-      delivery_notes:   delivery_notes || null,
-      pickup_location:  delivery_method === 'pickup' ? 'Boutique Alkamar Moroni' : null,
-      subtotal_eur,
-      total_eur,
-      total_kmf,
-      payment_method,
-      payment_status:   payment_method === 'stripe' ? 'unpaid' : 'awaiting_payment',
-      status:           'pending',
-      guest_checkout:   true,
-      notes:            notes || null,
-    }).select().single();
+      delivery_notes: delivery_notes || null,
+      pickup_location: delivery_method === 'pickup' ? 'Boutique Alkamar Moroni' : null,
+      subtotal_eur, payment_method,
+      payment_status: payment_method === 'stripe' ? 'unpaid' : 'awaiting_payment',
+      guest_checkout: true,
+    }).select().single());
+
+    // Tentative 2 : fallback sans nouvelles colonnes (migration pas encore appliquée)
+    if (orderErr && (orderErr.message.includes('column') || orderErr.message.includes('schema'))) {
+      console.warn('[guest_checkout] Migration non appliquée — fallback colonnes de base:', orderErr.message);
+      ({ data: order, error: orderErr } = await supabase.from('orders').insert({
+        customer_id, total_eur, total_kmf,
+        status: 'pending', notes: notesJson,
+      }).select().single());
+    }
     if (orderErr) return res.status(500).json({ error: orderErr.message });
 
     // Créer les order_items
