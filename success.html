@@ -67,6 +67,39 @@
       localStorage.removeItem('alkamar_cart');
       window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: [] } }));
     } catch {}
+
+    // ── Confirmation commande invitée (Mobile Money / Cash) ──────────────────
+    (function() {
+      var p = new URLSearchParams(window.location.search);
+      var mode = p.get('mode');
+      if (!mode || mode === 'stripe') return;
+      var orderNum = p.get('order_number') || (p.get('order_id') || '').split('-')[0].toUpperCase();
+      var totalEur = parseFloat(p.get('total') || 0);
+      var fmtEur   = function(n) { return n.toFixed(2).replace('.', ',') + ' €'; };
+      var labels   = { mobile_money: '📱 Mobile Money', cash_pickup: '💵 Espèces au retrait', cash_delivery: '💵 Espèces à la livraison' };
+      var div = document.createElement('div');
+      div.style.cssText = 'max-width:500px;margin:32px auto;padding:0 16px';
+      div.innerHTML = '<div style="background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:28px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,.06)">' +
+        '<div style="font-size:48px;margin-bottom:10px">✅</div>' +
+        '<h1 style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:8px">Commande enregistrée !</h1>' +
+        '<p style="color:#6b7280;font-size:14px;margin-bottom:20px">Votre commande a été enregistrée. Nous vous contacterons pour confirmation.</p>' +
+        '<div style="background:#f8fafc;border-radius:10px;padding:16px;text-align:left;font-size:14px">' +
+          '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#6b7280">N° commande</span><strong>#' + orderNum + '</strong></div>' +
+          (totalEur ? '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#6b7280">Total</span><strong>' + fmtEur(totalEur) + '</strong></div>' : '') +
+          '<div style="display:flex;justify-content:space-between;padding:4px 0"><span style="color:#6b7280">Paiement</span><strong>' + (labels[mode] || mode) + '</strong></div>' +
+        '</div>' +
+        (mode === 'mobile_money' ? '<div style="background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:14px;margin-top:14px;text-align:left;font-size:13px">' +
+          '📱 <strong style="color:#92400e">Instructions de paiement Mobile Money</strong><br><br>' +
+          'Envoyez <strong>' + (totalEur ? fmtEur(totalEur) : 'le montant total') + '</strong> au :<br>' +
+          '<strong style="font-size:16px">+269 331 27 22</strong> — Alkamar Info<br><br>' +
+          'Référence : <strong>#' + orderNum + '</strong><br><br>' +
+          'Transmettez la preuve par WhatsApp ou email avec votre numéro de commande.</div>' : '') +
+        (mode === 'cash_pickup' ? '<div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:13px;margin-top:14px;font-size:13px">🏪 Retrait gratuit dans notre boutique à Moroni. Nous vous confirmerons quand votre commande est prête.</div>' : '') +
+        (mode === 'cash_delivery' ? '<div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:13px;margin-top:14px;font-size:13px">🚚 Livraison à domicile. L\'adresse exacte sera confirmée après la commande par WhatsApp ou email.</div>' : '') +
+        '<a href="index.html" style="display:block;margin-top:20px;padding:14px;background:#1a3a8f;color:#fff;border-radius:11px;font-weight:800;text-decoration:none;font-size:15px">← Retourner à la boutique</a>' +
+      '</div>';
+      document.body.insertBefore(div, document.body.firstChild);
+    })();
   </script>
 </body>
 </html>
