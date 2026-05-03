@@ -157,7 +157,8 @@ const CATALOG = (function () {
 
   async function loadAllActive() {
     try {
-      const res = await fetch('/api/products?status=active&limit=500');
+      const _pf = window._pf; window._pf = null;
+      const res = _pf ? await _pf : await fetch('/api/products?status=active&limit=500');
       if (!res.ok) return [];
       const d = await res.json();
       return Array.isArray(d) ? d : [];
