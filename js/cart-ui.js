@@ -143,14 +143,8 @@
   async function checkout() {
     const items = typeof Cart !== 'undefined' ? Cart.load() : [];
     if (!items.length) return;
-
-    // Gate auth — redirige vers connexion si non connecté
-    if (typeof AccountGuard !== 'undefined') {
-      let proceed = false;
-      await AccountGuard.requireAuth(() => { proceed = true; });
-      if (!proceed) return;
-    }
-    await _doCheckout(items);
+    // Checkout invité — aucune connexion requise
+    window.location.href = '/checkout.html';
   }
 
   async function _doCheckout(items) {

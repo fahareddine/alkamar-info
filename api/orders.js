@@ -108,6 +108,144 @@ module.exports = async function handler(req, res) {
     return handleStripeCheckout(req, res);
   }
 
+  // ── Guest checkout — pas d'auth requise ───────────────────────────────────
+  if (req.method === 'POST' && req.query.action === 'guest_checkout') {
+    const {
+      customer_name, customer_email, customer_whatsapp, customer_phone,
+      delivery_method = 'pickup', delivery_city, delivery_address, delivery_notes,
+      payment_method = 'stripe', cart_items, notes,
+    } = req.body || {};
+
+    // Validation
+    const errors = [];
+    if (!customer_name || String(customer_name).trim().length < 2)
+      errors.push('Nom complet obligatoire (minimum 2 caractères).');
+    const emailTrimmed = (customer_email || '').trim();
+    const emailOk = emailTrimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed);
+    const waRaw   = (customer_whatsapp || '').replace(/\s+/g, '');
+    const waOk    = waRaw && /^\+?\d{7,15}$/.test(waRaw);
+    if (!emailOk && !waOk)
+      errors.push('Indiquez au moins un email valide ou un numéro WhatsApp valide.');
+    if (!['pickup','home_delivery'].includes(delivery_method))
+      errors.push('Mode de réception invalide.');
+    if (!['stripe','mobile_money','cash_pickup','cash_delivery'].includes(payment_method))
+      errors.push('Mode de paiement invalide.');
+    if (!Array.isArray(cart_items) || !cart_items.length)
+      errors.push('Le panier est vide.');
+    if (errors.length) return res.status(400).json({ errors });
+
+    // Recalcul serveur des prix (ne jamais faire confiance au frontend)
+    const productIds = cart_items.map(i => i.id).filter(Boolean);
+    const { data: products, error: prodErr } = await supabase
+      .from('products').select('id, name, price_eur, price_kmf').in('id', productIds).eq('status', 'active');
+    if (prodErr) return res.status(500).json({ error: prodErr.message });
+
+    const productMap = {};
+    (products || []).forEach(p => { productMap[p.id] = p; });
+
+    let subtotal_eur = 0;
+    const validItems = [];
+    for (const item of cart_items) {
+      const p = productMap[item.id];
+      if (!p) return res.status(400).json({ error: `Produit introuvable: ${item.id}` });
+      const qty = Math.max(1, parseInt(item.qty) || 1);
+      subtotal_eur += p.price_eur * qty;
+      validItems.push({ product_id: p.id, product_name: p.name, price_eur: p.price_eur, price_kmf: p.price_kmf, quantity: qty });
+    }
+    subtotal_eur = parseFloat(subtotal_eur.toFixed(2));
+    const delivery_fee = delivery_method === 'home_delivery' ? 5 : 0;
+    const total_eur    = parseFloat((subtotal_eur + delivery_fee).toFixed(2));
+    const total_kmf    = Math.round(total_eur * 491);
+
+    // Créer ou trouver le customer
+    let customer_id = null;
+    if (emailOk) {
+      const { data: existing } = await supabase.from('customers').select('id')
+        .ilike('email', emailTrimmed).limit(1).single();
+      if (existing) customer_id = existing.id;
+    }
+    if (!customer_id) {
+      const { data: nc } = await supabase.from('customers').insert({
+        name: String(customer_name).trim(),
+        email: emailOk ? emailTrimmed : null,
+        phone: customer_phone || null,
+        whatsapp: waOk ? waRaw : null,
+      }).select('id').single();
+      if (nc) customer_id = nc.id;
+    }
+
+    // Créer la commande
+    const { data: order, error: orderErr } = await supabase.from('orders').insert({
+      customer_id,
+      customer_name:    String(customer_name).trim(),
+      customer_email:   emailOk ? emailTrimmed : null,
+      customer_whatsapp: waOk ? waRaw : null,
+      customer_phone:   customer_phone || null,
+      preferred_contact: emailOk ? 'email' : 'whatsapp',
+      delivery_method,
+      delivery_fee,
+      delivery_city:    delivery_city || null,
+      delivery_address: delivery_address || null,
+      delivery_notes:   delivery_notes || null,
+      pickup_location:  delivery_method === 'pickup' ? 'Boutique Alkamar Moroni' : null,
+      subtotal_eur,
+      total_eur,
+      total_kmf,
+      payment_method,
+      payment_status:   payment_method === 'stripe' ? 'unpaid' : 'awaiting_payment',
+      status:           'pending',
+      guest_checkout:   true,
+      notes:            notes || null,
+    }).select().single();
+    if (orderErr) return res.status(500).json({ error: orderErr.message });
+
+    // Créer les order_items
+    if (validItems.length) {
+      await supabase.from('order_items').insert(
+        validItems.map(i => ({ order_id: order.id, product_id: i.product_id, product_name: i.product_name, price_eur: i.price_eur, price_kmf: i.price_kmf, quantity: i.quantity }))
+      );
+    }
+
+    const orderNum = order.id.split('-')[0].toUpperCase();
+
+    // Stripe
+    if (payment_method === 'stripe') {
+      const key = (process.env.STRIPE_SECRET_KEY || '').replace(/[\r\n\s]/g, '');
+      if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
+      const BASE = 'https://alkamar-info.vercel.app';
+      const line_items = validItems.map(i => ({
+        price_data: { currency: 'eur', product_data: { name: String(i.product_name).slice(0, 127) }, unit_amount: Math.round(i.price_eur * 100) },
+        quantity: i.quantity,
+      }));
+      if (delivery_fee > 0) {
+        line_items.push({ price_data: { currency: 'eur', product_data: { name: 'Livraison à domicile' }, unit_amount: 500 }, quantity: 1 });
+      }
+      const result = await stripeRequest('checkout/sessions', {
+        mode: 'payment', line_items, locale: 'fr',
+        customer_email: emailOk ? emailTrimmed : undefined,
+        success_url: `${BASE}/success.html?order_id=${order.id}&session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url:  `${BASE}/checkout.html`,
+        metadata:    { order_id: order.id },
+      }, key);
+      if (result.status !== 200 || !result.data.url) {
+        return res.status(result.status).json({ error: result.data?.error?.message || 'Stripe error' });
+      }
+      await supabase.from('orders').update({ stripe_session_id: result.data.id }).eq('id', order.id);
+      return res.status(200).json({ mode: 'stripe', url: result.data.url, order_id: order.id });
+    }
+
+    // Mobile Money / Cash
+    return res.status(200).json({
+      mode: payment_method,
+      order_id: order.id,
+      order_number: orderNum,
+      total_eur,
+      payment_instructions: payment_method === 'mobile_money'
+        ? { number: '+269 331 27 22', name: 'Alkamar Info', reference: orderNum }
+        : null,
+    });
+  }
+
   if (req.method === 'GET') {
     const auth = await requireRole(req, 'admin', 'commercial');
     if (auth.error) return res.status(auth.status).json({ error: auth.error });

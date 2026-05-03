@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Commander — Alkamar Info</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { background: #f1f5f9; }
+    .co-wrap { max-width: 540px; margin: 0 auto; padding: 20px 16px 80px; }
+    .co-header { background: var(--primary); padding: 14px 20px; position: sticky; top: 0; z-index: 10; margin-bottom: 20px; }
+    .co-header a { color: #fff; font-weight: 700; font-size: 16px; text-decoration: none; }
+    .co-title { font-size: 22px; font-weight: 800; margin-bottom: 4px; color: #0f172a; }
+    .co-sub { font-size: 13px; color: #6b7280; margin-bottom: 20px; }
+    .co-section { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 20px; margin-bottom: 14px; box-shadow: 0 1px 4px rgba(0,0,0,.06); }
+    .co-section h2 { font-size: 15px; font-weight: 700; margin-bottom: 16px; color: #0f172a; display: flex; align-items: center; gap: 8px; }
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 5px; }
+    .field input, .field textarea, .field select {
+      width: 100%; padding: 13px 14px; border: 1.5px solid #d1d5db; border-radius: 9px;
+      font-size: 15px; font-family: inherit; outline: none; color: #0f172a; background: #fff;
+      transition: border-color .15s, box-shadow .15s; box-sizing: border-box;
+    }
+    .field input:focus, .field textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,58,143,.1); }
+    .field .hint { font-size: 12px; color: #9ca3af; margin-top: 4px; }
+    .field .error-msg { font-size: 12px; color: #dc2626; margin-top: 4px; display: none; }
+    .field.is-error input, .field.is-error textarea { border-color: #dc2626; }
+    .field.is-error .error-msg { display: block; }
+    .or-sep { text-align: center; font-size: 12px; color: #9ca3af; padding: 4px 0; }
+    /* Option cards */
+    .opt-cards { display: flex; flex-direction: column; gap: 10px; }
+    .opt-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px; border: 2px solid #e5e7eb; border-radius: 11px; cursor: pointer; transition: border-color .15s, background .15s; user-select: none; }
+    .opt-card input[type=radio] { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--primary); margin-top: 2px; cursor: pointer; }
+    .opt-card.is-selected { border-color: var(--primary); background: #eff6ff; }
+    .opt-card label { cursor: pointer; flex: 1; }
+    .opt-card .oc-title { font-size: 14px; font-weight: 700; color: #0f172a; }
+    .opt-card .oc-desc { font-size: 12px; color: #6b7280; margin-top: 3px; line-height: 1.45; }
+    .opt-card .oc-price { font-size: 14px; font-weight: 800; color: var(--primary); white-space: nowrap; flex-shrink: 0; }
+    /* Summary */
+    .co-summary { background: #f8fafc; border-radius: 10px; padding: 16px; margin-top: 14px; }
+    .co-line { display: flex; justify-content: space-between; font-size: 13px; color: #374151; padding: 4px 0; }
+    .co-line.total { font-size: 16px; font-weight: 800; color: #0f172a; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 6px; }
+    /* MM info */
+    .mm-info { background: #fef3c7; border: 1px solid #fde68a; border-radius: 9px; padding: 12px 14px; font-size: 13px; margin-top: 10px; line-height: 1.55; display: none; }
+    /* Submit */
+    .co-submit { width: 100%; padding: 17px; background: #f59e0b; color: #111827; border: none; border-radius: 11px; font-size: 17px; font-weight: 800; cursor: pointer; transition: background .15s; margin-top: 6px; }
+    .co-submit:hover { background: #d97706; }
+    .co-submit:disabled { opacity: .5; cursor: not-allowed; }
+    .trust { text-align: center; font-size: 12px; color: #9ca3af; margin-top: 10px; line-height: 1.7; }
+    .global-err { background: #fef2f2; border: 1px solid #fecaca; border-radius: 9px; padding: 12px 14px; font-size: 13px; color: #dc2626; margin-bottom: 12px; display: none; }
+    @media (max-width: 380px) { .co-wrap { padding: 12px 10px 80px; } }
+  </style>
+</head>
+<body>
+  <div class="co-header">
+    <a href="index.html">← Alkamar Info</a>
+  </div>
+
+  <div class="co-wrap">
+    <h1 class="co-title">Commander</h1>
+    <p class="co-sub">🛒 Commandez sans créer de compte. Email ou WhatsApp suffit.</p>
+
+    <!-- Coordonnées -->
+    <div class="co-section">
+      <h2>👤 Vos coordonnées</h2>
+      <div class="field" id="f-name">
+        <label for="co-name">Nom complet *</label>
+        <input type="text" id="co-name" autocomplete="name" placeholder="Votre nom complet">
+        <div class="error-msg">Nom obligatoire (minimum 2 caractères).</div>
+      </div>
+      <div class="field" id="f-email">
+        <label for="co-email">Email <small style="color:#9ca3af;font-weight:400">(optionnel si WhatsApp fourni)</small></label>
+        <input type="email" id="co-email" autocomplete="email" inputmode="email" placeholder="votre@email.com">
+        <div class="error-msg">Adresse email invalide.</div>
+      </div>
+      <div class="or-sep">— ou —</div>
+      <div class="field" id="f-wa">
+        <label for="co-wa">WhatsApp <small style="color:#9ca3af;font-weight:400">(optionnel si email fourni)</small></label>
+        <input type="tel" id="co-wa" autocomplete="tel" inputmode="tel" placeholder="+269 321 00 00">
+        <div class="hint">Format : +269 xxx xx xx</div>
+        <div class="error-msg">Numéro WhatsApp invalide.</div>
+      </div>
+      <div id="err-contact" style="font-size:12px;color:#dc2626;margin-top:-4px;display:none">
+        Indiquez au moins un email valide ou un numéro WhatsApp valide.
+      </div>
+    </div>
+
+    <!-- Mode de réception -->
+    <div class="co-section">
+      <h2>📦 Mode de réception</h2>
+      <div class="opt-cards">
+        <div class="opt-card is-selected" id="card-pickup" onclick="setDelivery('pickup')">
+          <input type="radio" name="delivery" id="r-pickup" checked>
+          <label for="r-pickup">
+            <div class="oc-title">🏪 Retrait en boutique à Moroni</div>
+            <div class="oc-desc">Retirez gratuitement votre commande dans notre boutique à Moroni. Nous vous confirmerons quand elle est prête.</div>
+          </label>
+          <span class="oc-price">Gratuit</span>
+        </div>
+        <div class="opt-card" id="card-home" onclick="setDelivery('home_delivery')">
+          <input type="radio" name="delivery" id="r-home">
+          <label for="r-home">
+            <div class="oc-title">🚚 Livraison à domicile</div>
+            <div class="oc-desc">Frais fixes de 5 €. L'adresse exacte sera confirmée après la commande par WhatsApp ou email.</div>
+          </label>
+          <span class="oc-price">+5 €</span>
+        </div>
+      </div>
+      <div id="delivery-extra" style="display:none;margin-top:14px">
+        <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:9px;padding:10px 13px;font-size:12px;color:#92400e;margin-bottom:12px">
+          📍 L'adresse exacte pourra être confirmée après la commande par WhatsApp ou email.
+        </div>
+        <div class="field"><label for="co-city">Ville <small style="color:#9ca3af">(optionnel)</small></label><input type="text" id="co-city" placeholder="Ex : Moroni, Iconi, Mitsamiouli…"></div>
+        <div class="field"><label for="co-addr">Indication <small style="color:#9ca3af">(optionnel)</small></label><input type="text" id="co-addr" placeholder="Ex : Près de la mosquée, à côté de l'école…"></div>
+        <div class="field"><label for="co-dnotes">Commentaire livraison <small style="color:#9ca3af">(optionnel)</small></label><textarea id="co-dnotes" rows="2" placeholder="Disponibilité, précision…"></textarea></div>
+      </div>
+    </div>
+
+    <!-- Mode de paiement -->
+    <div class="co-section">
+      <h2>💳 Mode de paiement</h2>
+      <div class="opt-cards">
+        <div class="opt-card is-selected" id="card-stripe" onclick="setPayment('stripe')">
+          <input type="radio" name="payment" id="r-stripe" checked>
+          <label for="r-stripe">
+            <div class="oc-title">💳 Paiement par carte</div>
+            <div class="oc-desc">Paiement sécurisé par carte bancaire via Stripe.</div>
+          </label>
+        </div>
+        <div class="opt-card" id="card-mobile" onclick="setPayment('mobile_money')">
+          <input type="radio" name="payment" id="r-mobile">
+          <label for="r-mobile">
+            <div class="oc-title">📱 Mobile Money</div>
+            <div class="oc-desc">M-Pesa, Orange Money… Envoyez le paiement au numéro indiqué après commande.</div>
+          </label>
+        </div>
+        <div class="opt-card" id="card-cash" onclick="setPayment('cash_pickup')">
+          <input type="radio" name="payment" id="r-cash">
+          <label for="r-cash">
+            <div class="oc-title" id="cash-title">💵 Espèces au retrait</div>
+            <div class="oc-desc">Payez en espèces lors de la réception.</div>
+          </label>
+        </div>
+      </div>
+      <div class="mm-info" id="mm-info">
+        📱 <strong>Instructions Mobile Money</strong><br>
+        Après validation, envoyez le montant au numéro <strong>+269 331 27 22</strong> (Alkamar Info) avec votre numéro de commande comme référence.
+      </div>
+    </div>
+
+    <!-- Résumé -->
+    <div class="co-section">
+      <h2>🛒 Résumé de la commande</h2>
+      <div id="co-cart-lines"></div>
+      <div class="co-summary">
+        <div class="co-line"><span>Sous-total</span><span id="co-subtotal">—</span></div>
+        <div class="co-line"><span id="delivery-label">Retrait boutique</span><span id="co-delivery">Gratuit</span></div>
+        <div class="co-line total"><span>Total</span><span id="co-total">—</span></div>
+      </div>
+    </div>
+
+    <!-- Erreur globale -->
+    <div class="global-err" id="global-err"></div>
+
+    <!-- Bouton -->
+    <button class="co-submit" id="co-btn" onclick="submitOrder()">🛒 Valider ma commande</button>
+    <p class="trust">
+      ✅ Commande sans compte obligatoire<br>
+      🔒 Vos informations servent uniquement à préparer votre commande<br>
+      🏪 Retrait gratuit à Moroni · 🚚 Livraison à domicile +5 €
+    </p>
+  </div>
+
+  <script src="js/cart.js" defer></script>
+  <script src="js/checkout.js" defer></script>
+</body>
+</html>
