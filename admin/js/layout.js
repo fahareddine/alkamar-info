@@ -4,7 +4,7 @@ function injectSidebar() {
 
   const SIDEBAR_HTML = `
   <aside class="admin-sidebar">
-    <div class="admin-sidebar__logo">Alkamar <span>Admin</span></div>
+    <div class="admin-sidebar__logo">Info Experts <span>Admin</span></div>
     <nav class="admin-nav">
       <div class="section">Vue d'ensemble</div>
       <a href="/admin/" data-path="/admin/,/admin/index.html">📊 Dashboard</a>

@@ -3,22 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Détail produit — Alkamar Info</title>
+  <title>Détail produit — Boutique Info Experts</title>
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://m.media-amazon.com">
   <link rel="dns-prefetch" href="https://m.media-amazon.com">
   <link rel="stylesheet" href="style.css">
   <!-- Open Graph / Social sharing -->
-  <meta property="og:site_name" content="Alkamar Info">
+  <meta property="og:site_name" content="Boutique Info Experts">
   <meta property="og:type" content="product">
-  <meta property="og:title" content="Alkamar Info — Boutique informatique aux Comores">
+  <meta property="og:title" content="Boutique Info Experts — Matériel informatique aux Comores">
   <meta property="og:description" content="Matériel informatique neuf et reconditionné. Livraison aux Comores.">
-  <meta property="og:image" content="https://alkamar-info.vercel.app/favicon.svg">
-  <meta property="og:url" content="https://alkamar-info.vercel.app/produit.html">
+  <meta property="og:image" content="https://boutique.info-experts.fr/favicon.svg">
+  <meta property="og:url" content="https://boutique.info-experts.fr/produit.html">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Alkamar Info">
+  <meta name="twitter:title" content="Boutique Info Experts — Matériel informatique aux Comores">
   <meta name="twitter:description" content="Matériel informatique neuf et reconditionné. Livraison aux Comores.">
-  <meta name="twitter:image" content="https://alkamar-info.vercel.app/favicon.svg">
+  <meta name="twitter:image" content="https://boutique.info-experts.fr/favicon.svg">
   <style>
     /* ── Page produit ─────────────────────────────────── */
     .product-page {
@@ -490,7 +490,7 @@
       // Breadcrumb — utilise categories.slug renvoyé par l'API
       const catSlug = p.categories?.slug || '';
       const catPage = CAT_PAGES[catSlug] || 'ordinateurs.html';
-      document.title = p.name + ' — Alkamar Info';
+      document.title = p.name + ' — Boutique Info Experts';
       document.getElementById('bc-cat').innerHTML = `<a href="${catPage}?tab=${catSlug}">${CAT_LABELS[catSlug] || (p.categories?.name || 'Produits')}</a>`;
       document.getElementById('bc-product').textContent = p.name;
 
@@ -663,8 +663,8 @@
       // Open Graph dynamique — mis à jour après chargement produit
       (function () {
         var img = (!_isSuspicious(p.main_image_url || p.image)) ? (p.main_image_url || p.image || '') : '';
-        var title = p.name + ' — Alkamar Info';
-        var desc  = (p.subtitle || (p.description || '').slice(0, 155) || 'Disponible sur Alkamar Info.').replace(/\s+/g, ' ').trim();
+        var title = p.name + ' — Boutique Info Experts';
+        var desc  = (p.subtitle || (p.description || '').slice(0, 155) || 'Disponible sur la Boutique Info Experts.').replace(/\s+/g, ' ').trim();
         [['meta[property="og:title"]', title], ['meta[name="twitter:title"]', title],
          ['meta[property="og:description"]', desc], ['meta[name="twitter:description"]', desc],
          ['meta[property="og:url"]', window.location.href]

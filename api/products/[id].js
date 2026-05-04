@@ -44,12 +44,12 @@ module.exports = async function handler(req, res) {
       const base  = `${proto}://${req.headers.host}`;
       const prodUrl = `${base}/produit.html?id=${encodeURIComponent(id)}`;
 
-      const title = _e(p.name + ' — Alkamar Info');
+      const title = _e(p.name + ' — Boutique Info Experts');
       const img   = _e(_ogImg(p.main_image_url) || _ogImg(p.image) || `${base}/favicon.svg`);
       const price = p.price_eur ? `${Number(p.price_eur).toFixed(2).replace('.', ',')} €` : '';
       const hasPromo = p.badge && /promo|%|solde/i.test(p.badge);
       let rawDesc;
-      if (hasPromo && price) rawDesc = `🔥 Promo Alkamar : ${p.name} à ${price}`;
+      if (hasPromo && price) rawDesc = `🔥 Promo Info Experts : ${p.name} à ${price}`;
       else if (price)        rawDesc = `${p.brand ? p.brand + ' · ' : ''}${p.name} — ${price}`;
       else                   rawDesc = p.subtitle || (p.description || '').slice(0, 160) || 'Boutique informatique aux Comores.';
       const desc = _e(rawDesc.replace(/\s+/g,' ').trim());
@@ -59,7 +59,7 @@ module.exports = async function handler(req, res) {
 <meta charset="UTF-8"><title>${title}</title>
 <meta name="description" content="${desc}">
 <meta property="og:type" content="product">
-<meta property="og:site_name" content="Alkamar Info">
+<meta property="og:site_name" content="Boutique Info Experts">
 <meta property="og:title" content="${title}">
 <meta property="og:description" content="${desc}">
 <meta property="og:image" content="${img}">

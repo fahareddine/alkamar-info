@@ -53,14 +53,14 @@ const SocialShare = (function () {
   }
 
   function buildText(product) {
-    if (!product) return 'Découvrez ce produit sur Alkamar Info';
+    if (!product) return 'Découvrez ce produit sur la Boutique Info Experts';
     const price = product.price_eur
       ? (Number(product.price_eur).toFixed(2).replace('.', ',') + ' €')
       : '';
     const hasPromo = product.badge && /promo|%|solde/i.test(product.badge);
-    if (hasPromo && price) return '🔥 Promo Alkamar : ' + product.name + ' à ' + price;
-    if (price) return 'Disponible sur Alkamar : ' + product.name + ' — ' + price;
-    return 'Découvrez ' + product.name + ' sur Alkamar Info';
+    if (hasPromo && price) return '🔥 Promo Boutique Info Experts : ' + product.name + ' à ' + price;
+    if (price) return 'Disponible sur la Boutique Info Experts : ' + product.name + ' — ' + price;
+    return 'Découvrez ' + product.name + ' sur la Boutique Info Experts';
   }
 
   /* ── Réseaux ─────────────────────────────────────────────────────────────── */
@@ -145,7 +145,7 @@ const SocialShare = (function () {
       id: 'email', label: 'Email', cls: 'share-btn--email',
       icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>',
       fn: function (url, text, name) {
-        window.location.href = 'mailto:?subject=' + E(name + ' — Alkamar Info') +
+        window.location.href = 'mailto:?subject=' + E(name + ' — Boutique Info Experts') +
           '&body=' + E(text + '\n\n' + addUTM(url, 'email'));
       }
     },

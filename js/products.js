@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════
-   products.js — Catalogue Alkamar Info
+   products.js — Catalogue Boutique Info Experts
    Taux de conversion : 1 EUR = 491 KMF
 ═══════════════════════════════════════════════════════ */
 
@@ -603,7 +603,7 @@ const PRODUCTS = [
       'Reseau': 'WiFi 5, Bluetooth 4.1',
       'Webcam': 'HD 720p',
       'Etat': 'Grade A — comme neuf',
-      'Garantie': '6 mois Alkamar Info',
+      'Garantie': '6 mois Info Experts',
     },
     description: "Le ThinkPad T480 reconditionne est la reference des PC portables professionnels reconditionnes. Clavier retroeclaire ergonomique, 16 Go de RAM et SSD NVMe pour un demarrage en moins de 10 secondes. Chaque machine est nettoyee, testee et certifiee par nos techniciens avant livraison.",
   },
@@ -628,7 +628,7 @@ const PRODUCTS = [
       'Reseau': 'WiFi 6, Bluetooth 5.0',
       'Webcam': 'FHD integree',
       'Etat': 'Grade A — comme neuf',
-      'Garantie': '6 mois Alkamar Info',
+      'Garantie': '6 mois Info Experts',
     },
     description: "Le Dell Latitude 5420 reconditionne est un ordinateur portable professionnel de 11e generation, robuste et performant. Le Core i5-1145G7, les 16 Go de RAM et le SSD 512 Go offrent une experience fluide pour la bureautique, la gestion et le teletravail. Grade A — aspect comme neuf.",
   },
@@ -653,7 +653,7 @@ const PRODUCTS = [
       'Reseau': 'WiFi 5, Bluetooth 5.0',
       'Webcam': 'HD 720p',
       'Poids': '1.48 kg',
-      'Garantie': '6 mois Alkamar Info',
+      'Garantie': '6 mois Info Experts',
     },
     description: "Le HP EliteBook 840 G6 est un PC portable professionnel premium reconditionne. Son chassis aluminium leger (1.48 kg), son ecran FHD IPS et son SSD 512 Go en font une machine de choix pour les etudiants, les independants et les entreprises. Teste et verifie par nos techniciens.",
   },
@@ -677,13 +677,13 @@ const PRODUCTS = [
       'Connectique': 'USB-C, USB 3.0, DisplayPort, HDMI, RJ45',
       'Reseau': 'Ethernet Gigabit integre',
       'Etat': 'Grade A reconditionne',
-      'Garantie': '6 mois Alkamar Info',
+      'Garantie': '6 mois Info Experts',
     },
     description: "Le Dell OptiPlex 7060 SFF est une unite centrale compacte et fiable pour bureau, administration, caisse ou poste de travail fixe. Les 16 Go de RAM et le SSD 512 Go permettent de gerer plusieurs applications simultanement. Solution economique sans compromettre la performance.",
   },
   {
     id: 'pack-pc-bureau-complet',
-    brand: 'Alkamar Info', subcategory: 'reconditiones',
+    brand: 'Info Experts', subcategory: 'reconditiones',
     name: 'Pack PC Bureau Complet', subtitle: 'Unite centrale + Ecran + Clavier + Souris · Pret a l emploi',
     price: 399, priceKmf: 195900, priceOld: null,
     badge: 'Pack', badgeClass: 'badge--new',
@@ -701,7 +701,7 @@ const PRODUCTS = [
       'Systeme': 'Windows 11 Pro',
       'Reseau': 'Ethernet Gigabit + WiFi USB inclus',
       'Etat': 'Grade A reconditionne',
-      'Garantie': '6 mois Alkamar Info',
+      'Garantie': '6 mois Info Experts',
     },
     description: "Le Pack PC Bureau Complet est la solution cle en main pour equiper rapidement un poste de travail. Tout est inclus : unite centrale reconditionnee, ecran, clavier et souris. Il suffit de brancher et de commencer a travailler. Ideal pour equiper un bureau, une salle de formation ou une administration.",
   },
@@ -4479,7 +4479,7 @@ const PRODUCTS = [
   /* ── SERVICES INFORMATIQUES ──────────────────────── */
   {
     id: 'service-installation-windows',
-    brand: 'Alkamar Info', subcategory: 'service',
+    brand: 'Info Experts', subcategory: 'service',
     name: 'Installation Windows', subtitle: 'Windows 10 ou 11 · Pilotes essentiels · Mises à jour incluses',
     price: 49, priceKmf: 24100, priceOld: null,
     badge: 'Service', badgeClass: 'badge--new',
@@ -4500,7 +4500,7 @@ const PRODUCTS = [
   },
   {
     id: 'service-nettoyage-pc',
-    brand: 'Alkamar Info', subcategory: 'service',
+    brand: 'Info Experts', subcategory: 'service',
     name: 'Nettoyage et Optimisation PC', subtitle: 'Diagnostic · Suppression fichiers · Optimisation démarrage',
     price: 39, priceKmf: 19100, priceOld: null,
     badge: 'Service', badgeClass: 'badge--new',
@@ -4520,7 +4520,7 @@ const PRODUCTS = [
   },
   {
     id: 'service-remplacement-ssd',
-    brand: 'Alkamar Info', subcategory: 'service',
+    brand: 'Info Experts', subcategory: 'service',
     name: 'Remplacement SSD', subtitle: 'Pose SSD + migration données · PC plus rapide garanti',
     price: 69, priceKmf: 33900, priceOld: null,
     badge: 'Service', badgeClass: 'badge--new',
@@ -4541,7 +4541,7 @@ const PRODUCTS = [
   },
   {
     id: 'service-suppression-virus',
-    brand: 'Alkamar Info', subcategory: 'service',
+    brand: 'Info Experts', subcategory: 'service',
     name: 'Suppression Virus et Malware', subtitle: 'Analyse sécurité · Désinfection complète · Conseils protection',
     price: 45, priceKmf: 22100, priceOld: null,
     badge: 'Service', badgeClass: 'badge--new',
@@ -4561,7 +4561,7 @@ const PRODUCTS = [
   },
   {
     id: 'service-sauvegarde-donnees',
-    brand: 'Alkamar Info', subcategory: 'service',
+    brand: 'Info Experts', subcategory: 'service',
     name: 'Sauvegarde et Récupération de Données', subtitle: 'Sauvegarde · Récupération · Transfert · À partir de 59 €',
     price: 59, priceKmf: 29000, priceOld: null,
     badge: 'Service', badgeClass: 'badge--new',

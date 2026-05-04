@@ -51,7 +51,7 @@ async function handleStripeCheckout(req, res) {
   const key = (process.env.STRIPE_SECRET_KEY || '').replace(/[\r\n\s]/g, '');
   if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
 
-  const BASE = 'https://alkamar-info.vercel.app';
+  const BASE = 'https://boutique.info-experts.fr';
   const { items } = req.body || {};
   if (!Array.isArray(items) || !items.length) return res.status(400).json({ error: 'Panier vide' });
 
@@ -216,7 +216,7 @@ module.exports = async function handler(req, res) {
       delivery_city: delivery_city || null,
       delivery_address: delivery_address || null,
       delivery_notes: delivery_notes || null,
-      pickup_location: delivery_method === 'pickup' ? 'Boutique Alkamar Moroni' : null,
+      pickup_location: delivery_method === 'pickup' ? 'Boutique Info Experts — Moroni' : null,
       subtotal_eur, payment_method,
       payment_status: payment_method === 'stripe' ? 'unpaid' : 'awaiting_payment',
       guest_checkout: true,
@@ -245,7 +245,7 @@ module.exports = async function handler(req, res) {
     if (payment_method === 'stripe') {
       const key = (process.env.STRIPE_SECRET_KEY || '').replace(/[\r\n\s]/g, '');
       if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
-      const BASE = 'https://alkamar-info.vercel.app';
+      const BASE = 'https://boutique.info-experts.fr';
       const line_items = validItems.map(i => ({
         price_data: { currency: 'eur', product_data: { name: String(i.product_name).slice(0, 127) }, unit_amount: Math.round(i.price_eur * 100) },
         quantity: i.quantity,
@@ -274,7 +274,7 @@ module.exports = async function handler(req, res) {
       order_number: orderNum,
       total_eur,
       payment_instructions: payment_method === 'mobile_money'
-        ? { number: '+269 331 27 22', name: 'Alkamar Info', reference: orderNum }
+        ? { number: '+269 331 27 22', name: 'Info Experts', reference: orderNum }
         : null,
     });
   }
