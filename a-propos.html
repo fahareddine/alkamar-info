@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>À propos — Boutique Info Experts</title>
+  <meta name="description" content="Découvrez la Boutique Info Experts, votre espace de vente de produits informatiques aux Comores.">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Boutique Info Experts">
+  <meta property="og:title" content="À propos — Boutique Info Experts">
+  <meta property="og:description" content="Découvrez la Boutique Info Experts, votre espace de vente de produits informatiques aux Comores.">
+  <meta property="og:url" content="https://boutique.info-experts.fr/a-propos.html">
+  <link rel="canonical" href="https://boutique.info-experts.fr/a-propos.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .info-hero{background:linear-gradient(135deg,#0f172a 0%,#1e3a8a 100%);padding:36px 20px;color:#fff}
+    .info-hero__inner{max-width:860px;margin:0 auto}
+    .info-hero h1{font-size:1.6rem;font-weight:900;margin-bottom:8px}
+    .info-hero p{font-size:14px;color:#93c5fd}
+    .info-content{max-width:860px;margin:40px auto;padding:0 20px 60px}
+    .info-section{margin-bottom:36px}
+    .info-section h2{font-size:1.1rem;font-weight:800;color:#0f172a;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #e5e7eb}
+    .info-section p,.info-section li{font-size:14px;color:#334155;line-height:1.8;margin-bottom:8px}
+    .info-section ul{padding-left:20px}
+    .info-section li{margin-bottom:6px}
+    .info-badges{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+    .info-badge{display:inline-flex;align-items:center;gap:8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:600;color:#1e40af}
+    .info-cta{background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:24px;margin-top:40px;text-align:center}
+    .info-cta h3{font-size:1.05rem;font-weight:800;color:#1e3a8a;margin-bottom:8px}
+    .info-cta p{font-size:13px;color:#334155;margin-bottom:16px}
+    .info-cta a{display:inline-flex;align-items:center;gap:8px;background:#1a3a8f;color:#fff;padding:12px 24px;border-radius:8px;font-weight:700;font-size:13px;text-decoration:none;margin:4px}
+    .info-cta a.secondary{background:#fff;color:#1a3a8f;border:2px solid #1a3a8f}
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar__inner">
+      <span>📦 Livraison gratuite dès 150 € d'achat · Retrait en boutique disponible</span>
+      <div class="topbar__links">
+        <a href="/compte.html">Mon compte</a>
+        <a href="https://wa.me/33667491345?text=Bonjour%2C+je+voudrais+suivre+ma+commande">Mes commandes</a>
+        <a href="tel:+2697772722">+269 777 27 22</a>
+      </div>
+    </div>
+  </div>
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="index.html" class="logo">
+        <div class="logo__icon">B</div>
+        <span class="logo__text">La <span>Boutique</span></span>
+      </a>
+      <div class="search-bar">
+        <select class="search-bar__select"><option>Toutes catégories</option></select>
+        <input class="search-bar__input" type="text" placeholder="Rechercher un produit…" id="searchInput">
+        <button class="search-bar__btn" onclick="doSearch()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        </button>
+      </div>
+      <div class="header__actions">
+        <a href="index.html" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+          <span>Accueil</span>
+        </a>
+        <a href="#" class="header__action">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+          <span>Panier</span>
+          <span class="cart-badge">0</span>
+        </a>
+        <button class="menu-toggle" id="menu-toggle-btn" aria-label="Menu">☰</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="info-hero">
+    <div class="info-hero__inner">
+      <h1>À propos de la Boutique Info Experts</h1>
+      <p>Votre partenaire informatique aux Comores depuis plusieurs années</p>
+    </div>
+  </div>
+
+  <div class="info-content">
+
+    <div class="info-section">
+      <h2>Qui sommes-nous ?</h2>
+      <p>La Boutique Info Experts est la plateforme de vente en ligne officielle d'Info Experts, une entreprise informatique basée à Moroni, aux Comores.</p>
+      <p>Nous proposons du matériel informatique neuf et reconditionné, adapté aux besoins des particuliers et des professionnels aux Comores. Notre équipe de techniciens certifiés est disponible pour vous accompagner, vous conseiller et intervenir sur site.</p>
+    </div>
+
+    <div class="info-section">
+      <h2>Notre mission</h2>
+      <p>Rendre l'informatique accessible, fiable et abordable aux Comores. Nous sélectionnons rigoureusement nos produits pour vous proposer un catalogue de qualité, avec des prix adaptés au marché local.</p>
+      <p>En complément de la boutique en ligne, notre équipe assure des services de maintenance, de réparation et d'installation directement à Moroni.</p>
+    </div>
+
+    <div class="info-section">
+      <h2>Nos catégories de produits</h2>
+      <div class="info-badges">
+        <a href="ordinateurs.html" class="info-badge">💻 Ordinateurs</a>
+        <a href="composants.html" class="info-badge">🔧 Composants PC</a>
+        <a href="peripheriques.html" class="info-badge">🖱️ Périphériques</a>
+        <a href="ecrans.html" class="info-badge">🖥️ Écrans</a>
+        <a href="reseau.html" class="info-badge">📡 Réseau & WiFi</a>
+        <a href="stockage.html" class="info-badge">💾 Stockage</a>
+        <a href="protection.html" class="info-badge">🛡️ Protection</a>
+        <a href="reconditionnes.html" class="info-badge">♻️ Reconditionnés</a>
+      </div>
+    </div>
+
+    <div class="info-section">
+      <h2>Pourquoi choisir Info Experts ?</h2>
+      <ul>
+        <li>Produits sélectionnés et testés par notre équipe technique</li>
+        <li>Matériel reconditionné Grade A certifié</li>
+        <li>Service après-vente disponible à Moroni</li>
+        <li>Paiement Mobile Money accepté (M-Pesa, Orange Money)</li>
+        <li>Retrait gratuit en boutique à Moroni</li>
+        <li>Livraison à domicile disponible aux Comores</li>
+        <li>Conseils personnalisés par nos techniciens</li>
+      </ul>
+    </div>
+
+    <div class="info-section">
+      <h2>Nos coordonnées</h2>
+      <p>📍 Moroni, Grande Comore, Comores</p>
+      <p>📞 <a href="tel:+2697772722" style="color:#1a3a8f;font-weight:600">+269 777 27 22</a></p>
+      <p>✉️ <a href="mailto:contact@info-experts.fr" style="color:#1a3a8f;font-weight:600">contact@info-experts.fr</a></p>
+      <p>⏰ Lun–Sam · 8h–19h</p>
+    </div>
+
+    <div class="info-cta">
+      <h3>Visitez aussi notre site principal</h3>
+      <p>Conseils, guides et services informatiques disponibles sur info-experts.fr</p>
+      <a href="https://info-experts.fr" target="_blank" rel="noopener">↗ info-experts.fr</a>
+      <a href="contact.html" class="secondary">Nous contacter</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <div class="footer__inner footer__inner--3col">
+      <div class="footer-col">
+        <div class="logo" style="margin-bottom:12px">
+          <div class="logo__icon">B</div>
+          <span class="logo__text">La <span>Boutique</span></span>
+        </div>
+        <p style="font-size:13px;color:#94a3b8;line-height:1.7">Boutique officielle Info Experts aux Comores.<br>Matériel neuf et reconditionné, service local.<br><a href="https://info-experts.fr" style="color:#60a5fa">↗ Site Info Experts</a></p>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Informations</div>
+        <ul class="footer-links">
+          <li><a href="a-propos.html">À propos</a></li>
+          <li><a href="livraison.html">Livraison</a></li>
+          <li><a href="retours-garanties.html">Retours &amp; garanties</a></li>
+          <li><a href="cgv.html">CGV</a></li>
+          <li><a href="mentions-legales.html">Mentions légales</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col__title">Contact</div>
+        <ul class="footer-links">
+          <li>📞 +269 777 27 22</li>
+          <li>✉️ contact@info-experts.fr</li>
+          <li>📍 Moroni, Comores</li>
+          <li>⏰ Lun–Sam 8h–19h</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer__bottom">© 2026 Boutique Info Experts · <a href="https://info-experts.fr" style="color:#94a3b8">info-experts.fr</a> — Tous droits réservés</div>
+  </footer>
+
+  <script>
+    function doSearch(){const q=document.getElementById('searchInput').value.trim();if(q)window.location.href='index.html?q='+encodeURIComponent(q);}
+    document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter')doSearch();});
+  </script>
+  <script src="js/cart.js" defer></script>
+  <script src="js/cart-ui.js" defer></script>
+  <script src="js/nav.js" defer></script>
+</body>
+</html>
