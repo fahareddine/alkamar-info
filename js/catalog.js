@@ -62,6 +62,12 @@ const CATALOG = (function () {
     return (v > 0 ? v : Math.round((Number(eur) || 0) * 492)).toLocaleString('fr-FR');
   }
 
+  function wishGet(id) {
+    if (!id) return false;
+    try { return JSON.parse(localStorage.getItem('alkamar_wish') || '[]').includes(String(id)); }
+    catch { return false; }
+  }
+
   function specsSummary(specs) {
     if (!specs || typeof specs !== 'object') return '';
     const rows = Object.entries(specs).filter(([k]) => !k.startsWith('_')).slice(0, 3);
@@ -77,6 +83,7 @@ const CATALOG = (function () {
   // cardIdx : position dans la grille (0-based) — les 4 premières cartes sont above-fold
   function productCard(p, opts = {}, cardIdx = 99) {
     const link    = p.legacy_id || p.id;
+    const wished  = wishGet(link);
     const rawImg     = p.main_image_url || p.image || '';
     const isBanned   = hasSuspiciousUrl(rawImg);
     const imgSrc     = isBanned ? PLACEHOLDER_IMG : optimizeAmazonImg(rawImg || PLACEHOLDER_IMG, 380);
@@ -108,7 +115,7 @@ const CATALOG = (function () {
     return `<div class="product-card${_hasBadge ? ' has-badge' : ''}">
       ${badgeHtml}
       <div class="card-img">
-        <button class="card-wishlist" onclick="toggleWish(this)" aria-label="Ajouter aux favoris">\u2661</button>
+        <button class="card-wishlist${wished ? ' wished' : ''}" data-id="${esc(String(link || ''))}" onclick="toggleWish(this)" aria-label="Ajouter aux favoris" style="${wished ? 'color:#ef4444;border-color:#ef4444' : ''}">${wished ? '\u2665' : '\u2661'}</button>
         <img src="${imgSrc}" ${srcsetAttr} alt="${esc(p.name || '')}" width="220" height="170" ${isLCP ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} onerror="imgFallback(this)">
       </div>
       <div class="card-body">
@@ -279,7 +286,15 @@ const CATALOG = (function () {
       }
     };
     window.toggleWish = function (btn) {
-      const liked = btn.textContent === '\u2665';
+      const id = btn.dataset.id;
+      const liked = btn.textContent.trim() === '\u2665';
+      try {
+        const list = JSON.parse(localStorage.getItem('alkamar_wish') || '[]');
+        const next = liked
+          ? list.filter(x => x !== String(id))
+          : [...new Set([...list, String(id)])];
+        localStorage.setItem('alkamar_wish', JSON.stringify(next));
+      } catch {}
       btn.textContent = liked ? '\u2661' : '\u2665';
       btn.style.color = liked ? '' : '#ef4444';
       btn.style.borderColor = liked ? '' : '#ef4444';

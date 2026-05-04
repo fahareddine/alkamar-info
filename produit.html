@@ -8,6 +8,17 @@
   <link rel="preconnect" href="https://m.media-amazon.com">
   <link rel="dns-prefetch" href="https://m.media-amazon.com">
   <link rel="stylesheet" href="style.css">
+  <!-- Open Graph / Social sharing -->
+  <meta property="og:site_name" content="Alkamar Info">
+  <meta property="og:type" content="product">
+  <meta property="og:title" content="Alkamar Info — Boutique informatique aux Comores">
+  <meta property="og:description" content="Matériel informatique neuf et reconditionné. Livraison aux Comores.">
+  <meta property="og:image" content="https://alkamar-info.vercel.app/favicon.svg">
+  <meta property="og:url" content="https://alkamar-info.vercel.app/produit.html">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Alkamar Info">
+  <meta name="twitter:description" content="Matériel informatique neuf et reconditionné. Livraison aux Comores.">
+  <meta name="twitter:image" content="https://alkamar-info.vercel.app/favicon.svg">
   <style>
     /* ── Page produit ─────────────────────────────────── */
     .product-page {
@@ -622,6 +633,7 @@
               <div class="assurance-item">💳 Mobile Money accepté</div>
               <div class="assurance-item">🔄 Retour 14 jours</div>
             </div>
+            <div id="share-container"></div>
           </div>
         </div>
 
@@ -647,6 +659,40 @@
             <div class="prod-description">${p.description || 'Aucune description disponible.'}</div>
           </div>
         </div>`;
+
+      // Open Graph dynamique — mis à jour après chargement produit
+      (function () {
+        var img = (!_isSuspicious(p.main_image_url || p.image)) ? (p.main_image_url || p.image || '') : '';
+        var title = p.name + ' — Alkamar Info';
+        var desc  = (p.subtitle || (p.description || '').slice(0, 155) || 'Disponible sur Alkamar Info.').replace(/\s+/g, ' ').trim();
+        [['meta[property="og:title"]', title], ['meta[name="twitter:title"]', title],
+         ['meta[property="og:description"]', desc], ['meta[name="twitter:description"]', desc],
+         ['meta[property="og:url"]', window.location.href]
+        ].forEach(function (pair) {
+          var el = document.querySelector(pair[0]);
+          if (el) el.setAttribute('content', pair[1]);
+        });
+        if (img) {
+          ['meta[property="og:image"]', 'meta[name="twitter:image"]'].forEach(function (sel) {
+            var el = document.querySelector(sel);
+            if (el) el.setAttribute('content', img);
+          });
+        }
+      })();
+
+      // Partage social
+      (function initShare() {
+        if (typeof SocialShare === 'undefined') {
+          return setTimeout(initShare, 80);
+        }
+        var _pid = p.legacy_id || p.id || '';
+        SocialShare.render('share-container', {
+          name:   p.name,
+          product: p,
+          url:    window.location.href,
+          ogUrl:  window.location.origin + '/og/' + encodeURIComponent(_pid)
+        });
+      })();
 
       // Connecte sticky add-to-cart mobile
       setTimeout(() => {
@@ -709,6 +755,7 @@
     });
   </script>
   <script src="js/auth-client.js" defer></script>
+  <script src="js/share.js" defer></script>
   <script src="js/account-guard.js" defer></script>
   <script src="js/cart.js" defer></script>
   <script src="js/cart-ui.js" defer></script>
