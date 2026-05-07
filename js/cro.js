@@ -38,7 +38,8 @@
 
     const div = document.createElement('div');
     div.id = 'cro-countdown';
-    div.style.cssText = 'display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#fde68a;margin-top:10px;';
+    // position:absolute — n'étend pas la hauteur du banner (évite CLS 0.125)
+    div.style.cssText = 'position:absolute;bottom:14px;left:20px;display:flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#fde68a;';
     div.innerHTML = '⏰ Offre expire dans <span id="cd-val" style="font-size:14px;color:#fff;font-weight:900;letter-spacing:1px"></span>';
     target.appendChild(div);
 
