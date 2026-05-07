@@ -223,10 +223,20 @@
     chunk();
   };
 
+  // Différer injectSidebar après le premier paint — évite long task 171ms à ~1663ms
+  // Le DOM est prêt mais on laisse le navigateur peindre avant les opérations DOM coûteuses
+  function scheduleInject() {
+    if (typeof requestIdleCallback !== 'undefined') {
+      requestIdleCallback(injectSidebar, { timeout: 300 });
+    } else {
+      setTimeout(injectSidebar, 0);
+    }
+  }
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', injectSidebar);
+    document.addEventListener('DOMContentLoaded', scheduleInject);
   } else {
-    injectSidebar();
+    scheduleInject();
   }
 
 })();
