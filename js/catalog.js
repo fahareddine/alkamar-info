@@ -116,7 +116,7 @@ const CATALOG = (function () {
       ${badgeHtml}
       <div class="card-img">
         <button class="card-wishlist${wished ? ' wished' : ''}" data-id="${esc(String(link || ''))}" onclick="toggleWish(this)" aria-label="Ajouter aux favoris" style="${wished ? 'color:#ef4444;border-color:#ef4444' : ''}">${wished ? '\u2665' : '\u2661'}</button>
-        <img src="${imgSrc}" ${srcsetAttr} alt="${esc(p.name || '')}" width="220" height="170" ${isLCP ? 'loading="eager" fetchpriority="high"' : 'loading="lazy"'} onerror="imgFallback(this)">
+        <img src="${imgSrc}" ${srcsetAttr} alt="${esc(p.name || '')}" width="220" height="170" ${isLCP ? 'loading="eager" fetchpriority="high" decoding="sync"' : 'loading="lazy" decoding="async"'} onerror="imgFallback(this)">
       </div>
       <div class="card-body">
         <div class="card-brand">${esc(p.brand || '')}</div>

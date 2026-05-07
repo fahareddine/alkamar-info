@@ -263,9 +263,14 @@
   /* ── Chargement produits ─────────────────────────────────────── */
   async function loadProducts() {
     try {
-      const res = await fetch(API_URL);
-      if (!res.ok) return;
-      const data = await res.json();
+      // Réutilise la promesse partagée avec index.html via window._productsCache
+      if (!window._productsCache) {
+        window._productsCache = fetch(API_URL)
+          .then(r => r.ok ? r.json() : [])
+          .catch(() => []);
+      }
+      const data = await window._productsCache;
+      if (!Array.isArray(data)) return;
       _products = data.map(p => ({
         ...p,
         _cat: p.categories?.name || '',

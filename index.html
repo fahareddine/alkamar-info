@@ -19,7 +19,8 @@
   <meta name="twitter:image" content="https://boutique.info-experts.fr/images/equipe-alkamar.png">
   <link rel="canonical" href="https://boutique.info-experts.fr/">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="preload" as="image" href="/images/equipe-alkamar.png" fetchpriority="high">
+  <link rel="preload" as="style" href="style.css">
+  <link rel="preload" as="image" href="/images/equipe-alkamar-480.webp" fetchpriority="high" imagesrcset="/images/equipe-alkamar-320.webp 320w, /images/equipe-alkamar-480.webp 480w, /images/equipe-alkamar-640.webp 640w" imagesizes="(max-width: 640px) 320px, (max-width: 1024px) 480px, 640px">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -239,13 +240,18 @@
         </div>
       </div>
       <!-- Image équipe — LCP banner -->
-      <img src="/images/equipe-alkamar.png"
-           alt="Équipe Info Experts — Boutique informatique aux Comores"
-           width="320" height="213"
-           loading="eager"
-           fetchpriority="high"
-           style="display:block;width:320px;max-width:45%;height:auto;object-fit:cover;border-radius:14px;flex-shrink:0"
-           onerror="this.style.display='none'">
+      <picture>
+        <source type="image/avif" srcset="/images/equipe-alkamar-320.avif 320w, /images/equipe-alkamar-480.avif 480w" sizes="(max-width: 640px) 320px, 480px">
+        <source type="image/webp" srcset="/images/equipe-alkamar-320.webp 320w, /images/equipe-alkamar-480.webp 480w, /images/equipe-alkamar-640.webp 640w" sizes="(max-width: 640px) 320px, (max-width: 1024px) 480px, 640px">
+        <img src="/images/equipe-alkamar-480.webp"
+             alt="Équipe Info Experts — Boutique informatique aux Comores"
+             width="480" height="320"
+             fetchpriority="high"
+             loading="eager"
+             decoding="sync"
+             style="display:block;width:320px;max-width:45%;height:auto;object-fit:cover;border-radius:14px;flex-shrink:0"
+             onerror="this.style.display='none'">
+      </picture>
       <a href="#produits" class="promo-banner__cta">
         Voir tous les produits
         <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" width="16" height="16">
@@ -584,11 +590,14 @@
     const grid     = document.getElementById('products-grid');
     const countEl  = document.getElementById('product-count');
 
+    // Promise partagée avec search.js via window._productsCache — un seul fetch
+    window._productsCache = window._productsCache ||
+      fetch('/api/products?status=active&limit=500')
+        .then(r => r.ok ? r.json() : [])
+        .catch(() => []);
+
     async function loadCatalog() {
-      try {
-        const res = await fetch('/api/products?status=active&limit=500');
-        _allProducts = res.ok ? (await res.json()) : [];
-      } catch(e) { _allProducts = []; }
+      _allProducts = await window._productsCache;
       const loading = document.getElementById('loading-state');
       if (loading) loading.remove();
       applyFiltersAndRender();

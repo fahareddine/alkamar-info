@@ -142,7 +142,21 @@
       if (typeof Cart !== 'undefined') Cart.clear();
 
       if (data.mode === 'stripe' && data.url) {
-        window.location.href = data.url;
+        if (window.top !== window.self) {
+          // Naviguer directement la fenêtre parente depuis l'iframe.
+          // window.top.location.href est autorisé en cross-origin par spec,
+          // et reste dans le contexte du clic utilisateur (pas de saut postMessage
+          // qui casse le user gesture sur iOS Safari).
+          try {
+            window.top.location.href = data.url;
+          } catch (e) {
+            // Fallback : certains contextes (ex: double iframe) peuvent restreindre
+            // l'accès direct à window.top — on passe par postMessage.
+            window.parent.postMessage({ type: 'stripe_redirect', url: data.url }, 'https://info-experts.fr');
+          }
+        } else {
+          window.location.href = data.url;
+        }
       } else {
         var ps = new URLSearchParams({ order_id: data.order_id || '', order_number: data.order_number || '', mode: data.mode || _payment, total: data.total_eur || '' });
         window.location.href = 'success.html?' + ps.toString();
