@@ -264,6 +264,7 @@
   async function loadProducts() {
     try {
       // Réutilise la promesse partagée avec index.html via window._productsCache
+      // Si pas encore créée (ex: search.js sur page sans index.html inline), crée-la ici
       if (!window._productsCache) {
         window._productsCache = fetch(API_URL)
           .then(r => r.ok ? r.json() : [])
@@ -279,6 +280,15 @@
       _loaded = true;
     } catch (e) {
       console.warn('[search] Erreur chargement:', e.message);
+    }
+  }
+
+  /* Lance loadProducts après load pour ne pas concurrencer les ressources critiques */
+  function scheduleLoadProducts() {
+    if (document.readyState === 'complete') {
+      loadProducts();
+    } else {
+      window.addEventListener('load', loadProducts, { once: true });
     }
   }
 
@@ -344,8 +354,8 @@
     /* Mobile overlay */
     buildMobileOverlay();
 
-    /* Chargement produits */
-    loadProducts();
+    /* Chargement produits — décalé après load pour ne pas concurrencer le LCP */
+    scheduleLoadProducts();
   }
 
   if (document.readyState === 'loading') {
