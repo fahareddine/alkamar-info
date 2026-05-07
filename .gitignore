@@ -3,3 +3,8 @@
 node_modules/
 .playwright-mcp/
 .superpowers/
+
+# Performance reports (générés automatiquement)
+reports/*.json
+reports/*.md
+.lighthouseci/
