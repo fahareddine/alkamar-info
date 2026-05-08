@@ -137,7 +137,9 @@ Toute modification doit préserver ce score. En cas de doute, ne pas modifier av
 - Toujours définir `width` et `height` sur chaque `<img>`.
 - `loading="lazy"` sur toutes les images non visibles au premier écran.
 - `fetchpriority="high"` **uniquement** sur l'image LCP réelle (une seule par page).
-- `decoding="async"` sur toutes les images sans exception — jamais `decoding="sync"`.
+- **Image LCP** : utiliser `decoding="auto"` (laisse le browser décider — souvent sync pour les images haute priorité). Ne jamais utiliser `decoding="async"` sur l'image LCP : ça différe le paint et ajoute jusqu'à 2000ms de render delay.
+- **Images non-LCP** : `decoding="async"` recommandé pour éviter de bloquer le thread principal.
+- Jamais `decoding="sync"` sauf cas exceptionnel documenté.
 - Ne jamais committer une image de plus de 200 KB sans compression préalable.
 - Vérifier le poids avant commit : `Get-Item images/... | Select Length`.
 - L'image LCP actuelle (`/images/equipe-alkamar.png`) a des versions optimisées :
@@ -161,7 +163,16 @@ Toute modification doit préserver ce score. En cas de doute, ne pas modifier av
 
 ### Règles CSS / JS
 
-- Ne jamais ajouter un `<link rel="stylesheet">` bloquant supplémentaire en `<head>`.
+- **style.css est chargé de manière asynchrone** via `<link rel="preload" as="style" onload="this.onload=null;this.rel='stylesheet'">` + `<noscript>` fallback.
+  - **Ne jamais revenir** à `<link rel="stylesheet" href="style.css">` bloquant — économie estimée 380ms FCP.
+  - Le CSS critique (above-the-fold) est inliné dans `<style>` en `<head>`.
+- **Règle critique CSS async** : avant de rendre style.css async, vérifier que le CSS inline couvre **tous** les éléments above-the-fold sur mobile :
+  - `.nav-bar{display:none}` sur mobile (sans ça, la nav s'affiche et pousse le LCP → régression)
+  - `.header__actions .header__action{display:none}` sur mobile
+  - `.header__inner{height:56px}` sur mobile
+  - `.promo-banner__tag`, `.promo-banner__title`, `.promo-banner__sub`, `.promo-banner__cta` (affectent la hauteur de la bannière → position LCP)
+  - `.quick-cats`, `.quick-cat` (présents sur mobile)
+  - Media queries mobile pour `.promo-banner` (padding, flex-direction)
 - Ne jamais ajouter `<link rel="preload" as="style">` sans le trick `onload` — c'est inutile.
 - Ne jamais ajouter `<link rel="preload" as="image">` sur un format différent de celui chargé par `<picture>` (cause double fetch).
 - Ne jamais ajouter de script tiers sans nécessité absolue.
