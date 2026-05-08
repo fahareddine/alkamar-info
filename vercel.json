@@ -32,6 +32,7 @@
     }
   ],
   "rewrites": [
+    { "source": "/mentions-legales", "destination": "/mentions-legales.html" },
     { "source": "/og/:id", "destination": "/api/products/:id?_og=1" },
     { "source": "/api/tags", "destination": "/api/categories?_route=tags" },
     { "source": "/api/coupons/validate", "destination": "/api/coupons?_route=validate" },
