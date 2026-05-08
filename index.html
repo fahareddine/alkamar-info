@@ -431,7 +431,7 @@
 
       <!-- Toolbar -->
       <div class="products-toolbar">
-        <div class="products-toolbar__count"><strong id="product-count">11</strong> catégories disponibles</div>
+        <div class="products-toolbar__count"><strong id="product-count">12</strong> catégories disponibles</div>
         <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
           <div class="toolbar-sort">
             <label for="sort-select">Trier par :</label>
@@ -655,6 +655,26 @@
               Voir les offres
             </a>
             <a href="/promotions.html" class="btn-detail" onclick="event.stopPropagation()">Explorer les produits</a>
+          </div>
+        </div>
+
+        <div class="product-card has-badge" onclick="window.location='/ordinateurs.html?tab=gaming'" style="cursor:pointer" aria-label="Catégorie PC Gaming">
+          <div class="card-badges"><span class="badge badge--promo">PC Gaming</span></div>
+          <div class="card-img">
+            <img src="https://m.media-amazon.com/images/I/61GQjqWk7zL.jpg" alt="Catégorie PC Gaming — Boutique Info Experts" width="220" height="170" loading="lazy" decoding="async" onerror="this.closest('.card-img')?.classList.add('card-img--broken')">
+          </div>
+          <div class="card-body">
+            <div class="card-brand">Catégorie</div>
+            <div class="card-title">PC Gaming</div>
+            <p style="font-size:11px;color:#6b7280;line-height:1.5;flex:1;margin:0 0 6px">PC gaming et configurations haute performance pour les joueurs exigeants.</p>
+            <span class="badge badge--promo" style="align-self:flex-start;margin-top:6px;font-size:9.5px">GAMING</span>
+          </div>
+          <div class="card-footer">
+            <a href="/ordinateurs.html?tab=gaming" class="btn-cart" onclick="event.stopPropagation()" style="color:#111827;text-decoration:none;justify-content:center;gap:6px">
+              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5-5 5M6 12h12"/></svg>
+              Voir la catégorie
+            </a>
+            <a href="/ordinateurs.html?tab=gaming" class="btn-detail" onclick="event.stopPropagation()">Explorer les produits</a>
           </div>
         </div>
 
