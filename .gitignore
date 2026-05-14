@@ -8,3 +8,17 @@ node_modules/
 reports/*.json
 reports/*.md
 .lighthouseci/
+
+# Backup system — générés à l'exécution
+backup-system/snapshots/*
+!backup-system/snapshots/.gitkeep
+backup-system/logs/*
+!backup-system/logs/.gitkeep
+backup-system/reports/*
+!backup-system/reports/.gitkeep
+
+# Archives et fichiers chiffrés — jamais dans git
+*.gpg
+*.enc
+*.asc
+backup-system/config/rclone.conf
