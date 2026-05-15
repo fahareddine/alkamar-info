@@ -237,6 +237,18 @@ const CATALOG = (function () {
     renderGrid(subcategory, opts);
   }
 
+  // ─── Scroll vers la zone produits (compense le header sticky) ────────────
+  function scrollToProducts() {
+    const target = document.querySelector('.cat-tabs') ||
+                   document.querySelector('.subcat-section.active') ||
+                   document.querySelector('.products-grid');
+    if (!target) return;
+    const header = document.querySelector('.header');
+    const headerH = header ? header.getBoundingClientRect().height : 60;
+    const top = target.getBoundingClientRect().top + window.pageYOffset - headerH - 8;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  }
+
   // ─── Navigation onglets ───────────────────────────────────────────────────
   function initTabs(tabs) {
     window.showTab = function (id, btn) {
@@ -245,7 +257,7 @@ const CATALOG = (function () {
       const sec = document.getElementById('tab-' + id);
       if (sec) sec.classList.add('active');
       if (btn) btn.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      scrollToProducts();
     };
 
     const urlTab = new URLSearchParams(window.location.search).get('tab');
@@ -257,6 +269,8 @@ const CATALOG = (function () {
       const sec = document.getElementById('tab-' + urlTab);
       if (sec) sec.classList.add('active');
       if (tabBtns[idx]) tabBtns[idx].classList.add('active');
+      // Scroll vers les produits après chargement initial
+      requestAnimationFrame(() => setTimeout(scrollToProducts, 250));
     }
   }
 
