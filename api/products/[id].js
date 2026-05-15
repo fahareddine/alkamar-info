@@ -20,7 +20,7 @@ function _e(s) {
 }
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { id } = req.query;
@@ -89,9 +89,11 @@ module.exports = async function handler(req, res) {
     const auth = await requireRole(req, 'admin', 'editor');
     if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
+    const ALLOWED = new Set(['name','subtitle','description','brand','category_id','price_eur','price_kmf','price_old','stock','status','image','main_image_url','images','gallery_urls','gallery','badge','badge_class','stock_label','stock_class','features','specs','legacy_id','rating','rating_count','weight_kg','dimensions','meta_title','meta_description','is_featured','sort_order','tags']);
+    const update = Object.fromEntries(Object.entries(req.body || {}).filter(([k]) => ALLOWED.has(k)));
     const { data, error } = await supabase
       .from('products')
-      .update({ ...req.body, updated_at: new Date().toISOString() })
+      .update({ ...update, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select()
       .single();

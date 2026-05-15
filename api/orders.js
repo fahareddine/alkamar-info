@@ -86,7 +86,7 @@ async function handleStripeCheckout(req, res) {
 }
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   // Route client: GET /api/orders?my=1 — commandes de l'utilisateur connecté

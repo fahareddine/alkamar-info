@@ -4,7 +4,7 @@ const { requireRole } = require('./_lib/auth');
 const { setCors } = require('./_lib/cors');
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   // Route fusionnée : /api/stock/movements → /api/products?_route=stock
@@ -67,17 +67,21 @@ module.exports = async function handler(req, res) {
       return res.status(200).json(data || []);
     }
     if (req.method === 'POST') {
+      const ALLOWED_OFFER = new Set(['product_id','supplier_name','supplier_url','price','currency','is_primary','score','confidence','metadata','notes']);
+      const offerInsert = Object.fromEntries(Object.entries(req.body || {}).filter(([k]) => ALLOWED_OFFER.has(k)));
       const { data, error } = await supabase
         .from('product_supplier_offers')
-        .insert({ ...req.body, updated_at: new Date().toISOString() }).select().single();
+        .insert({ ...offerInsert, updated_at: new Date().toISOString() }).select().single();
       if (error) return res.status(500).json({ error: error.message });
       return res.status(201).json(data);
     }
     if (req.method === 'PUT') {
       if (!offer_id) return res.status(400).json({ error: 'offer_id requis' });
+      const ALLOWED_OFFER_UP = new Set(['product_id','supplier_name','supplier_url','price','currency','is_primary','score','confidence','metadata','notes']);
+      const offerUpdate = Object.fromEntries(Object.entries(req.body || {}).filter(([k]) => ALLOWED_OFFER_UP.has(k)));
       const { data, error } = await supabase
         .from('product_supplier_offers')
-        .update({ ...req.body, updated_at: new Date().toISOString() })
+        .update({ ...offerUpdate, updated_at: new Date().toISOString() })
         .eq('id', offer_id).select().single();
       if (error) return res.status(500).json({ error: error.message });
       return res.status(200).json(data);
@@ -634,9 +638,11 @@ module.exports = async function handler(req, res) {
     const auth = await requireRole(req, 'admin', 'editor');
     if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
+    const ALLOWED_NEW = new Set(['name','subtitle','description','brand','category_id','price_eur','price_kmf','price_old','stock','status','image','main_image_url','images','gallery_urls','gallery','badge','badge_class','stock_label','stock_class','features','specs','legacy_id','rating','rating_count','weight_kg','dimensions','meta_title','meta_description','is_featured','sort_order','tags']);
+    const newProduct = Object.fromEntries(Object.entries(req.body || {}).filter(([k]) => ALLOWED_NEW.has(k)));
     const { data, error } = await supabase
       .from('products')
-      .insert(req.body)
+      .insert(newProduct)
       .select()
       .single();
     if (error) return res.status(500).json({ error: error.message });

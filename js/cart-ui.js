@@ -65,6 +65,9 @@
     overlayEl?.classList.remove('open');
   }
 
+  const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const safeId = id => String(id||'').replace(/[^a-z0-9\-_]/gi, '');
+
   function render() {
     const items = typeof Cart !== 'undefined' ? Cart.load() : [];
     const count = items.reduce((s, i) => s + (i.qty || 1), 0);
@@ -94,17 +97,17 @@
 
     body.innerHTML = items.map(item => `
       <div class="cart-item">
-        <img class="cart-item__img" src="${item.main_image_url || item.image || ''}" alt="${item.name || ''}" onerror="this.style.display='none'">
+        <img class="cart-item__img" src="${item.main_image_url || item.image || ''}" alt="${esc(item.name || '')}" onerror="this.style.display='none'">
         <div class="cart-item__info">
-          <div class="cart-item__name">${item.name || ''}</div>
+          <div class="cart-item__name">${esc(item.name || '')}</div>
           <div class="cart-item__price">${((item.price_eur||0)*(item.qty||1)).toFixed(2).replace('.',',')} €</div>
           <div class="cart-item__qty">
-            <button class="cart-qty-btn" onclick="CartUI.decrement('${item.id}')">−</button>
+            <button class="cart-qty-btn" onclick="CartUI.decrement('${safeId(item.id)}')">−</button>
             <span class="cart-qty-val">${item.qty}</span>
-            <button class="cart-qty-btn" onclick="CartUI.increment('${item.id}')">+</button>
+            <button class="cart-qty-btn" onclick="CartUI.increment('${safeId(item.id)}')">+</button>
           </div>
         </div>
-        <button class="cart-item__remove" onclick="CartUI.removeItem('${item.id}')" title="Retirer">🗑</button>
+        <button class="cart-item__remove" onclick="CartUI.removeItem('${safeId(item.id)}')" title="Retirer">🗑</button>
       </div>`).join('');
 
     footer.innerHTML = `

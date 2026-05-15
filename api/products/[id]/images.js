@@ -7,7 +7,7 @@ const { setCors } = require('../../_lib/cors');
 const { requireRole } = require('../../_lib/auth');
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   const { id, action } = req.query;

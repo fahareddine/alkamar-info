@@ -538,6 +538,8 @@
         </div>`
       ).join('');
 
+      const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
       // Prix barré
       const oldPriceHTML = p.price_old
         ? `<div class="prod-price-old">${fmtEur(p.price_old)} €</div>`
@@ -545,7 +547,7 @@
 
       // Badge
       const badgeHTML = p.badge
-        ? `<span class="badge ${p.badge_class}" style="font-size:13px;padding:4px 12px">${p.badge}</span>`
+        ? `<span class="badge ${esc(p.badge_class)}" style="font-size:13px;padding:4px 12px">${esc(p.badge)}</span>`
         : '';
 
       // Stock class dérivé depuis stock_class DB ou stock_label
@@ -555,7 +557,7 @@
       );
 
       // Features
-      const featuresHTML = (p.features || []).map(f => `<li>${f}</li>`).join('');
+      const featuresHTML = (p.features || []).map(f => `<li>${esc(f)}</li>`).join('');
 
       // Specs — génère depuis le nom/description si vide
       function buildSpecs(p) {
@@ -576,7 +578,7 @@
       }
       const specsHTML = Object.entries(buildSpecs(p))
         .filter(([k]) => !k.startsWith('_'))
-        .map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`)
+        .map(([k, v]) => `<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`)
         .join('');
 
       // Message WhatsApp
@@ -596,9 +598,9 @@
           <!-- Informations produit -->
           <div class="prod-info">
             ${badgeHTML}
-            <div class="prod-brand" style="margin-top:${p.badge?'10px':'0'}">${p.brand || ''}</div>
-            <h1 class="prod-name">${p.name}</h1>
-            ${p.subtitle ? `<div class="prod-subtitle">${p.subtitle}</div>` : ''}
+            <div class="prod-brand" style="margin-top:${p.badge?'10px':'0'}">${esc(p.brand || '')}</div>
+            <h1 class="prod-name">${esc(p.name)}</h1>
+            ${p.subtitle ? `<div class="prod-subtitle">${esc(p.subtitle)}</div>` : ''}
 
             <div class="prod-rating">
               <span class="stars">${stars(p.rating || 0)}</span>
@@ -614,7 +616,7 @@
               ` : `<div class="prod-price-main" style="font-size:1.4rem;color:#94a3b8">Prix sur demande</div>`}
             </div>
 
-            <div class="prod-stock ${stockClass}">${p.stock_label}</div>
+            <div class="prod-stock ${esc(stockClass)}">${esc(p.stock_label)}</div>
 
             <div class="prod-actions">
               <button class="btn-add-cart" onclick="addToCart()">
@@ -628,7 +630,7 @@
             </div>
 
             <div class="prod-assurances">
-              <div class="assurance-item">🛡️ Garantie ${p.specs && p.specs['Garantie'] ? p.specs['Garantie'] : '24 mois'}</div>
+              <div class="assurance-item">🛡️ Garantie ${esc(p.specs && p.specs['Garantie'] ? p.specs['Garantie'] : '24 mois')}</div>
               <div class="assurance-item">📦 Livraison Comores</div>
               <div class="assurance-item">💳 Mobile Money accepté</div>
               <div class="assurance-item">🔄 Retour 14 jours</div>
@@ -656,7 +658,7 @@
           </div>
 
           <div class="detail-panel" id="panel-description">
-            <div class="prod-description">${p.description || 'Aucune description disponible.'}</div>
+            <div class="prod-description">${esc(p.description || 'Aucune description disponible.')}</div>
           </div>
         </div>`;
 

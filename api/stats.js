@@ -3,7 +3,7 @@ const { requireRole } = require('./_lib/auth');
 const { setCors } = require('./_lib/cors');
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
   // Route fusionnée : /api/logs → /api/stats?_route=logs
   if (req.query._route === 'logs') {

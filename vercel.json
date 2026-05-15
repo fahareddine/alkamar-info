@@ -27,7 +27,7 @@
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://info-experts.fr https://www.info-experts.fr; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://checkout.stripe.com https://cdn.jsdelivr.net; frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://*.supabase.co wss://*.supabase.co" }
+        { "key": "Content-Security-Policy", "value": "frame-ancestors 'self' https://info-experts.fr https://www.info-experts.fr; script-src 'self' 'unsafe-inline' https://js.stripe.com https://checkout.stripe.com https://cdn.jsdelivr.net; frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://hooks.stripe.com; connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://*.supabase.co wss://*.supabase.co" }
       ]
     }
   ],

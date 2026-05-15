@@ -1,4 +1,5 @@
 // admin/js/order-detail.js
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const orderId = new URLSearchParams(window.location.search).get('id');
 
 async function loadOrder() {
@@ -9,16 +10,16 @@ async function loadOrder() {
   document.getElementById('notes').value = o.notes || '';
 
   document.getElementById('customer-info').innerHTML = o.customers ? `
-    <p style="font-weight:600">${o.customers.name}</p>
-    <p style="color:var(--admin-muted);font-size:13px">${o.customers.email || ''}</p>
-    <p style="color:var(--admin-muted);font-size:13px">${o.customers.phone || ''}</p>
-    <p style="color:var(--admin-muted);font-size:13px">${o.customers.city || ''}</p>
+    <p style="font-weight:600">${esc(o.customers.name)}</p>
+    <p style="color:var(--admin-muted);font-size:13px">${esc(o.customers.email || '')}</p>
+    <p style="color:var(--admin-muted);font-size:13px">${esc(o.customers.phone || '')}</p>
+    <p style="color:var(--admin-muted);font-size:13px">${esc(o.customers.city || '')}</p>
   ` : '—';
 
   document.getElementById('order-items').innerHTML = (o.order_items || []).map(item => `
     <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--admin-border)">
       <div>
-        <div style="font-weight:600">${item.product_snapshot?.name || item.products?.name || '—'}</div>
+        <div style="font-weight:600">${esc(item.product_snapshot?.name || item.products?.name || '—')}</div>
         <div style="font-size:12px;color:var(--admin-muted)">Qté : ${item.quantity}</div>
       </div>
       <div style="text-align:right">

@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NovaTech Store — PC Portables Pro & Solutions IT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:            #080808;
+      --bg-2:          #0f0f0f;
+      --bg-3:          #141414;
+      --surface:       rgba(255,255,255,0.04);
+      --border:        rgba(255,255,255,0.07);
+      --border-hi:     rgba(255,255,255,0.11);
+      --text:          #f0ede8;
+      --text-muted:    rgba(240,237,232,0.5);
+      --text-subtle:   rgba(240,237,232,0.28);
+      --gold:          #d4a853;
+      --gold-dim:      rgba(212,168,83,0.14);
+      --gold-border:   rgba(212,168,83,0.22);
+      --r-xl:          1.5rem;
+      --r-2xl:         2rem;
+      --r-full:        9999px;
+      --ease-expo:     cubic-bezier(0.32,0.72,0,1);
+      --ease-spring:   cubic-bezier(0.34,1.56,0.64,1);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Grain noise — fixed, pointer-events-none, GPU-safe */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 200;
+      pointer-events: none;
+      opacity: 0.022;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px;
+    }
+
+    /* ── TYPOGRAPHY ──────────────────────────── */
+    h1, h2, h3, h4 {
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      line-height: 1.08;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.22rem 0.75rem;
+      background: var(--gold-dim);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--r-full);
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.1rem;
+    }
+
+    /* ── NAV ─────────────────────────────────── */
+    .nav-wrap {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex; justify-content: center;
+      padding: 1.25rem 1.5rem 0;
+      pointer-events: none;
+    }
+
+    nav {
+      pointer-events: all;
+      display: flex; align-items: center;
+      padding: 0.45rem 0.45rem 0.45rem 1.35rem;
+      background: rgba(8,8,8,0.75);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--border-hi);
+      border-radius: var(--r-full);
+      box-shadow: 0 0 0 1px rgba(255,255,255,0.025), 0 24px 64px rgba(0,0,0,0.55);
+      transition: padding 0.5s var(--ease-expo), background 0.5s var(--ease-expo);
+    }
+
+    .nav-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700; font-size: 0.88rem;
+      color: var(--text); text-decoration: none;
+      letter-spacing: -0.04em; margin-right: 2rem;
+    }
+    .nav-logo span { color: var(--gold); }
+
+    .nav-links { display: flex; gap: 0; list-style: none; }
+
+    .nav-links a {
+      display: block;
+      padding: 0.38rem 0.85rem;
+      font-size: 0.78rem; font-weight: 500;
+      color: var(--text-muted); text-decoration: none;
+      border-radius: var(--r-full);
+      transition: color 0.3s var(--ease-expo), background 0.3s var(--ease-expo);
+    }
+    .nav-links a:hover { color: var(--text); background: var(--surface); }
+
+    .nav-cta {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.48rem 0.48rem 0.48rem 1.1rem;
+      background: var(--text); color: var(--bg);
+      font-size: 0.78rem; font-weight: 700; letter-spacing: -0.01em;
+      text-decoration: none; border-radius: var(--r-full);
+      margin-left: 0.4rem;
+      transition: background 0.35s var(--ease-expo), transform 0.35s var(--ease-spring);
+    }
+    .nav-cta:hover { background: var(--gold); transform: scale(1.03); }
+    .nav-cta:active { transform: scale(0.97); }
+    .nav-cta .icon {
+      width: 1.5rem; height: 1.5rem;
+      background: rgba(0,0,0,0.1); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; font-style: normal;
+      transition: transform 0.4s var(--ease-spring);
+    }
+    .nav-cta:hover .icon { transform: translate(2px,-1px) scale(1.12); }
+
+    /* hamburger */
+    .nav-ham {
+      display: none; flex-direction: column; gap: 4.5px;
+      padding: 0.5rem; cursor: pointer; margin-left: 0.4rem;
+      background: none; border: none;
+    }
+    .nav-ham span {
+      display: block; width: 18px; height: 1.5px;
+      background: var(--text); border-radius: 2px;
+      transform-origin: center;
+      transition: transform 0.4s var(--ease-expo);
+    }
+    .nav-ham.open span:first-child { transform: translateY(6px) rotate(45deg); }
+    .nav-ham.open span:last-child  { transform: translateY(-6px) rotate(-45deg); }
+
+    /* ── HERO ────────────────────────────────── */
+    .hero {
+      min-height: 100dvh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 9rem 1.5rem 6rem;
+      position: relative; overflow: hidden;
+    }
+
+    .hero-orb-1, .hero-orb-2 {
+      position: absolute; pointer-events: none; border-radius: 50%;
+    }
+    .hero-orb-1 {
+      top: 45%; left: 50%; transform: translate(-50%,-55%);
+      width: 75vw; max-width: 700px; height: 600px;
+      background: radial-gradient(ellipse, rgba(212,168,83,0.065) 0%, transparent 68%);
+    }
+    .hero-orb-2 {
+      top: 35%; left: 28%; transform: translate(-50%,-50%);
+      width: 400px; height: 400px;
+      background: radial-gradient(ellipse, rgba(80,100,200,0.045) 0%, transparent 65%);
+    }
+
+    .hero-pill {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      padding: 0.28rem 0.9rem 0.28rem 0.28rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09);
+      border-radius: var(--r-full);
+      font-size: 0.7rem; font-weight: 500;
+      color: var(--text-muted); margin-bottom: 2rem;
+    }
+    .hero-pill-dot {
+      width: 1.4rem; height: 1.4rem;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.5rem; color: var(--gold);
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6.5vw, 6.2rem);
+      font-weight: 700;
+      max-width: 13ch; margin: 0 auto 1.25rem;
+    }
+    .hero h1 em { font-style: normal; color: var(--gold); }
+
+    .hero p {
+      font-size: clamp(0.9rem, 1.4vw, 1.1rem);
+      color: var(--text-muted); max-width: 44ch;
+      margin: 0 auto 2.75rem; line-height: 1.72;
+    }
+
+    .hero-actions {
+      display: flex; gap: 0.7rem;
+      flex-wrap: wrap; justify-content: center;
+    }
+
+    /* ── BUTTONS ─────────────────────────────── */
+    .btn-primary, .btn-secondary {
+      display: inline-flex; align-items: center; gap: 0.45rem;
+      font-family: inherit; cursor: pointer; text-decoration: none;
+      border-radius: var(--r-full); font-size: 0.875rem; font-weight: 600;
+      border: none; letter-spacing: -0.01em;
+    }
+    .btn-primary {
+      padding: 0.72rem 0.72rem 0.72rem 1.5rem;
+      background: var(--text); color: var(--bg);
+      transition: background 0.35s var(--ease-expo), transform 0.35s var(--ease-spring);
+    }
+    .btn-primary:hover { background: var(--gold); transform: scale(1.03); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-primary .btn-ico {
+      width: 2rem; height: 2rem;
+      background: rgba(0,0,0,0.1); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-style: normal;
+      transition: transform 0.4s var(--ease-spring);
+    }
+    .btn-primary:hover .btn-ico { transform: translate(2px,-1px) scale(1.1); }
+
+    .btn-secondary {
+      padding: 0.72rem 1.5rem;
+      background: transparent; color: var(--text-muted);
+      border: 1px solid var(--border-hi);
+      transition: color 0.35s var(--ease-expo), border-color 0.35s var(--ease-expo),
+                  background 0.35s var(--ease-expo), transform 0.35s var(--ease-spring);
+    }
+    .btn-secondary:hover {
+      color: var(--text); border-color: rgba(255,255,255,0.2);
+      background: var(--surface); transform: scale(1.03);
+    }
+
+    /* ── SCROLL REVEAL ───────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(1.75rem);
+      filter: blur(5px);
+      transition:
+        opacity  0.85s var(--ease-expo),
+        transform 0.85s var(--ease-expo),
+        filter   0.65s var(--ease-expo);
+      will-change: transform, opacity;
+    }
+    .reveal.in { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+    /* ── LAYOUT ──────────────────────────────── */
+    .section { padding: 6.5rem 1.5rem; }
+    .container { max-width: 1160px; margin: 0 auto; }
+    .section-head { margin-bottom: 3rem; }
+
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--border-hi) 30%, var(--border-hi) 70%, transparent);
+    }
+
+    /* ── DOUBLE-BEZEL CARD ───────────────────── */
+    .c-outer {
+      padding: 1.5px;
+      background: linear-gradient(145deg,
+        rgba(255,255,255,0.09) 0%,
+        rgba(255,255,255,0.02) 45%,
+        rgba(255,255,255,0.07) 100%);
+      border-radius: var(--r-2xl);
+      transition: background 0.5s var(--ease-expo), transform 0.5s var(--ease-expo), box-shadow 0.5s var(--ease-expo);
+    }
+    .c-outer:hover {
+      background: linear-gradient(145deg,
+        rgba(212,168,83,0.28) 0%,
+        rgba(255,255,255,0.04) 45%,
+        rgba(212,168,83,0.18) 100%);
+      transform: translateY(-4px);
+      box-shadow: 0 32px 80px rgba(0,0,0,0.45), 0 0 40px rgba(212,168,83,0.04);
+    }
+    .c-inner {
+      background: var(--bg-3);
+      border-radius: calc(var(--r-2xl) - 1.5px);
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.055);
+      overflow: hidden;
+    }
+
+    /* ── PRODUCTS BENTO ──────────────────────── */
+    .prod-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 0.875rem;
+    }
+    .prod-card:nth-child(1) { grid-column: span 5; }
+    .prod-card:nth-child(2) { grid-column: span 7; }
+    .prod-card:nth-child(3) { grid-column: span 7; }
+    .prod-card:nth-child(4) { grid-column: span 5; }
+
+    .prod-img {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(255,255,255,0.025) 0%, rgba(255,255,255,0.01) 100%);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.25rem; color: rgba(255,255,255,0.12);
+      position: relative; overflow: hidden;
+      aspect-ratio: 16 / 9;
+    }
+    .prod-card:nth-child(2) .prod-img,
+    .prod-card:nth-child(3) .prod-img { aspect-ratio: 21 / 9; }
+    .prod-img::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(212,168,83,0.055) 0%, transparent 65%);
+    }
+
+    .prod-body { padding: 1.75rem; }
+
+    .prod-tag {
+      display: inline-flex; align-items: center;
+      padding: 0.18rem 0.6rem;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      border-radius: var(--r-full);
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; color: var(--gold);
+      margin-bottom: 0.65rem;
+    }
+
+    .prod-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem; font-weight: 600;
+      color: var(--text); margin-bottom: 0.35rem;
+    }
+
+    .prod-desc {
+      font-size: 0.78rem; color: var(--text-muted);
+      line-height: 1.65; margin-bottom: 1.25rem;
+    }
+
+    .prod-foot {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1rem; border-top: 1px solid var(--border);
+    }
+
+    .prod-price {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.2rem; font-weight: 700; letter-spacing: -0.03em;
+    }
+    .prod-price small {
+      font-size: 0.72rem; font-weight: 400; color: var(--text-muted);
+    }
+
+    .btn-add {
+      width: 2.2rem; height: 2.2rem;
+      background: var(--text); color: var(--bg);
+      border: none; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; cursor: pointer;
+      transition: background 0.35s var(--ease-expo), transform 0.4s var(--ease-spring);
+    }
+    .btn-add:hover { background: var(--gold); transform: scale(1.12) rotate(90deg); }
+    .btn-add:active { transform: scale(0.95); }
+
+    /* ── FEATURES ────────────────────────────── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.875rem;
+    }
+    .feat-card .c-inner { padding: 2rem 1.5rem; }
+
+    .feat-ico {
+      width: 2.75rem; height: 2.75rem;
+      background: var(--gold-dim); border: 1px solid var(--gold-border);
+      border-radius: 0.8rem;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem; margin-bottom: 1.1rem;
+    }
+    .feat-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem; font-weight: 600; margin-bottom: 0.45rem;
+    }
+    .feat-desc { font-size: 0.79rem; color: var(--text-muted); line-height: 1.65; }
+
+    /* ── PROMO ───────────────────────────────── */
+    .promo-wrap { padding: 0 1.5rem 6.5rem; }
+
+    .promo-outer {
+      padding: 2px;
+      background: linear-gradient(135deg, rgba(212,168,83,0.45) 0%, rgba(255,255,255,0.04) 50%, rgba(212,168,83,0.22) 100%);
+      border-radius: var(--r-2xl);
+    }
+    .promo-inner {
+      background: linear-gradient(135deg, rgba(212,168,83,0.07) 0%, var(--bg-3) 55%);
+      border-radius: calc(var(--r-2xl) - 2px);
+      padding: 3.5rem 4rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+      box-shadow: inset 0 1px 1px rgba(255,255,255,0.055);
+      position: relative; overflow: hidden;
+    }
+    .promo-inner::before {
+      content: '';
+      position: absolute; top: -40%; right: -5%;
+      width: 500px; height: 500px;
+      background: radial-gradient(ellipse, rgba(212,168,83,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .promo-text { max-width: 480px; }
+    .promo-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 700;
+      letter-spacing: -0.035em; margin-bottom: 0.65rem;
+    }
+    .promo-desc { font-size: 0.88rem; color: var(--text-muted); line-height: 1.67; margin-bottom: 1.4rem; }
+    .promo-chips { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-bottom: 1.75rem; }
+    .chip {
+      padding: 0.27rem 0.72rem;
+      background: rgba(255,255,255,0.045); border: 1px solid var(--border);
+      border-radius: var(--r-full); font-size: 0.76rem; color: var(--text-muted);
+    }
+
+    .promo-price { text-align: right; flex-shrink: 0; }
+    .promo-old {
+      font-size: 0.82rem; color: var(--text-subtle);
+      text-decoration: line-through; margin-bottom: 0.2rem;
+    }
+    .promo-new {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem; font-weight: 700; color: var(--gold);
+      letter-spacing: -0.05em; line-height: 1;
+    }
+    .promo-new sup { font-size: 1.2rem; vertical-align: super; font-weight: 500; }
+    .promo-save { font-size: 0.73rem; color: var(--text-muted); margin-top: 0.5rem; }
+
+    /* ── TESTIMONIALS ────────────────────────── */
+    .testi-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.875rem;
+    }
+    .testi-card .c-inner { padding: 2rem; }
+
+    .stars { color: var(--gold); font-size: 0.78rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
+
+    .testi-text {
+      font-size: 0.86rem; color: var(--text-muted);
+      line-height: 1.72; margin-bottom: 1.4rem; font-style: italic;
+    }
+
+    .author { display: flex; align-items: center; gap: 0.75rem; }
+    .avatar {
+      width: 2.15rem; height: 2.15rem; border-radius: 50%;
+      background: var(--surface); border: 1px solid var(--border-hi);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.67rem; font-weight: 700; font-family: 'Space Grotesk', sans-serif;
+      color: var(--gold); flex-shrink: 0;
+    }
+    .author-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.83rem; font-weight: 600;
+    }
+    .author-role { font-size: 0.7rem; color: var(--text-subtle); }
+
+    /* ── FOOTER ──────────────────────────────── */
+    footer {
+      padding: 4rem 1.5rem 2rem;
+      border-top: 1px solid var(--border);
+    }
+    .foot-inner { max-width: 1160px; margin: 0 auto; }
+    .foot-top {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 3rem; margin-bottom: 2.75rem;
+    }
+    .foot-logo {
+      font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+      font-size: 0.9rem; letter-spacing: -0.04em; margin-bottom: 0.65rem;
+    }
+    .foot-logo span { color: var(--gold); }
+    .foot-brand p { font-size: 0.79rem; color: var(--text-muted); line-height: 1.7; max-width: 26ch; }
+    .foot-col h4 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--text-subtle); margin-bottom: 1rem;
+    }
+    .foot-col ul { list-style: none; }
+    .foot-col li { margin-bottom: 0.45rem; }
+    .foot-col a {
+      font-size: 0.8rem; color: var(--text-muted); text-decoration: none;
+      transition: color 0.3s var(--ease-expo);
+    }
+    .foot-col a:hover { color: var(--text); }
+    .foot-bottom {
+      display: flex; align-items: center; justify-content: space-between;
+      padding-top: 1.75rem; border-top: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--text-subtle);
+    }
+
+    /* ── RESPONSIVE ──────────────────────────── */
+    @media (max-width: 1024px) {
+      .prod-grid { grid-template-columns: repeat(2, 1fr); }
+      .prod-card:nth-child(n) { grid-column: span 1; }
+      .feat-grid { grid-template-columns: repeat(2, 1fr); }
+      .foot-top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .nav-ham { display: flex; }
+      nav { padding-right: 0.45rem; }
+
+      .hero { padding: 7rem 1rem 4rem; }
+      .section { padding: 4rem 1rem; }
+      .promo-wrap { padding: 0 1rem 4rem; }
+
+      .prod-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+      .feat-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+      .testi-grid { grid-template-columns: 1fr; gap: 0.75rem; }
+
+      .promo-inner {
+        flex-direction: column; align-items: flex-start; padding: 2rem 1.5rem;
+      }
+      .promo-price { text-align: left; }
+
+      .foot-top { grid-template-columns: 1fr; gap: 1.75rem; }
+      .foot-bottom { flex-direction: column; gap: 0.4rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ─────────────────────────────────── -->
+<div class="nav-wrap">
+  <nav id="nav">
+    <a href="#" class="nav-logo">Nova<span>Tech</span> Store</a>
+    <ul class="nav-links">
+      <li><a href="#produits">Produits</a></li>
+      <li><a href="#pourquoi">Pourquoi nous</a></li>
+      <li><a href="#temoignages">Avis</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#produits" class="nav-cta">
+      Voir catalogue <em class="icon">↗</em>
+    </a>
+    <button class="nav-ham" id="ham" aria-label="Menu">
+      <span></span><span></span>
+    </button>
+  </nav>
+</div>
+
+<!-- ── HERO ────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-orb-1"></div>
+  <div class="hero-orb-2"></div>
+
+  <div class="hero-pill reveal">
+    <span class="hero-pill-dot">✦</span>
+    Nouveau — Collection Printemps 2026
+  </div>
+
+  <h1 class="reveal" style="transition-delay:.1s">
+    Des équipements pros pour travailler <em>plus vite</em>
+  </h1>
+
+  <p class="reveal" style="transition-delay:.2s">
+    PC portables, accessoires et solutions IT pour étudiants,
+    entrepreneurs et entreprises.
+  </p>
+
+  <div class="hero-actions reveal" style="transition-delay:.3s">
+    <a href="#produits" class="btn-primary">
+      Voir les produits <em class="btn-ico">→</em>
+    </a>
+    <a href="#contact" class="btn-secondary">Demander un conseil</a>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── PRODUITS ─────────────────────────────── -->
+<section class="section" id="produits">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <div class="eyebrow">✦ Catalogue</div>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,3rem)">Produits populaires</h2>
+      <p style="color:var(--text-muted);font-size:.88rem;margin-top:.55rem;max-width:48ch">
+        Sélectionnés pour leur fiabilité, leurs performances et leur rapport qualité-prix.
+      </p>
+    </div>
+
+    <div class="prod-grid">
+
+      <!-- Laptop Pro 14 -->
+      <div class="prod-card c-outer reveal" style="transition-delay:.08s">
+        <div class="c-inner">
+          <div class="prod-img">💻</div>
+          <div class="prod-body">
+            <div class="prod-tag">⚡ Bestseller</div>
+            <div class="prod-name">Laptop Pro 14</div>
+            <div class="prod-desc">Core i7 · 16 Go RAM · 512 Go SSD NVMe · 14″ 2.8K OLED 120Hz</div>
+            <div class="prod-foot">
+              <div class="prod-price">1 290 € <small>TTC</small></div>
+              <button class="btn-add" aria-label="Ajouter">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WorkStation Elite -->
+      <div class="prod-card c-outer reveal" style="transition-delay:.13s">
+        <div class="c-inner">
+          <div class="prod-img">🖥️</div>
+          <div class="prod-body">
+            <div class="prod-tag">🔥 Pro Max</div>
+            <div class="prod-name">WorkStation Elite</div>
+            <div class="prod-desc">AMD Ryzen 9 · 32 Go · RTX 4070 · 15.6″ QHD — Pensé pour créatifs et développeurs exigeants. Puissance sans compromis.</div>
+            <div class="prod-foot">
+              <div class="prod-price">2 490 € <small>TTC</small></div>
+              <button class="btn-add" aria-label="Ajouter">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- UltraBook Air -->
+      <div class="prod-card c-outer reveal" style="transition-delay:.18s">
+        <div class="c-inner">
+          <div class="prod-img" style="font-size:2.8rem">🌬️</div>
+          <div class="prod-body">
+            <div class="prod-tag">🌬️ Ultra-fin</div>
+            <div class="prod-name">UltraBook Air</div>
+            <div class="prod-desc">Core Ultra 7 · 16 Go LPDDR5 · 1 To SSD · 13.4″ OLED — 990 g seulement. La perfection en déplacement.</div>
+            <div class="prod-foot">
+              <div class="prod-price">1 790 € <small>TTC</small></div>
+              <button class="btn-add" aria-label="Ajouter">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Docking Station Pro -->
+      <div class="prod-card c-outer reveal" style="transition-delay:.23s">
+        <div class="c-inner">
+          <div class="prod-img">🔌</div>
+          <div class="prod-body">
+            <div class="prod-tag">🛠️ Accessoire</div>
+            <div class="prod-name">Docking Station Pro</div>
+            <div class="prod-desc">12 ports · USB-C 140W · Dual 4K · Ethernet Gigabit</div>
+            <div class="prod-foot">
+              <div class="prod-price">290 € <small>TTC</small></div>
+              <button class="btn-add" aria-label="Ajouter">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ── POURQUOI ──────────────────────────────── -->
+<section class="section" id="pourquoi">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <div class="eyebrow">✦ Nos engagements</div>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,3rem)">Pourquoi nous choisir ?</h2>
+    </div>
+
+    <div class="feat-grid">
+      <div class="feat-card c-outer reveal" style="transition-delay:.05s">
+        <div class="c-inner">
+          <div class="feat-ico">🎯</div>
+          <div class="feat-title">Conseils personnalisés</div>
+          <div class="feat-desc">Un expert analyse votre usage et vous oriente vers le matériel le plus adapté à votre profil.</div>
+        </div>
+      </div>
+      <div class="feat-card c-outer reveal" style="transition-delay:.1s">
+        <div class="c-inner">
+          <div class="feat-ico">🔬</div>
+          <div class="feat-title">Matériel testé</div>
+          <div class="feat-desc">Chaque produit est contrôlé avant expédition. Zéro compromis sur la qualité, zéro mauvaise surprise.</div>
+        </div>
+      </div>
+      <div class="feat-card c-outer reveal" style="transition-delay:.15s">
+        <div class="c-inner">
+          <div class="feat-ico">⚡</div>
+          <div class="feat-title">Livraison rapide</div>
+          <div class="feat-desc">Commande expédiée sous 24h ouvrées. Suivi en temps réel, livraison sécurisée partout en France.</div>
+        </div>
+      </div>
+      <div class="feat-card c-outer reveal" style="transition-delay:.2s">
+        <div class="c-inner">
+          <div class="feat-ico">🛡️</div>
+          <div class="feat-title">Support technique</div>
+          <div class="feat-desc">Assistance dédiée 6j/7 par téléphone, email et chat. Garantie 2 ans sur tous les produits.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── PROMO ──────────────────────────────────── -->
+<div class="promo-wrap">
+  <div class="container">
+    <div class="promo-outer reveal">
+      <div class="promo-inner">
+        <div class="promo-text">
+          <div class="eyebrow">🔥 Offre limitée</div>
+          <div class="promo-title">Pack rentrée pro</div>
+          <div class="promo-desc">
+            Tout ce qu'il faut pour démarrer l'année dans les meilleures conditions.
+            Offre valable jusqu'au 30 juin 2026.
+          </div>
+          <div class="promo-chips">
+            <span class="chip">💻 PC portable 14″</span>
+            <span class="chip">🖱️ Souris sans fil</span>
+            <span class="chip">👜 Sacoche premium</span>
+          </div>
+          <a href="#contact" class="btn-primary">
+            Commander le pack <em class="btn-ico">→</em>
+          </a>
+        </div>
+        <div class="promo-price">
+          <div class="promo-old">Valeur : 1 490 €</div>
+          <div class="promo-new"><sup>€</sup>1 190</div>
+          <div class="promo-save">Économisez 300 € — Stock limité</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ── TÉMOIGNAGES ───────────────────────────── -->
+<section class="section" id="temoignages">
+  <div class="container">
+
+    <div class="section-head reveal">
+      <div class="eyebrow">✦ Témoignages</div>
+      <h2 style="font-size:clamp(1.7rem,3.5vw,3rem)">Ce qu'ils disent</h2>
+    </div>
+
+    <div class="testi-grid">
+
+      <div class="testi-card c-outer reveal" style="transition-delay:.05s">
+        <div class="c-inner">
+          <div class="stars">★★★★★</div>
+          <p class="testi-text">"Le Laptop Pro 14 est exactement ce que je cherchais. Service client réactif, livraison en 24h, produit impeccable. Je recommande NovaTech sans hésiter."</p>
+          <div class="author">
+            <div class="avatar">KM</div>
+            <div>
+              <div class="author-name">Karim M.</div>
+              <div class="author-role">Développeur freelance, Lyon</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card c-outer reveal" style="transition-delay:.1s">
+        <div class="c-inner">
+          <div class="stars">★★★★★</div>
+          <p class="testi-text">"J'ai commandé le Pack rentrée pour toute mon équipe de 5. Excellent rapport qualité-prix et accompagnement sur mesure. NovaTech est notre nouveau partenaire IT."</p>
+          <div class="author">
+            <div class="avatar">SA</div>
+            <div>
+              <div class="author-name">Sophie A.</div>
+              <div class="author-role">CEO, AgenceDigitale Paris</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testi-card c-outer reveal" style="transition-delay:.15s">
+        <div class="c-inner">
+          <div class="stars">★★★★★</div>
+          <p class="testi-text">"Le conseil personnalisé m'a fait économiser du temps et de l'argent. L'UltraBook Air est une perfection pour mes déplacements professionnels."</p>
+          <div class="author">
+            <div class="avatar">TB</div>
+            <div>
+              <div class="author-name">Thomas B.</div>
+              <div class="author-role">Consultant senior, Paris</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────── -->
+<footer id="contact">
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <div class="foot-logo">Nova<span>Tech</span> Store</div>
+        <p>Votre partenaire informatique de confiance. Matériel pro, conseils experts et support local 6j/7.</p>
+      </div>
+      <div class="foot-col">
+        <h4>Produits</h4>
+        <ul>
+          <li><a href="#">PC Portables</a></li>
+          <li><a href="#">Stations de travail</a></li>
+          <li><a href="#">Accessoires</a></li>
+          <li><a href="#">Reconditionnés</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#">Conseil IT</a></li>
+          <li><a href="#">Configuration</a></li>
+          <li><a href="#">Maintenance</a></li>
+          <li><a href="#">Formation</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="#">contact@novatech.fr</a></li>
+          <li><a href="#">+33 1 23 45 67 89</a></li>
+          <li><a href="#">75001 Paris, France</a></li>
+          <li><a href="#">Lun–Sam · 9h–19h</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 NovaTech Store — Page de démonstration fictive</span>
+      <span>Aucun lien avec un commerce réel · Données imaginaires</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal — IntersectionObserver (no scroll event listener)
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('in');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -48px 0px' });
+
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // Nav scroll shrink
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 50) {
+      nav.style.padding = '0.3rem 0.45rem 0.3rem 1.1rem';
+      nav.style.background = 'rgba(4,4,4,0.92)';
+    } else {
+      nav.style.padding = '';
+      nav.style.background = '';
+    }
+  }, { passive: true });
+
+  // Hamburger morph
+  const ham = document.getElementById('ham');
+  if (ham) {
+    ham.addEventListener('click', () => ham.classList.toggle('open'));
+  }
+</script>
+</body>
+</html>

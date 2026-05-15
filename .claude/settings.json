@@ -1,5 +1,7 @@
 {
   "enabledPlugins": {
-    "caveman@caveman": true
+    "caveman@caveman": true,
+    "skill-creator@claude-plugins-official": true,
+    "security-guidance@claude-plugins-official": true
   }
 }

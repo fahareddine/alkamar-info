@@ -3,7 +3,7 @@ const { requireRole } = require('../_lib/auth');
 const { setCors } = require('../_lib/cors');
 
 module.exports = async function handler(req, res) {
-  setCors(res);
+  setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
   const { id } = req.query;
 
@@ -36,9 +36,11 @@ module.exports = async function handler(req, res) {
     }
     const previousStatus = existing.status;
 
+    const ALLOWED = new Set(['status', 'notes', 'payment_method', 'delivery_address', 'assigned_to']);
+    const update = Object.fromEntries(Object.entries(req.body || {}).filter(([k]) => ALLOWED.has(k)));
     const { data, error } = await supabase
       .from('orders')
-      .update({ ...req.body, updated_at: new Date().toISOString() })
+      .update({ ...update, updated_at: new Date().toISOString() })
       .eq('id', id)
       .select('*, customer_id, total_eur, total_kmf, discount_eur, discount_kmf')
       .single();

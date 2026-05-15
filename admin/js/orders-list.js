@@ -1,4 +1,5 @@
 // admin/js/orders-list.js
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const STATUS_LABELS = {
   pending: 'En attente', confirmed: 'Confirmée',
   shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée',
@@ -17,7 +18,7 @@ async function loadOrders() {
   tbody.innerHTML = orders.map(o => `
     <tr>
       <td style="font-family:monospace;font-size:12px;color:var(--admin-muted)">${o.id.slice(0,8)}…</td>
-      <td>${o.customers?.name || '—'}</td>
+      <td>${esc(o.customers?.name || '—')}</td>
       <td>${Number(o.total_eur).toFixed(2)} €</td>
       <td><span class="badge badge--${o.status}">${STATUS_LABELS[o.status]}</span></td>
       <td style="font-size:13px;color:var(--admin-muted)">${new Date(o.created_at).toLocaleDateString('fr-FR')}</td>

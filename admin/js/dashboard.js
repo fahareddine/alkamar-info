@@ -1,4 +1,5 @@
 // admin/js/dashboard.js
+const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const STATUS_LABELS = {
   pending: 'En attente', confirmed: 'Confirmée',
   shipped: 'Expédiée', delivered: 'Livrée', cancelled: 'Annulée',
@@ -24,7 +25,7 @@ async function loadDashboard() {
       ? '<tr><td colspan="4" style="text-align:center;color:var(--admin-muted);padding:16px">Aucune commande</td></tr>'
       : stats.recent_orders.map(o => `
           <tr>
-            <td><a href="/admin/orders/detail.html?id=${o.id}">${o.customers?.name || '—'}</a></td>
+            <td><a href="/admin/orders/detail.html?id=${o.id}">${esc(o.customers?.name || '—')}</a></td>
             <td>${Number(o.total_eur).toFixed(2)} €</td>
             <td><span class="badge badge--${o.status}">${STATUS_LABELS[o.status] || o.status}</span></td>
             <td style="color:var(--admin-muted);font-size:12px">${new Date(o.created_at).toLocaleDateString('fr-FR')}</td>
@@ -35,7 +36,7 @@ async function loadDashboard() {
       ? '<tr><td colspan="2" style="text-align:center;color:var(--admin-muted);padding:16px">Aucune alerte</td></tr>'
       : stats.stock_alerts.map(p => `
           <tr>
-            <td><a href="/admin/products/edit.html?id=${p.id}">${p.name}</a></td>
+            <td><a href="/admin/products/edit.html?id=${p.id}">${esc(p.name)}</a></td>
             <td style="color:${p.stock === 0 ? 'var(--admin-danger)' : 'var(--admin-warning)'};font-weight:700">${p.stock}</td>
           </tr>`).join('');
   } catch (e) {
