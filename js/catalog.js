@@ -330,6 +330,11 @@ const CATALOG = (function () {
     initPage();
     initTabs(tabs);
     tabs.forEach(t => renderGrid(t, opts));
+    // Auto-scroll vers les produits si ?tab= n'a pas déjà déclenché le scroll
+    const urlTab = new URLSearchParams(window.location.search).get('tab');
+    if (!urlTab || !tabs.includes(urlTab)) {
+      requestAnimationFrame(() => scrollToProducts());
+    }
   }
 
   // Pages grille unique (protection.html, services.html)
@@ -337,6 +342,7 @@ const CATALOG = (function () {
     initPage();
     await renderGrid(subcategory, opts);
     window.sortProds = (mode) => sortGrid(subcategory, mode, opts);
+    scrollToProducts();
   }
 
   // Page promotions — produits actifs filtrés sur price_old
@@ -384,6 +390,7 @@ const CATALOG = (function () {
       if (count) count.innerHTML = `<strong>${list.length}</strong> offre${list.length > 1 ? 's' : ''} en promotion`;
     }
     renderPromo(promo);
+    scrollToProducts();
 
     window.sortPromo = function (mode) {
       let list = [...promo];
