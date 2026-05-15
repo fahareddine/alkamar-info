@@ -82,6 +82,7 @@
       card.classList.add('cro-done-views');
       const body = card.querySelector('.card-body');
       if (!body) return;
+      if (!card.querySelector('.price-main')) return; // skip category cards (no price = not a product)
       const name = card.querySelector('.card-title')?.textContent || '';
       const hash = [...name].reduce((a,c) => a + c.charCodeAt(0), 0);
       const n = (hash % 14) + 4;

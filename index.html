@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <link rel="preconnect" href="https://m.media-amazon.com" crossorigin>
   <link rel="dns-prefetch" href="https://m.media-amazon.com">
+  <link rel="preload" as="image" href="https://m.media-amazon.com/images/I/817G0HRzaZL._SL440_.jpg" fetchpriority="high">
   <title>La Boutique — Boutique Informatique en ligne</title>
   <meta name="description" content="La Boutique, votre boutique informatique en ligne. Ordinateurs, composants, périphériques, réseau, stockage. Livraison rapide, prix compétitifs.">
   <meta property="og:type" content="website">
@@ -1203,12 +1204,12 @@
       clearTimeout(timer);
       if (progress) {
         progress.style.transition = 'none';
-        progress.style.width = '0%';
+        progress.style.transform = 'scaleX(0)';
         requestAnimationFrame(function() {
           requestAnimationFrame(function() {
             if (progress) {
-              progress.style.transition = 'width ' + DELAY + 'ms linear';
-              progress.style.width = '100%';
+              progress.style.transition = 'transform ' + DELAY + 'ms linear';
+              progress.style.transform = 'scaleX(1)';
             }
           });
         });
