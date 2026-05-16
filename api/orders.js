@@ -47,7 +47,6 @@ function stripeRequest(path, params, apiKey) {
 
 // ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
 async function handleStripeCheckout(req, res) {
-  // Trim pour éviter espaces/sauts de ligne parasites dans la clé
   const key = (process.env.STRIPE_SECRET_KEY || '').replace(/[\r\n\s]/g, '');
   if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
 
@@ -55,14 +54,39 @@ async function handleStripeCheckout(req, res) {
   const { items } = req.body || {};
   if (!Array.isArray(items) || !items.length) return res.status(400).json({ error: 'Panier vide' });
 
-  const line_items = items.map((i, idx) => ({
-    price_data: {
-      currency: 'eur',
-      product_data: { name: String(i.name || 'Produit').slice(0, 127) },
-      unit_amount: Math.round(Math.max(50, Number(i.price_eur) || 50) * 100),
-    },
-    quantity: Math.max(1, Number(i.qty) || 1),
-  }));
+  // Récupère les vrais prix depuis la base — ignore complètement les prix client
+  const uuidRe    = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const productIds = items.map(i => i.id).filter(Boolean);
+  const uuids      = productIds.filter(id => uuidRe.test(id));
+  const slugs      = productIds.filter(id => !uuidRe.test(id));
+
+  let dbProducts = [];
+  if (uuids.length) {
+    const { data } = await supabase.from('products')
+      .select('id, legacy_id, name, price_eur').in('id', uuids).eq('status', 'active');
+    dbProducts = dbProducts.concat(data || []);
+  }
+  if (slugs.length) {
+    const { data } = await supabase.from('products')
+      .select('id, legacy_id, name, price_eur').in('legacy_id', slugs).eq('status', 'active');
+    dbProducts = dbProducts.concat(data || []);
+  }
+  const productMap = {};
+  dbProducts.forEach(p => { productMap[p.id] = p; if (p.legacy_id) productMap[p.legacy_id] = p; });
+
+  const line_items = [];
+  for (const i of items) {
+    const p = productMap[i.id];
+    if (!p) return res.status(400).json({ error: `Produit introuvable: ${i.id}` });
+    line_items.push({
+      price_data: {
+        currency: 'eur',
+        product_data: { name: String(p.name || 'Produit').slice(0, 127) },
+        unit_amount: Math.round(Math.max(50, Number(p.price_eur)) * 100), // prix DB
+      },
+      quantity: Math.max(1, Number(i.qty) || 1),
+    });
+  }
 
   try {
     const result = await stripeRequest('checkout/sessions', {
