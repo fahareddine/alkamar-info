@@ -102,9 +102,23 @@ test('Contact — validation email invalide', async ({ browser }) => {
 });
 
 // ── Formulaire rempli screenshot ──────────────────────────────────────────
-test('Contact — formulaire rempli visible', async ({ browser }) => {
-  const { page, ctx } = await open(browser, { w: 1440, h: 900 });
+test('Contact — formulaire rempli et soumis (mock Formspree)', async ({ browser }) => {
+  // Mock avant navigation pour intercepter la requête Formspree
+  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', e => errors.push(e.message));
 
+  // Intercepter Formspree AVANT navigation
+  await page.route('https://formspree.io/**', route => {
+    route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
+  });
+
+  await page.goto(BASE + '/', { waitUntil: 'networkidle', timeout: 30000 });
+  await page.evaluate(() => heroSlider.goTo(6));
+  await page.waitForSelector('#hcs-btn', { state: 'visible', timeout: 8000 });
+
+  // Remplir le formulaire
   await page.fill('#hcs-nom', 'Test Playwright');
   await page.fill('#hcs-email', 'test@example.com');
   await page.fill('#hcs-msg', 'Ceci est un test automatisé du formulaire de contact du hero.');
@@ -114,23 +128,20 @@ test('Contact — formulaire rempli visible', async ({ browser }) => {
     fullPage: false,
   });
 
-  // Intercepter Formspree pour ne pas envoyer réellement
-  await page.route('https://formspree.io/**', route => {
-    route.fulfill({ status: 200, contentType: 'application/json', body: '{"ok":true}' });
-  });
-
   await page.locator('#hcs-btn').click();
-  await page.waitForTimeout(1000);
-
-  // Message succès visible
-  const ok = page.locator('#hcs-ok');
-  const okDisplay = await ok.evaluate(el => el.style.display);
-  expect(okDisplay).toBe('block');
+  // Attendre que la réponse soit traitée
+  await page.waitForFunction(() => {
+    const ok = document.getElementById('hcs-ok');
+    return ok && ok.style.display === 'block';
+  }, { timeout: 5000 });
 
   await page.screenshot({
     path: 'tests/playwright/screenshots/contact-form-success-desktop.png',
     fullPage: false,
   });
+
+  const critical = errors.filter(e => !e.includes('supabase'));
+  expect(critical).toHaveLength(0);
   await ctx.close();
 });
 
