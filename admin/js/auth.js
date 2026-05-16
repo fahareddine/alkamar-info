@@ -28,11 +28,21 @@ async function requireAuth() {
   return session;
 }
 
+function setAdminCookie(token, expiresAt) {
+  const maxAge = expiresAt ? Math.max(0, Math.floor(expiresAt - Date.now() / 1000)) : 3600;
+  document.cookie = `admin_token=${encodeURIComponent(token)}; path=/admin; SameSite=Strict; Secure; Max-Age=${maxAge}`;
+}
+
+function clearAdminCookie() {
+  document.cookie = 'admin_token=; path=/admin; SameSite=Strict; Secure; Max-Age=0';
+}
+
 async function login(email, password) {
   const sb = getSupabase();
   const { data, error } = await sb.auth.signInWithPassword({ email, password });
   if (error) throw new Error(error.message);
   localStorage.setItem('alkamar_admin_session', JSON.stringify(data.session));
+  setAdminCookie(data.session.access_token, data.session.expires_at);
   return data.session;
 }
 
@@ -40,6 +50,7 @@ async function logout() {
   const sb = getSupabase();
   await sb.auth.signOut();
   localStorage.removeItem('alkamar_admin_session');
+  clearAdminCookie();
   window.location.href = '/admin/login.html';
 }
 
