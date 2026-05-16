@@ -1303,6 +1303,9 @@
       wrapper.addEventListener('mouseleave', resetProgress);
     }
 
+    function stop() { clearTimeout(timer); timer = null; }
+    function start() { stop(); timer = setTimeout(function(){ goTo(current + 1); }, DELAY); }
+
     resetProgress();
     return { goTo: goTo, stop: stop, start: start };
   })();
