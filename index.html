@@ -401,7 +401,7 @@
               <input type="email" name="email" id="hcs-email" class="hcs-i" placeholder="Votre email *" required>
               <textarea name="message" id="hcs-msg" class="hcs-i hcs-ta" placeholder="Votre message *" required></textarea>
               <button type="submit" id="hcs-btn" class="hcs-btn">Envoyer ma demande →</button>
-              <div id="hcs-ok" class="hcs-fb hcs-ok">✅ Envoyé ! Nous vous répondons rapidement.</div>
+              <div id="hcs-ok" class="hcs-fb hcs-ok">✅ Nous vous répondrons dans les meilleurs délais.</div>
               <div id="hcs-err" class="hcs-fb hcs-er"></div>
             </form>
           </div>
@@ -1311,15 +1311,23 @@
   })();
   </script>
   <script>
-  // ── Pause slider quand focus sur les champs du formulaire contact ────────
+  // ── Pause slider dès interaction formulaire contact (jamais relancé avant succès) ──
   (function(){
-    var fields=['hcs-nom','hcs-email','hcs-msg'];
-    fields.forEach(function(id){
-      var el=document.getElementById(id);
-      if(!el)return;
-      el.addEventListener('focus',function(){ heroSlider&&heroSlider.stop&&heroSlider.stop(); });
-      el.addEventListener('blur',function(){ heroSlider&&heroSlider.start&&heroSlider.start(); });
-    });
+    var f=document.getElementById('hcs-form');
+    if(!f)return;
+    var _locked=false;
+    function lockSlider(){
+      if(!_locked){
+        _locked=true;
+        if(heroSlider&&heroSlider.stop)heroSlider.stop();
+      }
+    }
+    // Arrêt sur tout type d'interaction : focus, clic, frappe
+    f.addEventListener('focusin',lockSlider,{passive:true});
+    f.addEventListener('pointerdown',lockSlider,{passive:true});
+    f.addEventListener('input',lockSlider,{passive:true});
+    // Expose pour le handler submit afin de rester bloqué après envoi
+    window._lockContactSlider=lockSlider;
   })();
   // ── Formulaire contact hero (slide 7) ─────────────────────────────────
   (function(){
@@ -1339,6 +1347,8 @@
       if(nom.length<2){err.textContent='⚠️ Nom trop court.';err.style.display='block';return;}
       if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){err.textContent='⚠️ Email invalide.';err.style.display='block';return;}
       if(msg.length<10){err.textContent='⚠️ Message trop court (10 car. min).';err.style.display='block';return;}
+      // Slider reste bloqué pendant envoi et après (succès ou erreur)
+      if(window._lockContactSlider)window._lockContactSlider();
       btn.disabled=true;btn.textContent='Envoi…';
       fetch(f.action,{method:'POST',body:new FormData(f),headers:{Accept:'application/json'}})
         .then(function(r){if(r.ok){ok.style.display='block';f.reset();}else{err.textContent='❌ Erreur. Contactez-nous par WhatsApp.';err.style.display='block';}})
