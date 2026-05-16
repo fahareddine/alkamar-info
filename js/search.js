@@ -283,12 +283,19 @@
     }
   }
 
-  /* Lance loadProducts après load pour ne pas concurrencer les ressources critiques */
+  /* Lance loadProducts en idle après load — réduit TBT en ne bloquant pas le thread principal */
   function scheduleLoadProducts() {
+    const run = () => {
+      if (typeof requestIdleCallback !== 'undefined') {
+        requestIdleCallback(loadProducts, { timeout: 4000 });
+      } else {
+        setTimeout(loadProducts, 200);
+      }
+    };
     if (document.readyState === 'complete') {
-      loadProducts();
+      run();
     } else {
-      window.addEventListener('load', loadProducts, { once: true });
+      window.addEventListener('load', run, { once: true });
     }
   }
 
