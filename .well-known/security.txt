@@ -1,0 +1,5 @@
+Contact: mailto:defistylez@gmail.com
+Expires: 2027-05-16T00:00:00Z
+Preferred-Languages: fr, en
+Canonical: https://boutique.info-experts.fr/.well-known/security.txt
+Policy: Signalez toute faille de sécurité à l'adresse email ci-dessus. Ne publiez pas les failles avant correction.

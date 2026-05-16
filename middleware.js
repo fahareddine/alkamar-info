@@ -14,33 +14,37 @@ const _rl = new Map();
 const RL_WINDOW = 60_000; // 1 minute
 
 const RL_LIMITS = {
-  '/api/orders':    { limit: 20, msg: 'Trop de commandes. Réessayez dans 1 minute.' },
-  '/api/customers': { limit: 15, msg: 'Trop de requêtes client. Réessayez dans 1 minute.' },
-  '/api/stats':     { limit:  5, msg: 'Trop de requêtes stats. Réessayez dans 1 minute.' },
-  '/api/coupons':   { limit: 10, msg: 'Trop de vérifications coupon. Réessayez dans 1 minute.' },
-  '/api/invoices':  { limit: 10, msg: 'Trop de requêtes. Réessayez dans 1 minute.' },
-  '/api/':          { limit: 80, msg: 'Trop de requêtes API. Réessayez dans 1 minute.' },
+  '/api/orders?action=guest_checkout': { limit:  5, window: 3600_000, msg: 'Trop de commandes. Réessayez dans 1 heure.' },
+  '/api/orders?action=checkout':       { limit: 10, window:   60_000, msg: 'Trop de commandes. Réessayez dans 1 minute.' },
+  '/api/orders':    { limit: 20, window: RL_WINDOW, msg: 'Trop de commandes. Réessayez dans 1 minute.' },
+  '/api/customers': { limit: 15, window: RL_WINDOW, msg: 'Trop de requêtes client. Réessayez dans 1 minute.' },
+  '/api/stats':     { limit:  5, window: RL_WINDOW, msg: 'Trop de requêtes stats. Réessayez dans 1 minute.' },
+  '/api/coupons':   { limit: 10, window: RL_WINDOW, msg: 'Trop de vérifications coupon. Réessayez dans 1 minute.' },
+  '/api/invoices':  { limit: 10, window: RL_WINDOW, msg: 'Trop de requêtes. Réessayez dans 1 minute.' },
+  '/api/':          { limit: 80, window: RL_WINDOW, msg: 'Trop de requêtes API. Réessayez dans 1 minute.' },
 };
 
-function getRlConfig(path) {
-  for (const [prefix, cfg] of Object.entries(RL_LIMITS)) {
-    if (prefix !== '/api/' && path.startsWith(prefix)) return cfg;
+function getRlConfig(path, search) {
+  const full = path + (search ? search : '');
+  for (const [key, cfg] of Object.entries(RL_LIMITS)) {
+    if (key !== '/api/' && (full.startsWith(key) || path.startsWith(key))) return { ...cfg, key };
   }
-  if (path.startsWith('/api/')) return RL_LIMITS['/api/'];
+  if (path.startsWith('/api/')) return { ...RL_LIMITS['/api/'], key: '/api/' };
   return null;
 }
 
-function checkRateLimit(ip, path) {
-  const cfg = getRlConfig(path);
+function checkRateLimit(ip, path, search) {
+  const cfg = getRlConfig(path, search);
   if (!cfg) return { allowed: true };
-  const key = `${ip}:${path.replace(/\/[0-9a-f-]{36}/g, '/:id').split('/').slice(0,4).join('/')}`;
+  const bucketKey = `${ip}:${cfg.key}`;
   const now = Date.now();
-  const e = _rl.get(key) || { n: 0, t: now };
-  if (now - e.t > RL_WINDOW) { e.n = 1; e.t = now; } else { e.n++; }
-  _rl.set(key, e);
-  // Nettoyage Map tous les 5000 entrées pour éviter fuite mémoire
+  const win = cfg.window || RL_WINDOW;
+  const e = _rl.get(bucketKey) || { n: 0, t: now };
+  if (now - e.t > win) { e.n = 1; e.t = now; } else { e.n++; }
+  _rl.set(bucketKey, e);
   if (_rl.size > 5000) { const iter = _rl.keys(); for (let i = 0; i < 1000; i++) _rl.delete(iter.next().value); }
-  return { allowed: e.n <= cfg.limit, count: e.n, limit: cfg.limit, msg: cfg.msg };
+  const retryAfter = Math.ceil((win - (now - e.t)) / 1000);
+  return { allowed: e.n <= cfg.limit, count: e.n, limit: cfg.limit, msg: cfg.msg, retryAfter };
 }
 
 function checkAdminCookie(req) {
@@ -68,13 +72,13 @@ export default function middleware(req) {
     const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
             || req.headers.get('x-real-ip')
             || 'unknown';
-    const rl = checkRateLimit(ip, path);
+    const rl = checkRateLimit(ip, path, url.search);
     if (!rl.allowed) {
-      return new Response(JSON.stringify({ error: rl.msg, retry_after: 60 }), {
+      return new Response(JSON.stringify({ error: rl.msg, retry_after: rl.retryAfter }), {
         status: 429,
         headers: {
           'Content-Type': 'application/json',
-          'Retry-After': '60',
+          'Retry-After': String(rl.retryAfter),
           'X-RateLimit-Limit': String(rl.limit),
           'X-RateLimit-Remaining': '0',
         },

@@ -142,11 +142,19 @@ module.exports = async function handler(req, res) {
 
     // Validation
     const errors = [];
-    if (!customer_name || String(customer_name).trim().length < 2)
+
+    // Champ honeypot : doit être vide (bots remplissent souvent tous les champs)
+    const { website: honeypot } = req.body || {};
+    if (honeypot) return res.status(400).json({ errors: ['Requête invalide.'] });
+
+    // Limites de taille des champs (anti-overflow / injection)
+    const nameTrimmed = String(customer_name || '').trim().slice(0, 200);
+    if (!nameTrimmed || nameTrimmed.length < 2)
       errors.push('Nom complet obligatoire (minimum 2 caractères).');
-    const emailTrimmed = (customer_email || '').trim();
+
+    const emailTrimmed = (customer_email || '').trim().slice(0, 254);
     const emailOk = emailTrimmed && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTrimmed);
-    const waRaw   = (customer_whatsapp || '').replace(/\s+/g, '');
+    const waRaw   = (customer_whatsapp || '').replace(/\s+/g, '').slice(0, 20);
     const waOk    = waRaw && /^\+?\d{7,15}$/.test(waRaw);
     if (!emailOk && !waOk)
       errors.push('Indiquez au moins un email valide ou un numéro WhatsApp valide.');
@@ -156,6 +164,12 @@ module.exports = async function handler(req, res) {
       errors.push('Mode de paiement invalide.');
     if (!Array.isArray(cart_items) || !cart_items.length)
       errors.push('Le panier est vide.');
+    if (Array.isArray(cart_items) && cart_items.length > 50)
+      errors.push('Panier trop grand (maximum 50 articles).');
+    if (delivery_address && String(delivery_address).length > 500)
+      errors.push('Adresse trop longue.');
+    if (notes && String(notes).length > 1000)
+      errors.push('Notes trop longues (maximum 1000 caractères).');
     if (errors.length) return res.status(400).json({ errors });
 
     // Recalcul serveur des prix — lookup par id (UUID) OU legacy_id (slug)
