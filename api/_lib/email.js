@@ -7,7 +7,7 @@
 const { Resend } = require('resend');
 
 // ─── Config ───────────────────────────────────────────────────────────────────
-const EMAIL_FROM     = process.env.EMAIL_FROM     || 'Info Experts <noreply@boutique.info-experts.fr>';
+const EMAIL_FROM     = process.env.EMAIL_FROM     || 'Info Experts <noreply@info-experts.fr>';
 const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || 'contact@info-experts.fr';
 const EMAIL_ADMIN_TO = process.env.EMAIL_ADMIN_TO || 'contact@info-experts.fr';
 const TEST_MODE      = process.env.EMAIL_TEST_MODE === 'true';
