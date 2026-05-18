@@ -14,6 +14,7 @@ const _rl = new Map();
 const RL_WINDOW = 60_000; // 1 minute
 
 const RL_LIMITS = {
+  '/api/contact':                       { limit:  3, window: 3600_000, msg: 'Trop de messages. Réessayez dans 1 heure.' },
   '/api/orders?action=guest_checkout': { limit:  5, window: 3600_000, msg: 'Trop de commandes. Réessayez dans 1 heure.' },
   '/api/orders?action=checkout':       { limit: 10, window:   60_000, msg: 'Trop de commandes. Réessayez dans 1 minute.' },
   '/api/orders':    { limit: 20, window: RL_WINDOW, msg: 'Trop de commandes. Réessayez dans 1 minute.' },

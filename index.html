@@ -395,7 +395,7 @@
             </div>
           </div>
           <div class="hcs-fw">
-            <form id="hcs-form" action="https://formspree.io/f/xbdazagj" method="POST" novalidate>
+            <form id="hcs-form" action="/api/contact" method="POST" novalidate>
               <input type="text" name="_honey" id="hcs-hp" style="display:none;position:absolute;left:-9999px" tabindex="-1" autocomplete="off">
               <input type="text" name="nom" id="hcs-nom" class="hcs-i" placeholder="Votre nom *" required>
               <input type="email" name="email" id="hcs-email" class="hcs-i" placeholder="Votre email *" required>
@@ -1350,8 +1350,9 @@
       // Slider reste bloqué pendant envoi et après (succès ou erreur)
       if(window._lockContactSlider)window._lockContactSlider();
       btn.disabled=true;btn.textContent='Envoi…';
-      fetch(f.action,{method:'POST',body:new FormData(f),headers:{Accept:'application/json'}})
-        .then(function(r){if(r.ok){ok.style.display='block';f.reset();}else{err.textContent='❌ Erreur. Contactez-nous par WhatsApp.';err.style.display='block';}})
+      fetch('/api/contact',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({nom:nom,email:email,message:msg,_honey:hp?hp.value:'',source:'hero-contact-slide'})})
+        .then(function(r){return r.json().then(function(d){return{ok:r.ok,data:d};});})
+        .then(function(res){if(res.ok&&res.data.ok){ok.style.display='block';f.reset();}else{err.textContent='❌ '+(res.data.errors?res.data.errors[0]:'Erreur. Contactez-nous par WhatsApp.');err.style.display='block';}})
         .catch(function(){err.textContent='❌ Connexion impossible.';err.style.display='block';})
         .finally(function(){btn.disabled=false;btn.textContent='Envoyer ma demande →';});
     });
