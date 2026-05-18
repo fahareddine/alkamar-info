@@ -2,6 +2,8 @@
 .env.local
 node_modules/
 .playwright-mcp/
+test-results/
+tests/playwright/screenshots/
 .superpowers/
 
 # Performance reports (générés automatiquement)
