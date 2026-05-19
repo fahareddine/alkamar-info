@@ -9,17 +9,18 @@ async function handleContact(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Méthode non autorisée' });
   const body = req.body || {};
   if (body._honey || body.website || body.url) return res.status(200).json({ ok: true });
-  const name    = String(body.nom   || body.name    || '').trim().slice(0, 200);
-  const email   = String(body.email || '').trim().slice(0, 254).toLowerCase();
-  const message = String(body.message || '').trim().slice(0, 4000);
-  const phone   = String(body.phone || body.telephone || '').trim().slice(0, 50);
-  const subject = String(body.subject || body.sujet  || '').trim().slice(0, 200);
-  const source  = String(body.source || 'hero-contact-form').trim().slice(0, 100);
+  const name       = String(body.nom   || body.name    || '').trim().slice(0, 200);
+  const email      = String(body.email || '').trim().slice(0, 254).toLowerCase();
+  const rawMessage = String(body.message || '').trim();
+  const message    = rawMessage.slice(0, 4000);
+  const phone      = String(body.phone || body.telephone || '').trim().slice(0, 50);
+  const subject    = String(body.subject || body.sujet  || '').trim().slice(0, 200);
+  const source     = String(body.source || 'hero-contact-form').trim().slice(0, 100);
   const errors = [];
-  if (!name || name.length < 2)        errors.push('Nom obligatoire (minimum 2 caractères).');
-  if (!isValidEmail(email))            errors.push('Adresse email invalide.');
-  if (!message || message.length < 10) errors.push('Message trop court (minimum 10 caractères).');
-  if (message.length > 4000)           errors.push('Message trop long (maximum 4000 caractères).');
+  if (!name || name.length < 2)          errors.push('Nom obligatoire (minimum 2 caractères).');
+  if (!isValidEmail(email))              errors.push('Adresse email invalide.');
+  if (!rawMessage || rawMessage.length < 10) errors.push('Message trop court (minimum 10 caractères).');
+  if (rawMessage.length > 4000)          errors.push('Message trop long (maximum 4000 caractères).');
   if (errors.length) return res.status(400).json({ errors });
   let contactId = null;
   try {
