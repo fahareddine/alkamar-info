@@ -1,6 +1,9 @@
 {
   "name": "alkamar-info",
   "version": "1.0.0",
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "performance:audit": "node scripts/performance-audit.mjs",
     "performance:check": "node scripts/check-pagespeed.mjs",
