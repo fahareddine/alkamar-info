@@ -1,10 +1,10 @@
 'use strict';
 // ── Service email centralisé — Boutique Info Experts ──────────────────────────
-// Utilise Resend (https://resend.com).
+// Appelle l'API REST Resend via https natif (pas de dépendance npm).
 // En mode test (EMAIL_TEST_MODE=true), redirige vers EMAIL_TEST_RECIPIENT.
 // Si RESEND_API_KEY absent ou placeholder → log uniquement, aucun envoi.
 
-const { Resend } = require('resend');
+const https = require('https');
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 const EMAIL_FROM     = process.env.EMAIL_FROM     || 'Info Experts <noreply@info-experts.fr>';
@@ -12,6 +12,34 @@ const EMAIL_REPLY_TO = process.env.EMAIL_REPLY_TO || 'contact@info-experts.fr';
 const EMAIL_ADMIN_TO = process.env.EMAIL_ADMIN_TO || 'contact@info-experts.fr';
 const TEST_MODE      = process.env.EMAIL_TEST_MODE === 'true';
 const TEST_RECIPIENT = process.env.EMAIL_TEST_RECIPIENT || '';
+
+// ─── Appel REST Resend (sans SDK) ────────────────────────────────────────────
+function resendRequest(payload, apiKey) {
+  const body = JSON.stringify(payload);
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'api.resend.com',
+      path: '/emails',
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body),
+      },
+    }, (res) => {
+      let d = '';
+      res.on('data', c => d += c);
+      res.on('end', () => {
+        try { resolve({ status: res.statusCode, data: JSON.parse(d) }); }
+        catch (e) { reject(new Error('Resend JSON parse: ' + d.slice(0, 200))); }
+      });
+    });
+    req.on('error', reject);
+    req.setTimeout(10000, () => { req.destroy(); reject(new Error('Resend timeout')); });
+    req.write(body);
+    req.end();
+  });
+}
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function esc(str) {
@@ -32,13 +60,6 @@ function stripHtml(html) {
   return (html || '').replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
-// ─── Resend lazy init ─────────────────────────────────────────────────────────
-let _resend = null;
-function getResend() {
-  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY);
-  return _resend;
-}
-
 // ─── Base send ────────────────────────────────────────────────────────────────
 async function sendEmail({ to, subject, html, text }) {
   const apiKey = process.env.RESEND_API_KEY || '';
@@ -51,18 +72,23 @@ async function sendEmail({ to, subject, html, text }) {
     return { skipped: true, reason: 'invalid_recipient' };
   }
 
-  const recipient  = (TEST_MODE && TEST_RECIPIENT) ? TEST_RECIPIENT : to;
-  const finalSubj  = TEST_MODE ? `[TEST] ${subject}` : subject;
+  const recipient = (TEST_MODE && TEST_RECIPIENT) ? TEST_RECIPIENT : to;
+  const finalSubj = TEST_MODE ? `[TEST] ${subject}` : subject;
 
   try {
-    const result = await getResend().emails.send({
-      from: EMAIL_FROM,
+    const result = await resendRequest({
+      from:     EMAIL_FROM,
       reply_to: EMAIL_REPLY_TO,
-      to: [recipient],
-      subject: finalSubj,
+      to:       [recipient],
+      subject:  finalSubj,
       html,
-      text: text || stripHtml(html),
-    });
+      text:     text || stripHtml(html),
+    }, apiKey);
+
+    if (result.status >= 400) {
+      console.error('[email] Resend erreur HTTP:', result.status, JSON.stringify(result.data).slice(0, 200));
+      return { success: false, error: result.data?.message || `HTTP ${result.status}` };
+    }
     console.log('[email] Envoyé:', finalSubj, '→', recipient, '| id:', result.data?.id);
     return { success: true, id: result.data?.id };
   } catch (err) {
