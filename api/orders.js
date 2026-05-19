@@ -280,9 +280,9 @@ module.exports = async function handler(req, res) {
 
     const orderNum = order.id.split('-')[0].toUpperCase();
 
-    // ── Emails en arrière-plan (fire-and-forget, ne bloque pas la réponse) ───
+    // ── Emails — await obligatoire (Vercel coupe la fonction après res.json) ───
     const _emailPayload = { order, items: validItems };
-    Promise.all([
+    await Promise.all([
       sendOrderConfirmation(_emailPayload)
         .catch(e => console.error('[orders] confirmation email failed:', e.message)),
       sendOrderAdminNotification(_emailPayload)

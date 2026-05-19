@@ -27,7 +27,8 @@ async function handleContact(req, res) {
     const { data: contact } = await supabase.from('contacts').insert({ name, email, phone: phone || null, subject: subject || null, message, source, status: 'new' }).select('id').single();
     contactId = contact?.id || null;
   } catch (e) { console.warn('[contact] Insert failed:', e.message); }
-  Promise.all([
+  // await obligatoire sur Vercel — fonction coupée après res.json() si fire-and-forget
+  await Promise.all([
     sendContactConfirmation({ name, email, message, subject: subject || null, phone: phone || null }).catch(e => console.error('[contact] confirm email failed:', e.message)),
     sendContactAdminNotification({ name, email, message, subject: subject || null, phone: phone || null, source, contactId }).catch(e => console.error('[contact] admin email failed:', e.message)),
   ]);
