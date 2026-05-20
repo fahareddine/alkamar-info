@@ -73,25 +73,6 @@ module.exports = async function handler(req, res) {
   // Route formulaire de contact — publique
   if (req.query._route === 'contact') return handleContact(req, res);
 
-  // Route diagnostic email — temporaire (à supprimer après debug)
-  if (req.query._route === 'email-test' && req.query._key === 'diag2026tmp') {
-    const https = require('https');
-    const apiKey = process.env.RESEND_API_KEY || '';
-    const from   = process.env.EMAIL_FROM || 'MISSING';
-    if (!apiKey || apiKey.startsWith('re_VOTRE')) {
-      return res.status(200).json({ configured: false, from, error: 'RESEND_API_KEY absent ou placeholder' });
-    }
-    const body = JSON.stringify({ from, to: ['defistylez@gmail.com'], subject: '[DIAG] Test email Vercel', html: '<p>Test diagnostic depuis Vercel</p>', text: 'Test diagnostic depuis Vercel' });
-    const result = await new Promise((resolve) => {
-      const req2 = https.request({ hostname: 'api.resend.com', path: '/emails', method: 'POST', headers: { 'Authorization': `Bearer ${apiKey}`, 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) } }, (r) => {
-        let d = ''; r.on('data', c => d += c); r.on('end', () => resolve({ status: r.statusCode, data: d }));
-      });
-      req2.on('error', (e) => resolve({ error: e.message }));
-      req2.write(body); req2.end();
-    });
-    return res.status(200).json({ configured: true, from: from.slice(0, 30) + '...', resend_status: result.status, resend_response: result.data?.slice(0, 500), key_prefix: apiKey.slice(0, 12) + '...' });
-  }
-
   const auth = await requireRole(req, 'admin', 'commercial');
   if (auth.error) return res.status(auth.status).json({ error: auth.error });
 
