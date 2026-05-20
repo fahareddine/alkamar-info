@@ -74,7 +74,7 @@ module.exports = async function handler(req, res) {
   if (req.query._route === 'contact') return handleContact(req, res);
 
   // Route diagnostic email — temporaire (à supprimer après debug)
-  if (req.query._route === 'email-test' && req.query._key === process.env.SUPABASE_SERVICE_ROLE_KEY?.slice(-8)) {
+  if (req.query._route === 'email-test' && req.query._key === 'diag2026tmp') {
     const https = require('https');
     const apiKey = process.env.RESEND_API_KEY || '';
     const from   = process.env.EMAIL_FROM || 'MISSING';
