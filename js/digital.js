@@ -71,7 +71,7 @@
     });
   }
 
-  // ─── Fetch API ─────────────────────────────────────────────────────────────
+  // ─── Fetch API — 4 produits max par onglet (sauf "tous") ──────────────────
   async function loadProducts() {
     if (!grid) return;
     while (grid.firstChild) grid.removeChild(grid.firstChild);
@@ -80,11 +80,14 @@
     p.setAttribute('aria-live', 'polite');
     grid.appendChild(p);
     try {
-      const qs = activeTab === 'tous' ? '?limit=100' : '?tab=' + encodeURIComponent(activeTab) + '&limit=100';
+      const limit = activeTab === 'tous' ? 100 : 4;
+      const qs = activeTab === 'tous'
+        ? '?limit=' + limit
+        : '?tab=' + encodeURIComponent(activeTab) + '&limit=' + limit;
       const res = await fetch('/api/digital' + qs);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
-      allProducts = Array.isArray(data.products) ? data.products : [];
+      allProducts = (Array.isArray(data.products) ? data.products : []).slice(0, limit);
       renderGrid();
     } catch {
       while (grid.firstChild) grid.removeChild(grid.firstChild);
@@ -125,21 +128,27 @@
     }
     card.appendChild(badgesDiv);
 
-    // ── Image ──
-    const cardImg = mk('div', { className: 'card-img' });
-    const img = mk('img', {
-      src:      p.image || PLACEHOLDER,
-      alt:      p.name || '',
-      width:    '220',
-      height:   '170',
-      loading:  isLCP ? 'eager' : 'lazy',
-      decoding: 'async',
-    });
-    img.onerror = function () {
-      this.onerror = null;
-      this.src = PLACEHOLDER;
-    };
-    cardImg.appendChild(img);
+    // ── Images — affichage 2 photos côte à côte si gallery disponible ─────
+    const gallery = Array.isArray(p.gallery) ? p.gallery.filter(Boolean) : [];
+    const img2src  = gallery[0] || null;
+    const hasDual  = !!img2src;
+    const cardImg  = mk('div', { className: hasDual ? 'card-img card-img--duo' : 'card-img' });
+
+    function makeImg(src, alt, priority) {
+      const el = mk('img', {
+        src: src || PLACEHOLDER,
+        alt: alt || '',
+        width: hasDual ? '100' : '220',
+        height: hasDual ? '80' : '170',
+        loading: (priority && isLCP) ? 'eager' : 'lazy',
+        decoding: 'async',
+      });
+      el.onerror = function () { this.onerror = null; this.src = PLACEHOLDER; };
+      return el;
+    }
+
+    cardImg.appendChild(makeImg(p.image, p.name, true));
+    if (hasDual) cardImg.appendChild(makeImg(img2src, (p.brand || p.name) + ' — vue produit', false));
     card.appendChild(cardImg);
 
     // ── Body ──
