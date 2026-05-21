@@ -1,7 +1,8 @@
-// api/promotions.js
-const { supabase } = require('./_lib/supabase');
-const { requireRole } = require('./_lib/auth');
-const { setCors } = require('./_lib/cors');
+// api/_lib/promotions.js — handler privé, appelé depuis api/products.js
+// (limite Vercel Hobby 12 fonctions — api/promotions.js fusionné ici)
+const { supabase } = require('./supabase');
+const { requireRole } = require('./auth');
+const { setCors } = require('./cors');
 
 module.exports = async function handler(req, res) {
   setCors(res, req);

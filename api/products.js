@@ -6,6 +6,10 @@ const { setCors } = require('./_lib/cors');
 module.exports = async function handler(req, res) {
   setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
+  // Délégation promotions (limite Vercel Hobby 12 fonctions)
+  if (req.query._route === 'promotions') {
+    return require('./_lib/promotions')(req, res);
+  }
 
   // Route fusionnée : /api/stock/movements → /api/products?_route=stock
   if (req.query._route === 'stock') {

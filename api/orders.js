@@ -113,6 +113,10 @@ async function handleStripeCheckout(req, res) {
 module.exports = async function handler(req, res) {
   setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
+  // Délégation stats/logs (limite Vercel Hobby 12 fonctions)
+  if (req.query._route === 'stats' || req.query._route === 'logs') {
+    return require('./_lib/stats')(req, res);
+  }
 
   // Route client: GET /api/orders?my=1 — commandes de l'utilisateur connecté
   if (req.method === 'GET' && req.query.my === '1') {

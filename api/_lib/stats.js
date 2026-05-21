@@ -1,11 +1,14 @@
-const { supabase } = require('./_lib/supabase');
-const { requireRole } = require('./_lib/auth');
-const { setCors } = require('./_lib/cors');
+// api/_lib/stats.js — handler privé, appelé depuis api/orders.js
+// (limite Vercel Hobby 12 fonctions — api/stats.js fusionné ici)
+const { supabase } = require('./supabase');
+const { requireRole } = require('./auth');
+const { setCors } = require('./cors');
 
 module.exports = async function handler(req, res) {
   setCors(res, req);
   if (req.method === 'OPTIONS') return res.status(200).end();
-  // Route fusionnée : /api/logs → /api/stats?_route=logs
+
+  // Route fusionnée : /api/logs → /api/orders?_route=logs
   if (req.query._route === 'logs') {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
     const auth = await requireRole(req, 'admin');
