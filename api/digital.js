@@ -114,7 +114,7 @@ module.exports = async function handler(req, res) {
       // Liste avec filtre par catégorie
       let q = sb
         .from('products')
-        .select('id,name,subtitle,slug,price_eur,price_kmf,price_old,badge,badge_class,rating,rating_count,image,features,specs,is_digital,product_type,billing_period,max_devices,file_version,compatibility,digital_category')
+        .select('id,name,subtitle,slug,price_eur,price_kmf,price_old,badge,badge_class,rating,rating_count,image,gallery,features,specs,is_digital,product_type,billing_period,max_devices,file_version,compatibility,digital_category')
         .eq('is_digital', true)
         .eq('status', 'active')
         .order('created_at', { ascending: false })
