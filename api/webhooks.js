@@ -16,8 +16,7 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const { sendEmail, isValidEmail } = require('./_lib/email');
 
-// Désactiver bodyParser Vercel pour recevoir le raw body (requis par Stripe)
-module.exports.config = { api: { bodyParser: false } };
+// bodyParser désactivé — voir handler.config en fin de fichier
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function supabaseAdmin() {
@@ -297,3 +296,6 @@ module.exports = async function handler(req, res) {
     return json(res, 500, { error: 'Erreur traitement' });
   }
 };
+
+// Config Vercel : désactiver bodyParser pour recevoir le raw body Stripe
+module.exports.config = { api: { bodyParser: false } };
