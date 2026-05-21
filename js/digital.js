@@ -80,7 +80,7 @@
     p.setAttribute('aria-live', 'polite');
     grid.appendChild(p);
     try {
-      const limit = activeTab === 'tous' ? 100 : 4;
+      const limit = activeTab === 'tous' ? 100 : 5;
       const qs = activeTab === 'tous'
         ? '?limit=' + limit
         : '?tab=' + encodeURIComponent(activeTab) + '&limit=' + limit;
@@ -134,21 +134,21 @@
     const hasDual  = !!img2src;
     const cardImg  = mk('div', { className: hasDual ? 'card-img card-img--duo' : 'card-img' });
 
-    function makeImg(src, alt, priority) {
+    function makeImg(src, alt) {
       const el = mk('img', {
         src: src || PLACEHOLDER,
         alt: alt || '',
         width: hasDual ? '100' : '220',
         height: hasDual ? '80' : '170',
-        loading: (priority && isLCP) ? 'eager' : 'lazy',
-        decoding: 'async',
+        loading: 'eager',
+        decoding: 'sync',
       });
       el.onerror = function () { this.onerror = null; this.src = PLACEHOLDER; };
       return el;
     }
 
-    cardImg.appendChild(makeImg(p.image, p.name, true));
-    if (hasDual) cardImg.appendChild(makeImg(img2src, (p.brand || p.name) + ' — vue produit', false));
+    cardImg.appendChild(makeImg(p.image, p.name));
+    if (hasDual) cardImg.appendChild(makeImg(img2src, (p.brand || p.name) + ' — logo'));
     card.appendChild(cardImg);
 
     // ── Body ──
