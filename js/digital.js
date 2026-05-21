@@ -128,27 +128,18 @@
     }
     card.appendChild(badgesDiv);
 
-    // ── Images — affichage 2 photos côte à côte si gallery disponible ─────
-    const gallery = Array.isArray(p.gallery) ? p.gallery.filter(Boolean) : [];
-    const img2src  = gallery[0] || null;
-    const hasDual  = !!img2src;
-    const cardImg  = mk('div', { className: hasDual ? 'card-img card-img--duo' : 'card-img' });
-
-    function makeImg(src, alt) {
-      const el = mk('img', {
-        src: src || PLACEHOLDER,
-        alt: alt || '',
-        width: hasDual ? '100' : '220',
-        height: hasDual ? '80' : '170',
-        loading: 'eager',
-        decoding: 'sync',
-      });
-      el.onerror = function () { this.onerror = null; this.src = PLACEHOLDER; };
-      return el;
-    }
-
-    cardImg.appendChild(makeImg(p.image, p.name));
-    if (hasDual) cardImg.appendChild(makeImg(img2src, (p.brand || p.name) + ' — logo'));
+    // ── Image principale ────────────────────────────────────────────────────
+    const cardImg = mk('div', { className: 'card-img' });
+    const imgEl = mk('img', {
+      src:     p.image || PLACEHOLDER,
+      alt:     p.name  || '',
+      width:   '220',
+      height:  '170',
+      loading: 'eager',
+      decoding:'sync',
+    });
+    imgEl.onerror = function () { this.onerror = null; this.src = PLACEHOLDER; };
+    cardImg.appendChild(imgEl);
     card.appendChild(cardImg);
 
     // ── Body ──
