@@ -38,12 +38,12 @@
     }
   ],
   "rewrites": [
-    { "source": "/digital",                      "destination": "/digital.html"                              },
-    { "source": "/api/digital/licenses",         "destination": "/api/digital.js?_route=licenses"           },
-    { "source": "/api/digital/subscriptions",    "destination": "/api/digital.js?_route=subscriptions"      },
-    { "source": "/api/digital/downloads",        "destination": "/api/digital.js?_route=download"           },
-    { "source": "/api/digital/serve",            "destination": "/api/digital.js?_route=serve"              },
-    { "source": "/api/webhooks/stripe",          "destination": "/api/webhooks.js"                          },
+    { "source": "/digital",                      "destination": "/digital.html"                         },
+    { "source": "/api/digital/licenses",         "destination": "/api/digital?_route=licenses"          },
+    { "source": "/api/digital/subscriptions",    "destination": "/api/digital?_route=subscriptions"     },
+    { "source": "/api/digital/downloads",        "destination": "/api/digital?_route=download"          },
+    { "source": "/api/digital/serve",            "destination": "/api/digital?_route=serve"             },
+    { "source": "/api/webhooks/stripe",          "destination": "/api/webhooks"                         },
     { "source": "/api/contact", "destination": "/api/customers?_route=contact" },
     { "source": "/mentions-legales", "destination": "/mentions-legales.html" },
     { "source": "/og/:id", "destination": "/api/products/:id?_og=1" },
