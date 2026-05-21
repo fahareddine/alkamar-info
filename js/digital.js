@@ -1,11 +1,9 @@
-// js/digital.js — Logique page produits digitaux
-// Charge les produits depuis /api/digital, filtre par onglet, affiche les cartes.
-// Sécurité : tout contenu dynamique est inséré via textContent (pas innerHTML).
+// js/digital.js — Catalogue Produits Digitaux
+// Cards identiques aux product-card existantes (catalog.js)
 'use strict';
 
 (function () {
 
-  // ─── Config ────────────────────────────────────────────────────────────────
   const TABS = [
     { id: 'tous',        label: '🌐 Tous'          },
     { id: 'logiciels',   label: '💿 Logiciels'      },
@@ -17,48 +15,37 @@
     { id: 'premium',     label: '⭐ Offres Premium'  },
   ];
 
-  const COMPAT_LABELS = {
-    windows: { icon: '🪟', label: 'Windows' },
-    mac:     { icon: '🍎', label: 'macOS'   },
-    linux:   { icon: '🐧', label: 'Linux'   },
-    ios:     { icon: '📱', label: 'iOS'     },
-    android: { icon: '🤖', label: 'Android' },
-  };
-
-  const TYPE_INFO = {
-    one_time:     { label: 'Achat unique', cls: 'dig-badge--once' },
-    subscription: { label: 'Abonnement',   cls: 'dig-badge--sub'  },
-    license:      { label: 'Licence',      cls: 'dig-badge--lic'  },
-  };
-
-  // ─── State ─────────────────────────────────────────────────────────────────
   let allProducts = [];
   let activeTab   = 'tous';
 
-  // ─── DOM refs ──────────────────────────────────────────────────────────────
   const grid    = document.getElementById('digital-grid');
   const tabsBar = document.getElementById('digital-tabs');
   const counter = document.getElementById('digital-count');
   const empty   = document.getElementById('digital-empty');
 
-  // ─── Helper : créer un élément avec propriétés ─────────────────────────────
-  function el(tag, props, children) {
-    const node = document.createElement(tag);
-    if (props) {
-      Object.entries(props).forEach(([k, v]) => {
-        if (k === 'className') node.className = v;
-        else if (k === 'textContent') node.textContent = v;
-        else if (k === 'ariaLabel') node.setAttribute('aria-label', v);
-        else node.setAttribute(k, v);
-      });
-    }
-    (children || []).forEach(c => c && node.appendChild(typeof c === 'string' ? document.createTextNode(c) : c));
-    return node;
+  const PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent(
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 165">' +
+    '<rect width="220" height="165" fill="#f1f5f9"/>' +
+    '<text x="110" y="90" text-anchor="middle" font-family="sans-serif" font-size="10" fill="#94a3b8">Image non disponible</text>' +
+    '</svg>'
+  );
+
+  // ─── Helpers ───────────────────────────────────────────────────────────────
+  function mk(tag, props) {
+    const n = document.createElement(tag);
+    if (!props) return n;
+    Object.entries(props).forEach(([k, v]) => {
+      if (k === 'className') n.className = v;
+      else if (k === 'text') n.textContent = v;
+      else n.setAttribute(k, v);
+    });
+    return n;
   }
 
-  // ─── Formatage prix ────────────────────────────────────────────────────────
-  function fmt(n) {
-    return Number(n || 0).toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  function fmtPrice(n) {
+    const v = Number(n) || 0;
+    const [int, dec] = v.toFixed(2).split('.');
+    return { int: Number(int).toLocaleString('fr-FR'), dec };
   }
 
   // ─── Init ──────────────────────────────────────────────────────────────────
@@ -74,35 +61,36 @@
     if (!tabsBar) return;
     while (tabsBar.firstChild) tabsBar.removeChild(tabsBar.firstChild);
     TABS.forEach(t => {
-      const btn = el('button', {
-        className:   'dig-tab' + (t.id === activeTab ? ' dig-tab--active' : ''),
-        'data-tab':  t.id,
-        type:        'button',
-        textContent: t.label,
+      const b = mk('button', {
+        className: 'dig-tab' + (t.id === activeTab ? ' dig-tab--active' : ''),
+        'data-tab': t.id, type: 'button', text: t.label,
       });
-      btn.addEventListener('click', () => setTab(t.id));
-      tabsBar.appendChild(btn);
+      b.textContent = t.label;
+      b.addEventListener('click', () => setTab(t.id));
+      tabsBar.appendChild(b);
     });
   }
 
-  // ─── Chargement API ────────────────────────────────────────────────────────
+  // ─── Fetch API ─────────────────────────────────────────────────────────────
   async function loadProducts() {
     if (!grid) return;
     while (grid.firstChild) grid.removeChild(grid.firstChild);
-    const loading = el('p', { className: 'dig-loading', textContent: 'Chargement…' });
-    loading.setAttribute('aria-live', 'polite');
-    grid.appendChild(loading);
-
+    const p = mk('p', { className: 'dig-loading' });
+    p.textContent = 'Chargement…';
+    p.setAttribute('aria-live', 'polite');
+    grid.appendChild(p);
     try {
-      const qs  = activeTab === 'tous' ? '?limit=100' : `?tab=${encodeURIComponent(activeTab)}&limit=100`;
-      const res  = await fetch('/api/digital' + qs);
+      const qs = activeTab === 'tous' ? '?limit=100' : '?tab=' + encodeURIComponent(activeTab) + '&limit=100';
+      const res = await fetch('/api/digital' + qs);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
       allProducts = Array.isArray(data.products) ? data.products : [];
       renderGrid();
     } catch {
       while (grid.firstChild) grid.removeChild(grid.firstChild);
-      grid.appendChild(el('p', { className: 'dig-error', textContent: 'Erreur de chargement. Réessayez.' }));
+      const err = mk('p', { className: 'dig-error' });
+      err.textContent = 'Erreur de chargement. Réessayez.';
+      grid.appendChild(err);
     }
   }
 
@@ -110,7 +98,6 @@
   function renderGrid() {
     if (!grid) return;
     while (grid.firstChild) grid.removeChild(grid.firstChild);
-
     if (!allProducts.length) {
       if (empty) empty.hidden = false;
       if (counter) counter.textContent = '0 produit';
@@ -118,115 +105,164 @@
     }
     if (empty) empty.hidden = true;
     if (counter) counter.textContent = allProducts.length + ' produit' + (allProducts.length > 1 ? 's' : '');
-
-    allProducts.forEach(p => grid.appendChild(buildCard(p)));
+    allProducts.forEach((p, i) => grid.appendChild(buildCard(p, i)));
   }
 
-  // ─── Carte produit (DOM pur) ────────────────────────────────────────────────
-  function buildCard(p) {
-    const typeInfo   = TYPE_INFO[p.product_type] || TYPE_INFO.one_time;
-    const billingStr = p.billing_period === 'monthly' ? '/mois' : p.billing_period === 'yearly' ? '/an' : '';
-    const imgSrc     = p.image || '/images/placeholder-digital.svg';
-    const article    = el('article', { className: 'dig-card', 'data-id': p.id, 'data-slug': p.slug });
+  // ─── Card — structure identique product-card ──────────────────────────────
+  function buildCard(p, idx) {
+    const link  = p.slug || p.id;
+    const isLCP = idx < 4;
 
-    // Image
-    const imgLink = el('a', { href: 'produit.html?id=' + encodeURIComponent(p.slug), className: 'dig-card__img-link', tabindex: '-1' });
-    imgLink.setAttribute('aria-hidden', 'true');
-    const imgWrap = el('div', { className: 'dig-card__img-wrap' });
-    const img = el('img', { src: imgSrc, alt: '', width: '80', height: '80', loading: 'lazy', decoding: 'async', className: 'dig-card__img' });
-    imgWrap.appendChild(img);
-    imgLink.appendChild(imgWrap);
-    article.appendChild(imgLink);
+    // Wrapper
+    const card = mk('div', { className: 'product-card' + (p.badge ? ' has-badge' : '') });
 
-    // Body
-    const body = el('div', { className: 'dig-card__body' });
+    // ── Badges ──
+    const badgesDiv = mk('div', { className: 'card-badges' });
+    if (p.badge) {
+      const b = mk('span', { className: 'badge ' + (p.badge_class || 'badge--deal') });
+      b.textContent = p.badge;
+      badgesDiv.appendChild(b);
+    }
+    card.appendChild(badgesDiv);
 
-    // Top badges
-    const top = el('div', { className: 'dig-card__top' });
-    top.appendChild(el('span', { className: 'dig-type-badge ' + typeInfo.cls, textContent: typeInfo.label }));
-    if (p.badge) top.appendChild(el('span', { className: 'dig-card__badge ' + (p.badge_class || ''), textContent: p.badge }));
-    body.appendChild(top);
+    // ── Image ──
+    const cardImg = mk('div', { className: 'card-img' });
+    const img = mk('img', {
+      src:      p.image || PLACEHOLDER,
+      alt:      p.name || '',
+      width:    '220',
+      height:   '170',
+      loading:  isLCP ? 'eager' : 'lazy',
+      decoding: 'async',
+    });
+    img.onerror = function () {
+      this.onerror = null;
+      this.src = PLACEHOLDER;
+    };
+    cardImg.appendChild(img);
+    card.appendChild(cardImg);
 
-    // Titre
-    const titleLink = el('a', { href: 'produit.html?id=' + encodeURIComponent(p.slug), className: 'dig-card__title', textContent: p.name });
-    body.appendChild(titleLink);
+    // ── Body ──
+    const body = mk('div', { className: 'card-body' });
 
-    // Sous-titre
-    if (p.subtitle) body.appendChild(el('p', { className: 'dig-card__subtitle', textContent: p.subtitle }));
+    if (p.brand) {
+      const brand = mk('div', { className: 'card-brand' });
+      brand.textContent = p.brand;
+      body.appendChild(brand);
+    }
+
+    const billingStr = p.billing_period === 'monthly' ? ' — Mensuel'
+                     : p.billing_period === 'yearly'  ? ' — Annuel' : '';
+    const titleText = (p.name || '') + (p.subtitle ? ' — ' + p.subtitle : '') + billingStr;
+    const title = mk('div', { className: 'card-title' });
+    title.textContent = titleText;
+    body.appendChild(title);
+
+    // Specs (3 premières clés)
+    const specsObj = p.specs && typeof p.specs === 'object' ? p.specs : {};
+    const entries  = Object.entries(specsObj).filter(([k]) => !k.startsWith('_')).slice(0, 3);
+    if (entries.length) {
+      const specsDiv = mk('div', { className: 'card-specs' });
+      entries.forEach(([k, v], i) => {
+        const span = mk('span');
+        const strong = mk('strong');
+        strong.textContent = k + ':';
+        span.appendChild(strong);
+        span.appendChild(document.createTextNode(' ' + v));
+        specsDiv.appendChild(span);
+        if (i < entries.length - 1) specsDiv.appendChild(document.createTextNode(' · '));
+      });
+      body.appendChild(specsDiv);
+    }
 
     // Étoiles
-    if (p.rating > 0) {
-      const stars = el('div', { className: 'dig-card__stars' });
-      stars.setAttribute('aria-label', p.rating + ' étoiles sur 5');
-      stars.appendChild(document.createTextNode('★'.repeat(p.rating) + '☆'.repeat(5 - p.rating)));
-      stars.appendChild(el('span', { className: 'dig-card__rating-count', textContent: '(' + p.rating_count + ')' }));
-      body.appendChild(stars);
+    if (Number(p.rating) > 0) {
+      const rDiv = mk('div', { className: 'card-rating' });
+      const stars = mk('span', { className: 'stars' });
+      stars.textContent = '★'.repeat(p.rating) + '☆'.repeat(5 - p.rating);
+      const cnt = mk('span', { className: 'rating-count' });
+      cnt.textContent = '(' + (Number(p.rating_count) || 0) + ')';
+      rDiv.appendChild(stars);
+      rDiv.appendChild(cnt);
+      body.appendChild(rDiv);
     }
 
-    // Méta (appareils + compatibilité)
-    const meta = el('div', { className: 'dig-card__meta' });
-    if (p.max_devices) {
-      const devText = p.max_devices >= 999 ? '📱 Illimité' : '📱 ' + p.max_devices + ' appareil' + (p.max_devices > 1 ? 's' : '');
-      meta.appendChild(el('span', { className: 'dig-meta-chip', textContent: devText }));
-    }
-    const compat = Array.isArray(p.compatibility) ? p.compatibility : [];
-    if (compat.length) {
-      const compatWrap = el('span', { className: 'dig-meta-compat' });
-      compat.forEach(c => {
-        const info = COMPAT_LABELS[c];
-        if (!info) return;
-        const chip = el('span', { className: 'dig-compat', textContent: info.icon });
-        chip.setAttribute('title', info.label);
-        compatWrap.appendChild(chip);
-      });
-      meta.appendChild(compatWrap);
-    }
-    body.appendChild(meta);
+    // Prix
+    if (Number(p.price_eur) > 0) {
+      const priceBlock = mk('div', { className: 'card-price-block' });
 
-    // Prix + bouton
-    const footer = el('div', { className: 'dig-card__footer' });
-    const priceBlock = el('div', { className: 'dig-card__price-block' });
-    if (p.price_old) priceBlock.appendChild(el('span', { className: 'dig-card__price-old', textContent: fmt(p.price_old) + ' €' }));
-    const priceSpan = el('span', { className: 'dig-card__price' });
-    priceSpan.appendChild(document.createTextNode(fmt(p.price_eur) + ' €'));
-    if (billingStr) priceSpan.appendChild(el('span', { className: 'dig-card__billing', textContent: billingStr }));
-    priceBlock.appendChild(priceSpan);
-    priceBlock.appendChild(el('span', { className: 'dig-card__kmf', textContent: Number(p.price_kmf || 0).toLocaleString('fr-FR') + ' KMF' }));
-    footer.appendChild(priceBlock);
+      if (p.price_old && Number(p.price_old) > 0) {
+        const { int: oi, dec: od } = fmtPrice(p.price_old);
+        const old = mk('span', { className: 'price-old' });
+        old.appendChild(document.createTextNode(oi));
+        const oc = mk('span', { className: 'price-cents' });
+        oc.textContent = ',' + od + ' €';
+        old.appendChild(oc);
+        priceBlock.appendChild(old);
+      }
 
-    // SVG panier (statique — pas de contenu dynamique)
-    const cartBtn = el('button', {
-      className:   'dig-card__cart-btn',
-      type:        'button',
-      ariaLabel:   'Ajouter ' + p.name + ' au panier',
-    });
+      const { int, dec } = fmtPrice(p.price_eur);
+      const billing = p.billing_period === 'monthly' ? '/mois' : p.billing_period === 'yearly' ? '/an' : '';
+      const priceMain = mk('span', { className: 'price-main' });
+      priceMain.appendChild(document.createTextNode(int));
+      const cents = mk('span', { className: 'price-cents' });
+      cents.textContent = ',' + dec + ' €' + billing;
+      priceMain.appendChild(cents);
+      priceBlock.appendChild(priceMain);
+
+      const kmf = mk('div', { className: 'price-kmf' });
+      kmf.textContent = '≈ ' + Number(p.price_kmf || 0).toLocaleString('fr-FR') + ' KMF';
+      priceBlock.appendChild(kmf);
+
+      const ttc = mk('div', { className: 'price-ttc' });
+      ttc.textContent = 'Prix TTC';
+      priceBlock.appendChild(ttc);
+
+      body.appendChild(priceBlock);
+    }
+
+    // Stock
+    const stock = mk('div', { className: 'card-stock in-stock' });
+    stock.textContent = '⚡ Livraison instantanée';
+    body.appendChild(stock);
+
+    card.appendChild(body);
+
+    // ── Footer ──
+    const footer = mk('div', { className: 'card-footer' });
+
+    const cartBtn = mk('button', { className: 'btn-cart', type: 'button' });
+    cartBtn.setAttribute('aria-label', 'Ajouter ' + (p.name || '') + ' au panier');
     cartBtn.dataset.id    = p.id;
-    cartBtn.dataset.name  = p.name;
+    cartBtn.dataset.name  = p.name || '';
     cartBtn.dataset.price = p.price_eur;
-    cartBtn.dataset.image = imgSrc;
-    cartBtn.dataset.slug  = p.slug;
-    // SVG inline safe (contenu statique, pas de données dynamiques)
-    cartBtn.setAttribute('data-svg', '1');
-    const svgNS = 'http://www.w3.org/2000/svg';
-    const svg = document.createElementNS(svgNS, 'svg');
-    svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('fill', 'none');
-    svg.setAttribute('stroke', 'currentColor'); svg.setAttribute('stroke-width', '2.5');
-    svg.setAttribute('width', '16'); svg.setAttribute('height', '16'); svg.setAttribute('aria-hidden', 'true');
-    const path = document.createElementNS(svgNS, 'path');
-    path.setAttribute('d', 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.3 2.3c-.6.6-.2 1.7.7 1.7H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z');
-    svg.appendChild(path);
+    cartBtn.dataset.image = p.image || '';
+    cartBtn.dataset.slug  = link;
+
+    const ns  = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('fill', 'none'); svg.setAttribute('stroke', 'currentColor');
+    svg.setAttribute('stroke-width', '2'); svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('width', '14'); svg.setAttribute('height', '14'); svg.setAttribute('aria-hidden', 'true');
+    const pathEl = document.createElementNS(ns, 'path');
+    pathEl.setAttribute('stroke-linecap', 'round'); pathEl.setAttribute('stroke-linejoin', 'round');
+    pathEl.setAttribute('d', 'M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z');
+    svg.appendChild(pathEl);
     cartBtn.appendChild(svg);
     cartBtn.appendChild(document.createTextNode(' Ajouter'));
     cartBtn.addEventListener('click', () => addToCart(cartBtn.dataset));
     footer.appendChild(cartBtn);
-    body.appendChild(footer);
 
-    body.appendChild(el('p', { className: 'dig-delivery-badge', textContent: '⚡ Livraison instantanée après paiement' }));
-    article.appendChild(body);
-    return article;
+    const detail = mk('a', { href: 'produit.html?id=' + encodeURIComponent(link), className: 'btn-detail' });
+    detail.setAttribute('aria-label', 'Voir le détail de ' + (p.name || ''));
+    detail.textContent = 'Voir le détail';
+    footer.appendChild(detail);
+
+    card.appendChild(footer);
+    return card;
   }
 
-  // ─── Changement onglet ─────────────────────────────────────────────────────
+  // ─── Changement d'onglet ───────────────────────────────────────────────────
   function setTab(tab) {
     activeTab = tab;
     const url = new URL(window.location.href);
@@ -239,36 +275,26 @@
     loadProducts();
   }
 
-  // Exposé globalement pour compatibilité anciens appels (nav dropdown links)
   window._digitalSetTab = setTab;
 
-  // ─── Ajout au panier ───────────────────────────────────────────────────────
+  // ─── Ajout panier ──────────────────────────────────────────────────────────
   function addToCart(data) {
     if (typeof window._cartAdd === 'function') {
       window._cartAdd({ id: data.id, name: data.name, price: parseFloat(data.price), image: data.image, slug: data.slug, quantity: 1 });
       return;
     }
     try {
-      const cart     = JSON.parse(localStorage.getItem('cart') || '[]');
-      const existing = cart.find(i => i.id === data.id);
-      if (existing) existing.quantity = (existing.quantity || 1) + 1;
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const ex = cart.find(i => i.id === data.id);
+      if (ex) ex.quantity = (ex.quantity || 1) + 1;
       else cart.push({ id: data.id, name: data.name, price: parseFloat(data.price), image: data.image, slug: data.slug, quantity: 1 });
       localStorage.setItem('cart', JSON.stringify(cart));
       document.querySelectorAll('.cart-badge').forEach(b => {
         b.textContent = cart.reduce((s, i) => s + (i.quantity || 1), 0);
       });
-      showCartFeedback(data.name);
     } catch {}
   }
 
-  function showCartFeedback(name) {
-    const fb = el('div', { className: 'dig-cart-feedback', textContent: '✓ ' + name + ' ajouté au panier' });
-    document.body.appendChild(fb);
-    setTimeout(() => fb.classList.add('dig-cart-feedback--show'), 10);
-    setTimeout(() => { fb.classList.remove('dig-cart-feedback--show'); setTimeout(() => fb.remove(), 300); }, 2500);
-  }
-
-  // ─── Bootstrap ─────────────────────────────────────────────────────────────
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 
