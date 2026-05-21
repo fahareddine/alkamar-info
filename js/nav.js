@@ -129,6 +129,23 @@
         </a>
       </div>
 
+      <div class="nav-item">
+        <a href="digital.html" class="nav-item__btn" style="text-decoration:none;color:#a78bfa;font-weight:800">
+          <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="14" height="14"><path stroke-linecap="round" stroke-linejoin="round" d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+          Digital
+          <svg viewBox="0 0 20 20" fill="currentColor" width="12" height="12"><path d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+        </a>
+        <div class="nav-dropdown">
+          <a href="digital.html?tab=logiciels">💿 Logiciels</a>
+          <a href="digital.html?tab=abonnements">🔄 Abonnements</a>
+          <a href="digital.html?tab=licences">🔑 Licences</a>
+          <a href="digital.html?tab=antivirus">🛡️ Antivirus</a>
+          <a href="digital.html?tab=outils-ia">🤖 Outils IA</a>
+          <a href="digital.html?tab=saas">☁️ SaaS</a>
+          <a href="digital.html?tab=premium">⭐ Offres Premium</a>
+        </div>
+      </div>
+
     </div>
   </nav>`;
 
@@ -148,6 +165,7 @@
       <a href="reconditionnes.html" class="quick-cat"><span class="icon">♻️</span>Reconditionnés</a>
       <a href="promotions.html" class="quick-cat"><span class="icon">🔥</span>Promotions</a>
       <a href="services.html" class="quick-cat"><span class="icon">🛠️</span>Services</a>
+      <a href="digital.html" class="quick-cat" style="color:#a78bfa"><span class="icon">💿</span>Digital</a>
     </div>
   </div>`;
 

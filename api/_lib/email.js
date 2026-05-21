@@ -107,46 +107,66 @@ async function logEmail({ eventType, recipientEmail, subject, status, providerId
 // ─── Template base ────────────────────────────────────────────────────────────
 function baseTemplate({ title, preheader, content }) {
   return `<!DOCTYPE html>
-<html lang="fr" xmlns:v="urn:schemas-microsoft-com:vml">
+<html lang="fr" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
 <title>${esc(title)}</title>
+<style>
+  #outlook a { padding: 0; }
+  body { margin: 0; padding: 0; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+  table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; }
+  img { -ms-interpolation-mode: bicubic; border: 0; display: block; }
+  a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; font-size: inherit !important; }
+  u + #body a { color: inherit; text-decoration: none; font-size: inherit; }
+  @media only screen and (max-width: 620px) {
+    .em-wrapper { padding: 16px 8px !important; }
+    .em-container { width: 100% !important; max-width: 100% !important; }
+    .em-content { padding: 24px 20px !important; }
+    .em-header { padding: 20px !important; }
+    .em-footer { padding: 20px !important; }
+    .em-footer-cols > td { display: block !important; width: 100% !important; padding-right: 0 !important; }
+    .em-footer-cols .em-footer-right { text-align: left !important; margin-top: 12px; }
+  }
+</style>
 </head>
-<body style="margin:0;padding:0;background:#f0f2f5;font-family:Arial,Helvetica,sans-serif">
-<span style="display:none;max-height:0;overflow:hidden">${esc(preheader)}&nbsp;&zwnj;&nbsp;&zwnj;</span>
+<body id="body" style="margin:0;padding:0;background:#f0f2f5;font-family:Arial,Helvetica,sans-serif;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%">
+<span style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;opacity:0">${esc(preheader)}&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</span>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f2f5">
-<tr><td align="center" style="padding:32px 16px">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%">
-<tr><td style="background:linear-gradient(135deg,#0f2460 0%,#1e3a8a 60%,#1a3a8f 100%);padding:28px 36px;border-radius:12px 12px 0 0">
+<tr><td align="center" class="em-wrapper" style="padding:32px 16px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="em-container" style="max-width:600px;width:100%">
+<tr><td class="em-header" style="background-color:#1e3a8a;background-image:linear-gradient(135deg,#0f2460 0%,#1e3a8a 60%,#1a3a8f 100%);padding:28px 36px;border-radius:12px 12px 0 0">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
 <td valign="middle">
-  <p style="margin:0;font-size:10px;color:#93c5fd;text-transform:uppercase;letter-spacing:2.5px;font-weight:700">Boutique Officielle</p>
-  <p style="margin:4px 0 0;font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px">Info&nbsp;<span style="color:#f59e0b">Experts</span></p>
+  <p style="margin:0;font-size:12px;color:#93c5fd;text-transform:uppercase;letter-spacing:2.5px;font-weight:700;mso-line-height-rule:exactly;line-height:16px">Boutique Officielle</p>
+  <p style="margin:4px 0 0;font-size:26px;font-weight:900;color:#fff;letter-spacing:-0.5px;mso-line-height-rule:exactly;line-height:32px">Info&nbsp;<span style="color:#f59e0b">Experts</span></p>
 </td>
 <td align="right" valign="top">
-  <p style="margin:0;font-size:10px;color:#93c5fd;line-height:1.8">Moroni, Comores<br><a href="https://boutique.info-experts.fr" style="color:#60a5fa;text-decoration:none;font-size:10px">boutique.info-experts.fr</a></p>
+  <p style="margin:0;font-size:11px;color:#93c5fd;line-height:1.8;text-align:right">Moroni, Comores<br><a href="https://boutique.info-experts.fr" style="color:#60a5fa;text-decoration:none;font-size:11px">boutique.info-experts.fr</a></p>
 </td>
 </tr></table>
 </td></tr>
-<tr><td style="background:#fff;padding:36px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb">
+<tr><td class="em-content" style="background:#fff;padding:36px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb">
 ${content}
 </td></tr>
-<tr><td style="background:#0a0f1e;padding:24px 36px;border-radius:0 0 12px 12px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+<tr><td class="em-footer" style="background:#0a0f1e;padding:24px 36px;border-radius:0 0 12px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="em-footer-cols"><tr>
 <td valign="top" style="padding-right:16px">
-  <p style="margin:0 0 6px;color:#e2e8f0;font-size:13px;font-weight:700">Info Experts</p>
-  <p style="margin:0 0 3px;color:#9ca3af;font-size:11px">&#128222; <a href="tel:+2697772722" style="color:#9ca3af;text-decoration:none">+269 777 27 22</a></p>
-  <p style="margin:0 0 3px;color:#9ca3af;font-size:11px">&#128231; <a href="mailto:contact@info-experts.fr" style="color:#60a5fa;text-decoration:none">contact@info-experts.fr</a></p>
-  <p style="margin:0;color:#9ca3af;font-size:11px">&#128205; Moroni, Grande Comore, Comores</p>
+  <p style="margin:0 0 6px;color:#e2e8f0;font-size:13px;font-weight:700;mso-line-height-rule:exactly;line-height:18px">Info Experts</p>
+  <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">&#128222; <a href="tel:+2697772722" style="color:#9ca3af;text-decoration:none">+269 777 27 22</a></p>
+  <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">&#128231; <a href="mailto:contact@info-experts.fr" style="color:#60a5fa;text-decoration:none">contact@info-experts.fr</a></p>
+  <p style="margin:0;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">&#128205; Moroni, Grande Comore, Comores</p>
 </td>
-<td align="right" valign="top">
+<td align="right" valign="top" class="em-footer-right">
   <p style="margin:0 0 8px"><a href="https://boutique.info-experts.fr" style="color:#60a5fa;font-size:12px;text-decoration:none;font-weight:600">&#128722; Boutique</a></p>
   <p style="margin:0"><a href="https://info-experts.fr" style="color:#94a3b8;font-size:11px;text-decoration:none">info-experts.fr</a></p>
 </td>
 </tr></table>
-<p style="margin:16px 0 0;padding-top:12px;border-top:1px solid #1f2937;color:#4b5563;font-size:10px;text-align:center">&copy; 2026 Info Experts &middot; Boutique informatique aux Comores &middot; Tous droits r&eacute;serv&eacute;s<br>
-<a href="https://boutique.info-experts.fr/mentions-legales.html" style="color:#4b5563;text-decoration:none">Mentions l&eacute;gales</a> &middot; <a href="https://boutique.info-experts.fr/cgv.html" style="color:#4b5563;text-decoration:none">CGV</a></p>
+<p style="margin:16px 0 0;padding-top:12px;border-top:1px solid #1f2937;color:#9ca3af;font-size:11px;text-align:center;mso-line-height-rule:exactly;line-height:16px">&copy; 2026 Info Experts &middot; Boutique informatique aux Comores &middot; Tous droits r&eacute;serv&eacute;s<br>
+<a href="https://boutique.info-experts.fr/mentions-legales.html" style="color:#9ca3af;text-decoration:none">Mentions l&eacute;gales</a> &middot; <a href="https://boutique.info-experts.fr/cgv.html" style="color:#9ca3af;text-decoration:none">CGV</a></p>
 </td></tr>
 </table></td></tr></table>
 </body></html>`;
@@ -154,19 +174,22 @@ ${content}
 
 function ctaButton(href, label) {
   return `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0"><tr><td>
-<a href="${href}" style="background:#f59e0b;color:#0f172a;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;display:inline-block">${esc(label)} &#8594;</a>
+<!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href}" style="height:44px;v-text-anchor:middle;width:220px;" arcsize="18%" stroke="f" fillcolor="#f59e0b"><w:anchorlock/><center style="color:#0f172a;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700">${esc(label)} &#8594;</center></v:roundrect><![endif]-->
+<!--[if !mso]><!-->
+<a href="${href}" style="background:#f59e0b;color:#0f172a;padding:14px 28px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;display:inline-block;mso-hide:all;line-height:1.2">${esc(label)} &#8594;</a>
+<!--<![endif]-->
 </td></tr></table>`;
 }
 
 function infoBox(rows) {
   const cells = rows.filter(Boolean).map(([l, v]) =>
-    `<tr><td style="padding:8px 12px;background:#f8fafc;font-size:12px;color:#6b7280;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top">${esc(l)}</td><td style="padding:8px 12px;background:#fff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb">${esc(v)}</td></tr>`
+    `<tr><td style="padding:9px 12px;background:#f8fafc;font-size:12px;color:#4b5563;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top;mso-line-height-rule:exactly;line-height:18px">${esc(l)}</td><td style="padding:9px 12px;background:#fff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb;mso-line-height-rule:exactly;line-height:18px">${esc(v)}</td></tr>`
   ).join('');
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin:16px 0">${cells}</table>`;
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:8px;margin:16px 0">${cells}</table>`;
 }
 
 function sectionHeading(t) {
-  return `<p style="margin:24px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280">${esc(t)}</p>`;
+  return `<p style="margin:24px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#4b5563;mso-line-height-rule:exactly;line-height:16px">${esc(t)}</p>`;
 }
 
 function nextSteps(steps) {
@@ -181,9 +204,9 @@ function nextSteps(steps) {
 
 function orderItemsTable(items) {
   const rows = (items || []).map(item =>
-    `<tr><td style="padding:10px 12px;font-size:13px;color:#1f2937;border-bottom:1px solid #f1f5f9">${esc(item.product_name || item.name || 'Produit')}</td><td style="padding:10px 12px;font-size:13px;color:#6b7280;text-align:center;border-bottom:1px solid #f1f5f9">${item.quantity || 1}</td><td style="padding:10px 12px;font-size:13px;color:#1f2937;text-align:right;border-bottom:1px solid #f1f5f9;font-weight:600;white-space:nowrap">${formatPrice(item.price_eur)} &euro;</td></tr>`
+    `<tr><td style="padding:10px 12px;font-size:13px;color:#1f2937;border-bottom:1px solid #f1f5f9;mso-line-height-rule:exactly;line-height:18px">${esc(item.product_name || item.name || 'Produit')}</td><td style="padding:10px 12px;font-size:13px;color:#4b5563;text-align:center;border-bottom:1px solid #f1f5f9;mso-line-height-rule:exactly;line-height:18px">${item.quantity || 1}</td><td style="padding:10px 12px;font-size:13px;color:#1f2937;text-align:right;border-bottom:1px solid #f1f5f9;font-weight:600;white-space:nowrap;mso-line-height-rule:exactly;line-height:18px">${formatPrice(item.price_eur)} &euro;</td></tr>`
   ).join('');
-  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin:12px 0">
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:8px;margin:12px 0">
 <tr style="background:#1e3a8a"><th style="padding:10px 12px;font-size:11px;font-weight:700;color:#fff;text-align:left;text-transform:uppercase;letter-spacing:1px">Article</th><th style="padding:10px 12px;font-size:11px;font-weight:700;color:#fff;text-align:center;text-transform:uppercase;letter-spacing:1px;width:50px">Qt&eacute;</th><th style="padding:10px 12px;font-size:11px;font-weight:700;color:#fff;text-align:right;text-transform:uppercase;letter-spacing:1px;white-space:nowrap">Prix unit.</th></tr>
 ${rows}</table>`;
 }
@@ -239,7 +262,7 @@ ${infoBox([
     ['Date', new Date().toLocaleString('fr-FR', { timeZone: 'Indian/Comoro', dateStyle: 'short', timeStyle: 'short' })],
   ].filter(Boolean))}
 ${sectionHeading('Message')}
-<div style="background:#f8fafc;border-left:3px solid #f59e0b;padding:16px 20px;margin:0 0 20px;border-radius:0 8px 8px 0;font-size:13px;color:#374151;line-height:1.7;white-space:pre-wrap">${esc(message)}</div>
+<div style="background:#f8fafc;border-left:3px solid #f59e0b;padding:16px 20px;margin:0 0 20px;border-radius:0 8px 8px 0;font-size:13px;color:#374151;line-height:1.7">${esc(message).replace(/\n/g, '<br>')}</div>
 ${email ? ctaButton('mailto:' + email + '?subject=Re%3A Votre message — Info Experts', 'Répondre au client') : ''}`;
   const html = baseTemplate({ title: subject, preheader, content });
   const text = `Nouveau contact\nNom : ${name}\nEmail : ${email || 'Non fourni'}${phone ? `\nTéléphone : ${phone}` : ''}\nSource : ${source || 'Formulaire boutique'}\n\nMessage :\n${message}`;

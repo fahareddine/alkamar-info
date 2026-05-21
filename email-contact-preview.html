@@ -1,47 +1,67 @@
 <!DOCTYPE html>
-<html lang="fr" xmlns:v="urn:schemas-microsoft-com:vml">
+<html lang="fr" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light">
+<meta name="supported-color-schemes" content="light">
 <title>Preview — Email Contact Client</title>
-<style>body{margin:0;padding:20px;background:#e5e7eb;font-family:system-ui,sans-serif}</style>
+<style>
+  body { margin: 0; padding: 20px; background: #e5e7eb; font-family: system-ui, sans-serif; }
+  #outlook a { padding: 0; }
+  table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; }
+  img { -ms-interpolation-mode: bicubic; border: 0; display: block; }
+  a[x-apple-data-detectors] { color: inherit !important; text-decoration: none !important; }
+  @media only screen and (max-width: 620px) {
+    .em-wrapper { padding: 16px 8px !important; }
+    .em-container { width: 100% !important; max-width: 100% !important; }
+    .em-content { padding: 24px 20px !important; }
+    .em-header { padding: 20px !important; }
+    .em-footer { padding: 20px !important; }
+    .em-footer-cols > td { display: block !important; width: 100% !important; padding-right: 0 !important; }
+  }
+  .preview-label { text-align: center; font-size: 12px; color: #6b7280; margin: 0 0 16px; }
+</style>
 </head>
 <body>
-<p style="text-align:center;font-size:12px;color:#6b7280;margin:0 0 16px">📧 Preview — Email de confirmation contact (client)</p>
+<p class="preview-label">📧 Preview — Email de confirmation contact (client)</p>
+
+<!-- PREHEADER (invisible) -->
+<span style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;opacity:0">Bonjour Ahmed, nous avons bien reçu votre message et vous répondrons dans les meilleurs délais.&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;</span>
 
 <!-- ═══ EMAIL TEMPLATE ═══════════════════════════════════════════════════════ -->
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f0f2f5">
-<tr><td align="center" style="padding:32px 16px">
-<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%">
+<tr><td align="center" class="em-wrapper" style="padding:32px 16px">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" class="em-container" style="max-width:600px;width:100%">
 
 <!-- HEADER -->
-<tr><td style="background:linear-gradient(135deg,#0f2460 0%,#1e3a8a 60%,#1a3a8f 100%);padding:28px 36px;border-radius:12px 12px 0 0">
+<tr><td class="em-header" style="background-color:#1e3a8a;background-image:linear-gradient(135deg,#0f2460 0%,#1e3a8a 60%,#1a3a8f 100%);padding:28px 36px;border-radius:12px 12px 0 0">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
 <tr>
   <td valign="middle">
-    <p style="margin:0;font-size:10px;color:#93c5fd;text-transform:uppercase;letter-spacing:2.5px;font-weight:700">Boutique Officielle</p>
-    <p style="margin:4px 0 0;font-size:26px;font-weight:900;color:#ffffff;letter-spacing:-0.5px">Info&nbsp;<span style="color:#f59e0b">Experts</span></p>
+    <p style="margin:0;font-size:12px;color:#93c5fd;text-transform:uppercase;letter-spacing:2.5px;font-weight:700;mso-line-height-rule:exactly;line-height:16px">Boutique Officielle</p>
+    <p style="margin:4px 0 0;font-size:26px;font-weight:900;color:#ffffff;letter-spacing:-0.5px;mso-line-height-rule:exactly;line-height:32px">Info&nbsp;<span style="color:#f59e0b">Experts</span></p>
   </td>
   <td align="right" valign="top">
-    <p style="margin:0;font-size:10px;color:#93c5fd;line-height:1.8">Moroni, Comores<br><a href="https://boutique.info-experts.fr" style="color:#60a5fa;text-decoration:none;font-size:10px">boutique.info-experts.fr</a></p>
+    <p style="margin:0;font-size:11px;color:#93c5fd;line-height:1.8;text-align:right">Moroni, Comores<br><a href="https://boutique.info-experts.fr" style="color:#60a5fa;text-decoration:none;font-size:11px">boutique.info-experts.fr</a></p>
   </td>
 </tr>
 </table>
 </td></tr>
 
 <!-- CONTENT -->
-<tr><td style="background:#ffffff;padding:36px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb">
+<tr><td class="em-content" style="background:#ffffff;padding:36px;border-left:1px solid #e5e7eb;border-right:1px solid #e5e7eb">
 
 <p style="margin:0 0 4px;font-size:13px;color:#6b7280;font-weight:600">Bonjour Ahmed,</p>
 <h1 style="margin:8px 0 20px;font-size:22px;font-weight:800;color:#0f172a;line-height:1.3">Votre message a bien été reçu ✓</h1>
-<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.7">Merci de nous avoir contactés. Notre équipe a bien reçu votre message et vous répondra dans les <strong>meilleurs délais</strong>, généralement sous 24–48 heures.</p>
+<p style="margin:0 0 20px;font-size:14px;color:#374151;line-height:1.7">Merci de nous avoir contactés. Notre équipe vous répondra dans les <strong>meilleurs délais</strong>, généralement sous 24–48 heures.</p>
 
-<p style="margin:24px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#6b7280">Récapitulatif de votre message</p>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;margin:16px 0">
-  <tr><td style="padding:8px 12px;background:#f8fafc;font-size:12px;color:#6b7280;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top">Nom</td><td style="padding:8px 12px;background:#ffffff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb">Ahmed Abdallah</td></tr>
-  <tr><td style="padding:8px 12px;background:#f8fafc;font-size:12px;color:#6b7280;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top">Email</td><td style="padding:8px 12px;background:#ffffff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb">ahmed@example.com</td></tr>
-  <tr><td style="padding:8px 12px;background:#f8fafc;font-size:12px;color:#6b7280;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top">Message</td><td style="padding:8px 12px;background:#ffffff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb">Bonjour, je souhaite avoir des informations sur vos ordinateurs portables disponibles et les délais de livraison à Moroni.</td></tr>
+<p style="margin:24px 0 10px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#4b5563;mso-line-height-rule:exactly;line-height:16px">Récapitulatif</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border:1px solid #e5e7eb;border-radius:8px;margin:16px 0">
+  <tr><td style="padding:9px 12px;background:#f8fafc;font-size:12px;color:#4b5563;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top;mso-line-height-rule:exactly;line-height:18px">Nom</td><td style="padding:9px 12px;background:#ffffff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb;mso-line-height-rule:exactly;line-height:18px">Ahmed Abdallah</td></tr>
+  <tr><td style="padding:9px 12px;background:#f8fafc;font-size:12px;color:#4b5563;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top;mso-line-height-rule:exactly;line-height:18px">Email</td><td style="padding:9px 12px;background:#ffffff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb;mso-line-height-rule:exactly;line-height:18px">ahmed@example.com</td></tr>
+  <tr><td style="padding:9px 12px;background:#f8fafc;font-size:12px;color:#4b5563;font-weight:600;width:35%;border-bottom:1px solid #e5e7eb;vertical-align:top;mso-line-height-rule:exactly;line-height:18px">Message</td><td style="padding:9px 12px;background:#ffffff;font-size:13px;color:#1f2937;border-bottom:1px solid #e5e7eb;mso-line-height-rule:exactly;line-height:18px">Bonjour, je souhaite avoir des informations sur vos ordinateurs portables disponibles et les délais de livraison à Moroni.</td></tr>
 </table>
 
 <div style="background:#eff6ff;border-left:4px solid #1e3a8a;border-radius:0 8px 8px 0;padding:16px 20px;margin:20px 0">
@@ -60,7 +80,10 @@
 
 <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0">
 <tr><td>
-  <a href="https://boutique.info-experts.fr" style="background:#f59e0b;color:#0f172a;padding:13px 28px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;display:inline-block;letter-spacing:0.3px">Découvrir la boutique →</a>
+  <!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://boutique.info-experts.fr" style="height:44px;v-text-anchor:middle;width:220px;" arcsize="18%" stroke="f" fillcolor="#f59e0b"><w:anchorlock/><center style="color:#0f172a;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:700">Découvrir la boutique &#8594;</center></v:roundrect><![endif]-->
+  <!--[if !mso]><!-->
+  <a href="https://boutique.info-experts.fr" style="background:#f59e0b;color:#0f172a;padding:14px 28px;border-radius:8px;font-size:14px;font-weight:800;text-decoration:none;display:inline-block;mso-hide:all;line-height:1.2">Découvrir la boutique →</a>
+  <!--<![endif]-->
 </td></tr>
 </table>
 
@@ -69,27 +92,23 @@
 </td></tr>
 
 <!-- FOOTER -->
-<tr><td style="background:#0a0f1e;padding:24px 36px;border-radius:0 0 12px 12px">
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr><td class="em-footer" style="background:#0a0f1e;padding:24px 36px;border-radius:0 0 12px 12px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="em-footer-cols">
 <tr>
   <td valign="top" style="padding-right:16px">
-    <p style="margin:0 0 6px;color:#e2e8f0;font-size:13px;font-weight:700">Info Experts</p>
-    <p style="margin:0 0 3px;color:#9ca3af;font-size:11px">📞 <a href="tel:+2697772722" style="color:#9ca3af;text-decoration:none">+269 777 27 22</a></p>
-    <p style="margin:0 0 3px;color:#9ca3af;font-size:11px">📧 <a href="mailto:contact@info-experts.fr" style="color:#60a5fa;text-decoration:none">contact@info-experts.fr</a></p>
-    <p style="margin:0;color:#9ca3af;font-size:11px">📍 Moroni, Grande Comore, Comores</p>
+    <p style="margin:0 0 6px;color:#e2e8f0;font-size:13px;font-weight:700;mso-line-height-rule:exactly;line-height:18px">Info Experts</p>
+    <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">📞 <a href="tel:+2697772722" style="color:#9ca3af;text-decoration:none">+269 777 27 22</a></p>
+    <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">📧 <a href="mailto:contact@info-experts.fr" style="color:#60a5fa;text-decoration:none">contact@info-experts.fr</a></p>
+    <p style="margin:0;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">📍 Moroni, Grande Comore, Comores</p>
   </td>
-  <td align="right" valign="top">
+  <td align="right" valign="top" class="em-footer-right">
     <p style="margin:0 0 8px"><a href="https://boutique.info-experts.fr" style="color:#60a5fa;font-size:12px;text-decoration:none;font-weight:600">🛒 Boutique</a></p>
     <p style="margin:0"><a href="https://info-experts.fr" style="color:#94a3b8;font-size:11px;text-decoration:none">info-experts.fr</a></p>
   </td>
 </tr>
 </table>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:16px;border-top:1px solid #1f2937;padding-top:12px">
-<tr><td>
-  <p style="margin:0;color:#4b5563;font-size:10px;text-align:center">© 2026 Info Experts · Boutique informatique aux Comores · Tous droits réservés<br>
-  <a href="https://boutique.info-experts.fr/mentions-legales.html" style="color:#4b5563;text-decoration:none">Mentions légales</a> · <a href="https://boutique.info-experts.fr/cgv.html" style="color:#4b5563;text-decoration:none">CGV</a></p>
-</td></tr>
-</table>
+<p style="margin:16px 0 0;padding-top:12px;border-top:1px solid #1f2937;color:#9ca3af;font-size:11px;text-align:center;mso-line-height-rule:exactly;line-height:16px">© 2026 Info Experts · Boutique informatique aux Comores · Tous droits réservés<br>
+<a href="https://boutique.info-experts.fr/mentions-legales.html" style="color:#9ca3af;text-decoration:none">Mentions légales</a> · <a href="https://boutique.info-experts.fr/cgv.html" style="color:#9ca3af;text-decoration:none">CGV</a></p>
 </td></tr>
 
 </table>
