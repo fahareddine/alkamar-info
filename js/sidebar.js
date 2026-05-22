@@ -39,6 +39,7 @@
         <a class="filter-cat ${active('reconditionnes.html')}" href="reconditionnes.html">Reconditionnés <span class="filter-cat__count">8</span></a>
         <a class="filter-cat ${active('promotions.html')}" href="promotions.html">Promotions 🔥</a>
         <a class="filter-cat ${active('services.html')}" href="services.html">Services 🛠️</a>
+        <a class="filter-cat ${active('digital.html')}" href="digital.html" style="color:#a78bfa;font-weight:700">💿 Digital</a>
       </div>
     </div>
 
