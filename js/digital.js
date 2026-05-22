@@ -279,19 +279,26 @@
 
   // ─── Ajout panier ──────────────────────────────────────────────────────────
   function addToCart(data) {
-    if (typeof window._cartAdd === 'function') {
-      window._cartAdd({ id: data.id, name: data.name, price: parseFloat(data.price), image: data.image, slug: data.slug, quantity: 1 });
+    const item = {
+      id:        data.id,
+      name:      data.name,
+      price_eur: parseFloat(data.price) || 0,
+      image:     data.image || '',
+      is_digital: true,
+    };
+    if (typeof Cart !== 'undefined') {
+      Cart.add(item);
+      if (typeof CartUI !== 'undefined') CartUI.open();
       return;
     }
+    // Fallback sans cart.js — clé et événement corrects
     try {
-      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      const ex = cart.find(i => i.id === data.id);
-      if (ex) ex.quantity = (ex.quantity || 1) + 1;
-      else cart.push({ id: data.id, name: data.name, price: parseFloat(data.price), image: data.image, slug: data.slug, quantity: 1 });
-      localStorage.setItem('cart', JSON.stringify(cart));
-      document.querySelectorAll('.cart-badge').forEach(b => {
-        b.textContent = cart.reduce((s, i) => s + (i.quantity || 1), 0);
-      });
+      const cart = JSON.parse(localStorage.getItem('alkamar_cart') || '[]');
+      const ex = cart.find(i => i.id === item.id);
+      if (ex) ex.qty = (ex.qty || 1) + 1;
+      else cart.push({ ...item, qty: 1 });
+      localStorage.setItem('alkamar_cart', JSON.stringify(cart));
+      window.dispatchEvent(new CustomEvent('cart:updated', { detail: { items: cart } }));
     } catch {}
   }
 
