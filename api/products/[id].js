@@ -28,14 +28,19 @@ module.exports = async function handler(req, res) {
   // GET — lecture publique par UUID ou legacy_id
   if (req.method === 'GET') {
     const isUUID = /^[0-9a-f-]{36}$/.test(id);
-    let query;
+    let data, error;
     if (isUUID) {
-      query = supabase.from('products').select('*, categories(id, name, slug, parent_id, icon)').eq('id', id).single();
+      ({ data, error } = await supabase.from('products').select('*, categories(id, name, slug, parent_id, icon)').eq('id', id).single());
     } else {
-      query = supabase.from('products').select('*, categories(id, name, slug, parent_id, icon)').eq('legacy_id', id).single();
+      // Cherche d'abord par legacy_id (produits physiques), puis par slug (produits digitaux)
+      const { data: d1 } = await supabase.from('products').select('*, categories(id, name, slug, parent_id, icon)').eq('legacy_id', id).maybeSingle();
+      if (d1) {
+        data = d1;
+      } else {
+        ({ data, error } = await supabase.from('products').select('*, categories(id, name, slug, parent_id, icon)').eq('slug', id).single());
+      }
     }
-    const { data, error } = await query;
-    if (error) return res.status(404).json({ error: 'Produit introuvable' });
+    if (error || !data) return res.status(404).json({ error: 'Produit introuvable' });
 
     // ?_og=1 — renvoie HTML avec métas Open Graph pour les crawlers sociaux
     if (req.query._og === '1') {

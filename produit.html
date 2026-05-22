@@ -487,11 +487,21 @@
         protection: 'protection.html'
       };
 
-      // Breadcrumb — utilise categories.slug renvoyé par l'API
-      const catSlug = p.categories?.slug || '';
-      const catPage = CAT_PAGES[catSlug] || 'ordinateurs.html';
+      // Breadcrumb
       document.title = p.name + ' — Boutique Info Experts';
-      document.getElementById('bc-cat').innerHTML = `<a href="${catPage}?tab=${catSlug}">${CAT_LABELS[catSlug] || (p.categories?.name || 'Produits')}</a>`;
+      const bcCat = document.getElementById('bc-cat');
+      const bcLink = document.createElement('a');
+      if (p.is_digital) {
+        bcLink.href = 'digital.html';
+        bcLink.textContent = 'Produits Digitaux';
+      } else {
+        const catSlug = p.categories?.slug || '';
+        const catPage = CAT_PAGES[catSlug] || 'ordinateurs.html';
+        bcLink.href = catPage + '?tab=' + catSlug;
+        bcLink.textContent = CAT_LABELS[catSlug] || (p.categories?.name || 'Produits');
+      }
+      bcCat.textContent = '';
+      bcCat.appendChild(bcLink);
       document.getElementById('bc-product').textContent = p.name;
 
       // Galerie — gallery items can be strings or {src, alt} objects
@@ -523,6 +533,7 @@
       const rawGallery = (p.gallery_urls && p.gallery_urls.length > 0)
         ? p.gallery_urls
         : ((p.gallery && p.gallery.length > 0) ? p.gallery : [p.main_image_url || p.image].filter(Boolean));
+      if (!rawGallery.length) rawGallery.push(_PLACEHOLDER);
       const _seen = new Set();
       const _viewLabels = ['Vue principale', 'Vue de côté', 'Détails produit', 'Vue arrière', 'Vue packaging'];
       const galleryItems = rawGallery
@@ -551,9 +562,15 @@
         : '';
 
       // Stock class dérivé depuis stock_class DB ou stock_label
+      // Pour les produits digitaux : livraison instantanée
+      const isDigital = !!p.is_digital;
+      const stockLabel = isDigital
+        ? (p.stock_label || '⚡ Livraison instantanée par email')
+        : (p.stock_label || 'En stock');
       const stockClass = p.stock_class || (
-        p.stock_label === 'En stock' ? 'in-stock' :
-        (p.stock_label && p.stock_label.toLowerCase().includes('limité') ? 'low-stock' : 'out-stock')
+        isDigital ? 'in-stock' :
+        (p.stock_label === 'En stock' ? 'in-stock' :
+        (p.stock_label && p.stock_label.toLowerCase().includes('limité') ? 'low-stock' : 'out-stock'))
       );
 
       // Features
@@ -616,7 +633,7 @@
               ` : `<div class="prod-price-main" style="font-size:1.4rem;color:#94a3b8">Prix sur demande</div>`}
             </div>
 
-            <div class="prod-stock ${esc(stockClass)}">${esc(p.stock_label)}</div>
+            <div class="prod-stock ${esc(stockClass)}">${esc(stockLabel)}</div>
 
             <div class="prod-actions">
               <button class="btn-add-cart" onclick="addToCart()">
@@ -630,10 +647,17 @@
             </div>
 
             <div class="prod-assurances">
+              ${isDigital ? `
+              <div class="assurance-item">⚡ Livraison instantanée</div>
+              <div class="assurance-item">📧 Clé par email</div>
+              <div class="assurance-item">💳 Mobile Money accepté</div>
+              <div class="assurance-item">✅ Licence officielle</div>
+              ` : `
               <div class="assurance-item">🛡️ Garantie ${esc(p.specs && p.specs['Garantie'] ? p.specs['Garantie'] : '24 mois')}</div>
               <div class="assurance-item">📦 Livraison Comores</div>
               <div class="assurance-item">💳 Mobile Money accepté</div>
               <div class="assurance-item">🔄 Retour 14 jours</div>
+              `}
             </div>
             <div id="share-container"></div>
           </div>
