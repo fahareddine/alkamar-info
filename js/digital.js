@@ -135,8 +135,8 @@
       alt:     p.name  || '',
       width:   '220',
       height:  '170',
-      loading: 'eager',
-      decoding:'sync',
+      loading: isLCP ? 'eager' : 'lazy',
+      decoding: isLCP ? 'auto' : 'async',
     });
     imgEl.onerror = function () { this.onerror = null; this.src = PLACEHOLDER; };
     cardImg.appendChild(imgEl);
