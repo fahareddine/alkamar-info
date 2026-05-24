@@ -667,7 +667,7 @@
         <div class="detail-tabs">
           <div class="detail-tabs__nav">
             <button class="detail-tab-btn active" onclick="showPanel('specs', this)">Fiche technique</button>
-            <button class="detail-tab-btn" onclick="showPanel('features', this)">Points forts</button>
+            ${featuresHTML ? `<button class="detail-tab-btn" onclick="showPanel('features', this)">Points forts</button>` : ''}
             <button class="detail-tab-btn" onclick="showPanel('description', this)">Description</button>
           </div>
 
@@ -677,9 +677,7 @@
             </table>
           </div>
 
-          <div class="detail-panel" id="panel-features">
-            <ul class="features-list">${featuresHTML}</ul>
-          </div>
+          ${featuresHTML ? `<div class="detail-panel" id="panel-features"><ul class="features-list">${featuresHTML}</ul></div>` : ''}
 
           <div class="detail-panel" id="panel-description">
             <div class="prod-description">${esc(p.description || 'Aucune description disponible.')}</div>
