@@ -5,7 +5,6 @@
 (function () {
 
   const TABS = [
-    { id: 'tous',        label: '🌐 Tous'          },
     { id: 'logiciels',   label: '💿 Logiciels'      },
     { id: 'abonnements', label: '🔄 Abonnements'    },
     { id: 'licences',    label: '🔑 Licences'       },
@@ -16,7 +15,7 @@
   ];
 
   let allProducts = [];
-  let activeTab   = 'tous';
+  let activeTab   = 'logiciels';
 
   const grid    = document.getElementById('digital-grid');
   const tabsBar = document.getElementById('digital-tabs');
@@ -51,7 +50,7 @@
   // ─── Init ──────────────────────────────────────────────────────────────────
   function init() {
     const params = new URLSearchParams(window.location.search);
-    activeTab = params.get('tab') || 'tous';
+    activeTab = params.get('tab') || 'logiciels';
     renderTabs();
     loadProducts();
   }
@@ -62,7 +61,7 @@
     while (tabsBar.firstChild) tabsBar.removeChild(tabsBar.firstChild);
     TABS.forEach(t => {
       const b = mk('button', {
-        className: 'dig-tab' + (t.id === activeTab ? ' dig-tab--active' : ''),
+        className: 'cat-tab' + (t.id === activeTab ? ' active' : ''),
         'data-tab': t.id, type: 'button', text: t.label,
       });
       b.textContent = t.label;
@@ -80,10 +79,8 @@
     p.setAttribute('aria-live', 'polite');
     grid.appendChild(p);
     try {
-      const limit = activeTab === 'tous' ? 100 : 5;
-      const qs = activeTab === 'tous'
-        ? '?limit=' + limit
-        : '?tab=' + encodeURIComponent(activeTab) + '&limit=' + limit;
+      const limit = 100;
+      const qs = '?tab=' + encodeURIComponent(activeTab) + '&limit=' + limit;
       const res = await fetch('/api/digital' + qs);
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
@@ -266,11 +263,10 @@
   function setTab(tab) {
     activeTab = tab;
     const url = new URL(window.location.href);
-    if (tab === 'tous') url.searchParams.delete('tab');
-    else url.searchParams.set('tab', tab);
+    url.searchParams.set('tab', tab);
     history.replaceState(null, '', url.toString());
-    document.querySelectorAll('.dig-tab').forEach(b => {
-      b.classList.toggle('dig-tab--active', b.dataset.tab === tab);
+    document.querySelectorAll('.cat-tab').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
     });
     loadProducts();
   }

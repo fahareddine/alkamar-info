@@ -49,13 +49,7 @@
     .dig-hero__sub{font-size:15px;color:#c4b5fd;margin-bottom:20px;max-width:560px;margin-left:auto;margin-right:auto}
     .dig-trust{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:4px}
     .dig-trust__item{background:rgba(255,255,255,.1);border-radius:6px;padding:6px 14px;font-size:12px;font-weight:700;color:#e2e8f0;white-space:nowrap}
-    /* Onglets */
-    .dig-tabs-bar{background:#1f2937;border-bottom:1px solid rgba(255,255,255,.06);padding:0 20px;overflow-x:auto;scrollbar-width:none}
-    .dig-tabs-bar::-webkit-scrollbar{display:none}
-    .dig-tabs-inner{max-width:1320px;margin:0 auto;display:flex;gap:2px}
-    .dig-tab{background:transparent;border:none;color:#9ca3af;font-size:12.5px;font-weight:600;padding:11px 16px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;font-family:inherit}
-    .dig-tab:hover{color:#d1d5db}
-    .dig-tab--active{color:#a78bfa;border-bottom-color:#a78bfa}
+    /* Onglets — reprend cat-tabs de style.css */
     /* Bannière */
     .dig-instant-bar{background:linear-gradient(90deg,#7c3aed,#1e3a8a);padding:8px 20px;text-align:center}
     .dig-instant-bar__inner{max-width:1320px;margin:0 auto;font-size:12px;color:#e9d5ff;font-weight:600;display:flex;gap:20px;justify-content:center;flex-wrap:wrap}
@@ -177,8 +171,8 @@
   </nav>
 
   <!-- ── ONGLETS ────────────────────────────────────── -->
-  <div class="dig-tabs-bar" role="tablist" aria-label="Catégories produits digitaux">
-    <div class="dig-tabs-inner" id="digital-tabs"></div>
+  <div class="cat-tabs" role="tablist" aria-label="Catégories produits digitaux">
+    <div class="cat-tabs__inner" id="digital-tabs"></div>
   </div>
 
   <!-- ── MAIN ──────────────────────────────────────── -->
@@ -237,7 +231,7 @@
   <script src="js/cart-ui.js?v=2" defer></script>
   <script src="js/catalog.js?v=5" defer></script>
   <script src="js/animations.js" defer></script>
-  <script src="js/digital.js?v=3" defer></script>
+  <script src="js/digital.js?v=4" defer></script>
   <script src="js/cro.js" defer></script>
   <script src="js/sidebar.js?v=2" defer></script>
 </body>
