@@ -88,7 +88,7 @@
       const n = (hash % 14) + 4;
       const el = document.createElement('div');
       el.className = 'cro-views';
-      el.style.cssText = 'font-size:10px;color:#4b5563;margin-bottom:4px;';
+      el.style.cssText = 'font-size:12px;color:#374151;font-weight:500;margin-bottom:5px;';
       el.textContent = `👁 ${n} personnes regardent`;
       body.insertBefore(el, body.firstChild);
     });

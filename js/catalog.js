@@ -73,9 +73,11 @@ const CATALOG = (function () {
     const rows = Object.entries(specs).filter(([k]) => !k.startsWith('_')).slice(0, 3);
     if (!rows.length) return '';
     return '<div class="card-specs">'
-      + rows.map(([k, v]) => `<span><strong>${esc(k)}:</strong> ${esc(v)}</span>`).join(' · ')
+      + rows.map(([k, v]) => `<span><strong>${esc(k)}:</strong> ${esc(v)}</span>`).join('')
       + '</div>';
   }
+
+  const BADGE_LABELS = { TPP: 'Top Prix', BDP: 'Bon Deal', EXC: 'Exclusif', RECO: 'Recommandé', NVX: 'Nouveau' };
 
   // ─── Carte produit ────────────────────────────────────────────────────────
   // opts.promoMode   : calcule le badge -XX% depuis price_old
@@ -100,7 +102,8 @@ const CATALOG = (function () {
       const pct = Math.round((1 - Number(p.price_eur) / Number(p.price_old)) * 100);
       badgeHtml = `<div class="card-badges"><span class="badge badge--promo">-${pct}%</span></div>`;
     } else if (p.badge) {
-      badgeHtml = `<div class="card-badges"><span class="badge ${p.badge_class || ''}">${esc(p.badge)}</span></div>`;
+      const badgeLabel = BADGE_LABELS[p.badge] || p.badge;
+      badgeHtml = `<div class="card-badges"><span class="badge ${p.badge_class || ''}">${esc(badgeLabel)}</span></div>`;
     } else {
       badgeHtml = '<div class="card-badges"></div>';
     }
@@ -130,8 +133,7 @@ const CATALOG = (function () {
           ${Number(p.price_eur) > 0 ? `
           ${oldPrice}
           <span class="price-main">${fmtEur(p.price_eur)}</span>
-          <div class="price-kmf">\u2248 ${fmtKmf(p.price_kmf, p.price_eur)} KMF</div>
-          <div class="price-ttc">Prix TTC</div>` : `<span class="price-main" style="font-size:14px;color:#94a3b8">Prix sur demande</span>`}
+          <div class="price-kmf">\u2248 ${fmtKmf(p.price_kmf, p.price_eur)} KMF</div>` : `<span class="price-main" style="font-size:14px;color:#94a3b8">Prix sur demande</span>`}
         </div>
         <div class="card-stock ${stockClass}">${stockLabel}</div>
       </div>
