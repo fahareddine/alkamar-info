@@ -148,7 +148,7 @@ const CATALOG = (function () {
   }
 
   // ─── Fetch API ────────────────────────────────────────────────────────────
-  const MAX = 5;
+  const MAX = 4;
   const gridsState    = {};
   const gridsExpanded = {};
 
