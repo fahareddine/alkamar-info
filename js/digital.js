@@ -79,7 +79,7 @@
     p.setAttribute('aria-live', 'polite');
     grid.appendChild(p);
     try {
-      const limit = 100;
+      const limit = 4;
       const qs = '?tab=' + encodeURIComponent(activeTab) + '&limit=' + limit;
       const res = await fetch('/api/digital' + qs);
       if (!res.ok) throw new Error('HTTP ' + res.status);
