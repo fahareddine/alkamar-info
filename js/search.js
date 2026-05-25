@@ -195,19 +195,24 @@
 
   /* ── Overlay mobile ──────────────────────────────────────────── */
   function buildMobileOverlay() {
-    /* Bouton toggle dans header__actions */
     const actions = document.querySelector('.header__actions');
-    if (!actions || document.getElementById('search-toggle-btn')) return;
+    if (!actions) return;
+    if (document.getElementById('mso')) return;
 
-    const toggleBtn = document.createElement('button');
+    let toggleBtn = document.getElementById('search-toggle-btn');
+    if (toggleBtn) {
+      /* bouton déjà dans le DOM — attacher l'overlay sans recréer le bouton */
+    } else {
+      toggleBtn = document.createElement('button');
     toggleBtn.id = 'search-toggle-btn';
     toggleBtn.className = 'header__action';
     toggleBtn.setAttribute('aria-label', 'Rechercher');
     toggleBtn.innerHTML = `
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" width="22" height="22"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <span>Chercher</span>`;
-    const menuToggle = document.getElementById('menu-toggle-btn');
-    actions.insertBefore(toggleBtn, menuToggle);
+      const menuToggle = document.getElementById('menu-toggle-btn');
+      actions.insertBefore(toggleBtn, menuToggle);
+    }
 
     /* Overlay */
     const overlay = document.createElement('div');

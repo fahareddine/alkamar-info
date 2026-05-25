@@ -274,7 +274,7 @@
   if (!document.getElementById('alkamar-search-js')) {
     const _s = document.createElement('script');
     _s.id  = 'alkamar-search-js';
-    _s.src = '/js/search.js?v=2';
+    _s.src = '/js/search.js?v=3';
     _s.defer = true;
     document.head.appendChild(_s);
   }
