@@ -68,12 +68,35 @@ const CATALOG = (function () {
     catch { return false; }
   }
 
+  const SPEC_ICONS = [
+    [/[eé]cran|screen|display|taille/i,              '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>'],
+    [/\bram\b|m[ée]moire/i,                          '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="8" width="20" height="8" rx="1"/><path d="M7 8V6M10 8V6M13 8V6M16 8V6M7 16v2M10 16v2M13 16v2M16 16v2"/></svg>'],
+    [/processeur|cpu|ryzen|core.i|intel|amd/i,       '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="7" y="7" width="10" height="10" rx="1"/><path d="M9 4v3M12 4v3M15 4v3M9 17v3M12 17v3M15 17v3M4 9h3M4 12h3M4 15h3M17 9h3M17 12h3M17 15h3"/></svg>'],
+    [/\bgpu\b|graphique|nvidia|radeon|vid[ée]o/i,    '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="8" cy="12" r="2"/><circle cx="14" cy="12" r="2"/><path d="M6 7V5M10 7V5M14 7V5M18 7V5"/></svg>'],
+    [/stockage|ssd|hdd|disque|nvme|capacit/i,        '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 12h4M18 12h.5"/></svg>'],
+    [/poids|kg\b/i,                                  '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 3a3 3 0 100 6 3 3 0 000-6zM5 21l2-8h10l2 8H5z"/></svg>'],
+    [/webcam|cam[ée]ra|\bcam\b/i,                    '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 10l4.553-2.069A1 1 0 0121 8.9v6.2a1 1 0 01-1.447.969L15 14v-4z"/><rect x="3" y="8" width="12" height="8" rx="2"/></svg>'],
+    [/batterie|autonomie|wh\b|mah\b/i,               '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="7" width="18" height="10" rx="2"/><path d="M22 11v2M6 12h6"/></svg>'],
+    [/\bos\b|windows|linux|android|syst[èe]me/i,     '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>'],
+    [/wifi|wi.fi|bluetooth|sans.fil|connexion/i,     '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>'],
+    [/\bport|usb|hdmi|thunderbolt/i,                 '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 3v14M7 19s2-2 5-2 5 2 5 2M8 8l-2 2 2 2M16 8l2 2-2 2"/></svg>'],
+    [/fr[ée]quence|d[ée]bit|bande|vitesse|mbps|gbps|ghz/i, '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2a10 10 0 000 20M12 2a10 10 0 110 20M12 12l-2-5"/></svg>'],
+    [/antenne|r[ée]seau|lan|ethernet|norme|standard/i, '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 010 8.49M7.76 7.76a6 6 0 000 8.49"/></svg>'],
+  ];
+  const SPEC_DEFAULT_ICON = '<svg aria-hidden="true" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.5"/></svg>';
+
   function specsSummary(specs) {
     if (!specs || typeof specs !== 'object') return '';
     const rows = Object.entries(specs).filter(([k]) => !k.startsWith('_')).slice(0, 3);
     if (!rows.length) return '';
     return '<div class="card-specs">'
-      + rows.map(([k, v]) => `<span><strong>${esc(k)}:</strong> ${esc(v)}</span>`).join('')
+      + rows.map(([k, v]) => {
+          const icon  = (SPEC_ICONS.find(([re]) => re.test(k)) || [, SPEC_DEFAULT_ICON])[1];
+          const val   = String(v);
+          const short = val.length > 26 ? val.slice(0, 25) + '…' : val;
+          const title = val !== short ? ` title="${esc(k + ': ' + val)}"` : '';
+          return `<span${title}>${icon} ${esc(short)}</span>`;
+        }).join('')
       + '</div>';
   }
 
