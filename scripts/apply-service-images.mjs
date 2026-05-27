@@ -45,7 +45,7 @@ async function run() {
   for (const { slug, image } of UPDATES) {
     const { data, error } = await sb
       .from('products')
-      .update({ image })
+      .update({ image, main_image_url: image })
       .eq('slug', slug)
       .select('id, name');
     if (error) {

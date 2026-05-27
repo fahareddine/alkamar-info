@@ -68,7 +68,7 @@
       if (qty <= 5) {
         const el = document.createElement('div');
         el.className = 'cro-scarcity';
-        el.style.cssText = 'font-size:11px;font-weight:700;color:#92400e;display:flex;align-items:center;gap:3px;margin-bottom:3px;';
+        el.style.cssText = 'font-size:12px;font-weight:700;color:#92400e;display:flex;align-items:center;gap:3px;margin-bottom:3px;';
         el.innerHTML = `🔥 Plus que ${qty} en stock`;
         stockEl.insertAdjacentElement('beforebegin', el);
       }
