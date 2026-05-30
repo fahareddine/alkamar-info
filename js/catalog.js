@@ -144,7 +144,7 @@ const CATALOG = (function () {
     return `<div class="product-card${_hasBadge ? ' has-badge' : ''}">
       ${badgeHtml}
       <div class="card-img">
-        <button class="card-wishlist${wished ? ' wished' : ''}" data-id="${esc(String(link || ''))}" onclick="toggleWish(this)" aria-label="Ajouter aux favoris" style="${wished ? 'color:#ef4444;border-color:#ef4444' : ''}">${wished ? '\u2665' : '\u2661'}</button>
+        <button class="card-wishlist${wished ? ' wished' : ''}" data-id="${esc(String(link || ''))}" onclick="toggleWish(this)" aria-label="${wished ? 'Retirer des favoris' : 'Ajouter aux favoris'}"><svg viewBox="0 0 24 24" width="16" height="16" fill="${wished ? '#ef4444' : 'none'}" stroke="${wished ? '#ef4444' : 'currentColor'}" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></button>
         <img src="${imgSrc}" ${srcsetAttr} alt="${esc(p.name || '')}" width="220" height="170" ${imgLoadAttrs} onerror="imgFallback(this)">
       </div>
       <div class="card-body">
@@ -329,18 +329,45 @@ const CATALOG = (function () {
     };
     window.toggleWish = function (btn) {
       const id = btn.dataset.id;
-      const liked = btn.textContent.trim() === '\u2665';
-      try {
-        const list = JSON.parse(localStorage.getItem('alkamar_wish') || '[]');
-        const next = liked
-          ? list.filter(x => x !== String(id))
-          : [...new Set([...list, String(id)])];
-        localStorage.setItem('alkamar_wish', JSON.stringify(next));
-      } catch {}
-      btn.textContent = liked ? '\u2661' : '\u2665';
-      btn.style.color = liked ? '' : '#ef4444';
-      btn.style.borderColor = liked ? '' : '#ef4444';
+      if (!id) return;
+      const card = btn.closest('.product-card');
+      const productData = {
+        name:       card ? ((card.querySelector('.card-title') || {}).textContent || '').trim() : '',
+        brand:      card ? ((card.querySelector('.card-brand') || {}).textContent || '').trim() : '',
+        price_eur:  parseFloat(((card ? (card.querySelector('.price-main') || {}) : {}).childNodes[0] || {}).textContent || '0') || 0,
+        price_kmf:  parseInt(((card ? (card.querySelector('.price-kmf') || {}).textContent : '') || '0').replace(/\D/g, '')) || 0,
+        img:        card ? ((card.querySelector('.card-img img') || {}).src || '') : '',
+        stock:      card ? (card.querySelector('.card-stock') || {}).textContent || '' : '',
+        stockClass: card ? ((card.querySelector('.card-stock') || {}).className || '').replace('card-stock', '').trim() : '',
+      };
+      const wishlist = window.Wishlist || _wishFallback();
+      const result = wishlist.toggle(id, productData);
+      const added = result.added;
+      const svg = btn.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('fill', added ? '#ef4444' : 'none');
+        svg.setAttribute('stroke', added ? '#ef4444' : 'currentColor');
+      }
+      btn.classList.toggle('wished', added);
+      btn.setAttribute('aria-label', added ? 'Retirer des favoris' : 'Ajouter aux favoris');
     };
+
+    function _wishFallback() {
+      var KEY = 'alkamar_wish';
+      return {
+        toggle: function(id, data) {
+          try {
+            var list = JSON.parse(localStorage.getItem(KEY) || '[]');
+            var idx = list.findIndex(function(p) { return (p.id || p) === String(id); });
+            var added;
+            if (idx !== -1) { list.splice(idx, 1); added = false; }
+            else { list.push(Object.assign({ id: String(id) }, data)); added = true; }
+            localStorage.setItem(KEY, JSON.stringify(list));
+            return { added: added };
+          } catch(e) { return { added: false }; }
+        }
+      };
+    }
     window.doSearch = function () {
       const input = document.getElementById('searchInput');
       const q = input ? input.value.trim() : '';

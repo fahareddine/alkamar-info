@@ -103,6 +103,7 @@
   </header>
 
   <script src="js/nav.js?v=5" defer></script>
+  <script src="/js/wishlist.js?v=1" defer></script>
 
   <!-- Nav statique — évite CLS 0.247 causé par nav.js defer qui injectait après paint -->
   <!-- nav.js détecte #main-nav existant → ne réinsère pas, gère uniquement mobile + active state -->
@@ -1078,15 +1079,6 @@
       if (e.key === 'Enter') doSearch();
     });
 
-    // Favoris toggle
-    document.querySelectorAll('.card-wishlist').forEach(btn => {
-      btn.addEventListener('click', function() {
-        this.textContent = this.textContent === '♡' ? '♥' : '♡';
-        this.style.color = this.textContent === '♥' ? '#ef4444' : '';
-        this.style.borderColor = this.textContent === '♥' ? '#ef4444' : '';
-      });
-    });
-
     // Quick cats actif
     document.querySelectorAll('.quick-cat').forEach(cat => {
       cat.addEventListener('click', function(e) {
@@ -1149,13 +1141,6 @@
         return;
       }
       grid.innerHTML = items.map((p, i) => CATALOG.productCard(p, {}, i)).join('');
-      // Réattache favoris
-      grid.querySelectorAll('.card-wishlist').forEach(btn => {
-        btn.addEventListener('click', function() {
-          this.textContent = this.textContent === '♡' ? '♥' : '♡';
-          this.style.color = this.textContent === '♥' ? '#ef4444' : '';
-        });
-      });
     }
 
     function renderPagination() {
