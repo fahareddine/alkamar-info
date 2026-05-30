@@ -159,6 +159,32 @@
     _initNavBadge();
   }
 
+  /* ── toggleWish global — onclick="toggleWish(this)" sur toutes les pages ── */
+
+  window.toggleWish = function (btn) {
+    var id = btn.dataset.id;
+    if (!id) return;
+    var card = btn.closest('.product-card');
+    var productData = {
+      name:       card ? ((card.querySelector('.card-title') || {}).textContent || '').trim() : '',
+      brand:      card ? ((card.querySelector('.card-brand') || {}).textContent || '').trim() : '',
+      price_eur:  parseFloat(((card ? (card.querySelector('.price-main') || {}) : {}).childNodes[0] || {}).textContent || '0') || 0,
+      price_kmf:  parseInt(((card ? (card.querySelector('.price-kmf') || {}).textContent : '') || '0').replace(/\D/g, '')) || 0,
+      img:        card ? ((card.querySelector('.card-img img') || {}).src || '') : '',
+      stock:      card ? (card.querySelector('.card-stock') || {}).textContent || '' : '',
+      stockClass: card ? ((card.querySelector('.card-stock') || {}).className || '').replace('card-stock', '').trim() : '',
+    };
+    var result = toggle(id, productData);
+    var added = result.added;
+    var svg = btn.querySelector('svg');
+    if (svg) {
+      svg.setAttribute('fill', added ? '#ef4444' : 'none');
+      svg.setAttribute('stroke', added ? '#ef4444' : 'currentColor');
+    }
+    btn.classList.toggle('wished', added);
+    btn.setAttribute('aria-label', added ? 'Retirer des favoris' : 'Ajouter aux favoris');
+  };
+
   /* ── Export ───────────────────────────────────────────────── */
 
   window.Wishlist = { toggle: toggle, clear: clear, getList: getList, getCount: getCount, has: has, on: on };

@@ -327,47 +327,6 @@ const CATALOG = (function () {
         setTimeout(() => { btn.innerHTML = orig; btn.style.background = ''; }, 1600);
       }
     };
-    window.toggleWish = function (btn) {
-      const id = btn.dataset.id;
-      if (!id) return;
-      const card = btn.closest('.product-card');
-      const productData = {
-        name:       card ? ((card.querySelector('.card-title') || {}).textContent || '').trim() : '',
-        brand:      card ? ((card.querySelector('.card-brand') || {}).textContent || '').trim() : '',
-        price_eur:  parseFloat(((card ? (card.querySelector('.price-main') || {}) : {}).childNodes[0] || {}).textContent || '0') || 0,
-        price_kmf:  parseInt(((card ? (card.querySelector('.price-kmf') || {}).textContent : '') || '0').replace(/\D/g, '')) || 0,
-        img:        card ? ((card.querySelector('.card-img img') || {}).src || '') : '',
-        stock:      card ? (card.querySelector('.card-stock') || {}).textContent || '' : '',
-        stockClass: card ? ((card.querySelector('.card-stock') || {}).className || '').replace('card-stock', '').trim() : '',
-      };
-      const wishlist = window.Wishlist || _wishFallback();
-      const result = wishlist.toggle(id, productData);
-      const added = result.added;
-      const svg = btn.querySelector('svg');
-      if (svg) {
-        svg.setAttribute('fill', added ? '#ef4444' : 'none');
-        svg.setAttribute('stroke', added ? '#ef4444' : 'currentColor');
-      }
-      btn.classList.toggle('wished', added);
-      btn.setAttribute('aria-label', added ? 'Retirer des favoris' : 'Ajouter aux favoris');
-    };
-
-    function _wishFallback() {
-      var KEY = 'alkamar_wish';
-      return {
-        toggle: function(id, data) {
-          try {
-            var list = JSON.parse(localStorage.getItem(KEY) || '[]');
-            var idx = list.findIndex(function(p) { return (p.id || p) === String(id); });
-            var added;
-            if (idx !== -1) { list.splice(idx, 1); added = false; }
-            else { list.push(Object.assign({ id: String(id) }, data)); added = true; }
-            localStorage.setItem(KEY, JSON.stringify(list));
-            return { added: added };
-          } catch(e) { return { added: false }; }
-        }
-      };
-    }
     window.doSearch = function () {
       const input = document.getElementById('searchInput');
       const q = input ? input.value.trim() : '';
