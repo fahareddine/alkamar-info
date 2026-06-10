@@ -11,12 +11,15 @@ module.exports = async function handler(req, res) {
     return require('./_lib/promotions')(req, res);
   }
 
-  // Route publique : GET /api/products/:id
+  // Route publique : GET /api/products/:id (slug, legacy_id ou UUID)
   if (req.query._route === 'product_id') {
     const _id = req.query._id;
     if (!_id) return res.status(400).json({ error: 'id requis' });
     const cols = 'id,legacy_id,name,subtitle,slug,description,price_eur,price_kmf,price_old,stock,stock_label,status,brand,badge,badge_class,rating,rating_count,image,main_image_url,gallery,gallery_urls,features,specs,categories(id,name,slug,parent_id)';
-    const { data, error } = await supabase.from('products').select(cols).or(`slug.eq.${_id},legacy_id.eq.${_id}`).maybeSingle();
+    const isUuid = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(_id);
+    let q = supabase.from('products').select(cols);
+    q = isUuid ? q.eq('id', _id) : q.or(`slug.eq.${_id},legacy_id.eq.${_id}`);
+    const { data, error } = await q.maybeSingle();
     if (error) return res.status(500).json({ error: error.message });
     if (!data) return res.status(404).json({ error: 'Produit introuvable' });
     return res.status(200).json(data);
