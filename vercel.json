@@ -46,7 +46,6 @@
     { "source": "/api/webhooks/stripe",          "destination": "/api/webhooks"                         },
     { "source": "/api/contact", "destination": "/api/customers?_route=contact" },
     { "source": "/mentions-legales", "destination": "/mentions-legales.html" },
-    { "source": "/api/products/:id/images", "destination": "/api/product-images?id=:id" },
     { "source": "/api/products/:id", "destination": "/api/products?_route=product_id&_id=:id" },
     { "source": "/og/:id", "destination": "/api/products?_route=product_id&_id=:id&_og=1" },
     { "source": "/api/tags", "destination": "/api/categories?_route=tags" },
