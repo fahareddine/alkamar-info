@@ -415,6 +415,24 @@
     ✅ Produit ajouté au panier
   </div>
 
+  <script src="js/products.js"></script>
+  <script>
+    function _mapStaticProduct(id) {
+      if (typeof PRODUCTS === 'undefined') return null;
+      const s = PRODUCTS.find(function(x){ return x.id === id; });
+      if (!s) return null;
+      return { name: s.name, subtitle: s.subtitle, brand: s.brand,
+        price_eur: s.price, price_kmf: s.priceKmf, price_old: s.priceOld,
+        badge: s.badge, badge_class: s.badgeClass,
+        stock_label: s.stock, stock_class: s.stockClass,
+        main_image_url: s.image, gallery_urls: s.gallery || [s.image],
+        features: s.features || [], specs: s.specs || {},
+        description: s.description || '', rating: s.rating,
+        rating_count: s.ratingCount,
+        categories: { slug: s.subcategory || '', name: s.subcategory || '' },
+        is_digital: false };
+    }
+  </script>
   <script>
     (async () => {
       const content = document.getElementById('product-content');
@@ -432,7 +450,7 @@
       let p;
       try {
         const res = await fetch(`/api/products/${id}`);
-        if (!res.ok) {
+        if (!res.ok && !(p = _mapStaticProduct(id))) {
           content.innerHTML = `
             <div class="not-found">
               <h1>Produit introuvable</h1>
@@ -441,7 +459,7 @@
             </div>`;
           return;
         }
-        p = await res.json();
+        if (res.ok) p = await res.json();
       } catch (e) {
         console.error('Erreur chargement produit', e);
         content.innerHTML = `
