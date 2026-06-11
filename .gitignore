@@ -19,6 +19,9 @@ backup-system/logs/*
 backup-system/reports/*
 !backup-system/reports/.gitkeep
 
+# Backups table products (point de restauration local)
+backups/
+
 # Archives et fichiers chiffrés — jamais dans git
 *.gpg
 *.enc
