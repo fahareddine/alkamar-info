@@ -100,7 +100,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .btn-detail:hover{background:rgba(26,58,143,.06);border-color:transparent;color:var(--primary)}
 .btn-cart{box-shadow:0 1px 3px rgba(245,158,11,.25);transition:background .2s,box-shadow .2s,transform .1s}
 .btn-cart:hover{box-shadow:var(--shadow-accent)}
-.btn-cart:active,.btn-detail:active,.btn-checkout:active,.hero-slide__cta:active,.btn-voir-tout:active,.page-btn:active{transform:scale(.97)}
+/* btn-detail exclu du press-scale : transform sur le lien re-ancre son ::after
+   stretched-link (inset:0) du card vers le bouton → clic card mort. */
+.btn-cart:active,.btn-checkout:active,.hero-slide__cta:active,.btn-voir-tout:active,.page-btn:active{transform:scale(.97)}
 .btn-checkout{transition:background .15s,box-shadow .2s,transform .1s}
 .btn-checkout:hover{box-shadow:0 6px 18px rgba(26,58,143,.35)}
 .hero-slide__cta{transition:background-color .15s,box-shadow .2s,transform .1s}
