@@ -142,7 +142,7 @@ module.exports = async function handler(req, res) {
     const {
       customer_name, customer_email, customer_whatsapp, customer_phone,
       delivery_method = 'pickup', delivery_city, delivery_address, delivery_notes,
-      payment_method = 'stripe', cart_items, notes,
+      payment_method = 'stripe', cart_items, notes, coupon_code,
     } = req.body || {};
 
     // Validation
@@ -209,7 +209,21 @@ module.exports = async function handler(req, res) {
     }
     subtotal_eur = parseFloat(subtotal_eur.toFixed(2));
     const delivery_fee = delivery_method === 'home_delivery' ? 5 : 0;
-    const total_eur    = parseFloat((subtotal_eur + delivery_fee).toFixed(2));
+
+    // Code promo — revalidé côté serveur (jamais de confiance au montant client)
+    let appliedCoupon = null;
+    let discount_eur  = 0;
+    let discount_kmf  = 0;
+    if (coupon_code) {
+      const { validateCoupon } = require('./_lib/coupon-validate');
+      const cv = await validateCoupon(coupon_code, subtotal_eur);
+      if (cv.error) return res.status(cv.status).json({ error: cv.error });
+      appliedCoupon = cv.coupon;
+      discount_eur  = Math.min(cv.discount_eur, subtotal_eur);
+      discount_kmf  = cv.discount_kmf;
+    }
+
+    const total_eur    = parseFloat((subtotal_eur + delivery_fee - discount_eur).toFixed(2));
     const total_kmf    = Math.round(total_eur * 491);
 
     // Créer ou trouver le customer
@@ -263,6 +277,8 @@ module.exports = async function handler(req, res) {
       subtotal_eur, payment_method,
       payment_status: payment_method === 'stripe' ? 'unpaid' : 'awaiting_payment',
       guest_checkout: true,
+      coupon_code: appliedCoupon ? appliedCoupon.code : null,
+      discount_eur, discount_kmf,
     }).select().single());
 
     // Tentative 2 : fallback sans nouvelles colonnes (migration pas encore appliquée)
@@ -280,6 +296,14 @@ module.exports = async function handler(req, res) {
       await supabase.from('order_items').insert(
         validItems.map(i => ({ order_id: order.id, product_id: i.product_id, product_name: i.product_name, price_eur: i.price_eur, price_kmf: i.price_kmf, quantity: i.quantity }))
       );
+    }
+
+    // Incrémenter l'usage du coupon (best-effort, ne bloque pas la commande)
+    if (appliedCoupon) {
+      const { error: cErr } = await supabase.from('coupon_codes')
+        .update({ uses_count: (appliedCoupon.uses_count || 0) + 1 })
+        .eq('id', appliedCoupon.id);
+      if (cErr) console.error('[guest_checkout] uses_count update failed:', cErr.message);
     }
 
     const orderNum = order.id.split('-')[0].toUpperCase();
@@ -305,13 +329,31 @@ module.exports = async function handler(req, res) {
       if (delivery_fee > 0) {
         line_items.push({ price_data: { currency: 'eur', product_data: { name: 'Livraison à domicile' }, unit_amount: 500 }, quantity: 1 });
       }
-      const result = await stripeRequest('checkout/sessions', {
+
+      // Remise : coupon Stripe one-off appliqué à la session
+      const sessionParams = {
         mode: 'payment', line_items, locale: 'fr',
         customer_email: emailOk ? emailTrimmed : undefined,
         success_url: `${BASE}/success.html?order_id=${order.id}&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url:  `${BASE}/checkout.html`,
         metadata:    { order_id: order.id },
-      }, key);
+      };
+      if (discount_eur > 0) {
+        const sc = await stripeRequest('coupons', {
+          amount_off: Math.round(discount_eur * 100),
+          currency: 'eur',
+          duration: 'once',
+          name: `Code ${appliedCoupon.code}`,
+        }, key);
+        if (sc.status === 200 && sc.data.id) {
+          sessionParams.discounts = [{ coupon: sc.data.id }];
+        } else {
+          console.error('[guest_checkout] Stripe coupon failed:', JSON.stringify(sc.data).slice(0, 200));
+          return res.status(500).json({ error: 'Erreur application du code promo au paiement' });
+        }
+      }
+
+      const result = await stripeRequest('checkout/sessions', sessionParams, key);
       if (result.status !== 200 || !result.data.url) {
         return res.status(result.status).json({ error: result.data?.error?.message || 'Stripe error' });
       }

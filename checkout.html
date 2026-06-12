@@ -39,6 +39,7 @@
     .opt-card .oc-price { font-size: 14px; font-weight: 800; color: var(--primary); white-space: nowrap; flex-shrink: 0; }
     /* Summary */
     .co-summary { background: #f8fafc; border-radius: 10px; padding: 16px; margin-top: 14px; }
+    .co-coupon  { display: flex; gap: 8px; margin-top: 12px; }
     .co-line { display: flex; justify-content: space-between; font-size: 13px; color: #374151; padding: 4px 0; }
     .co-line.total { font-size: 16px; font-weight: 800; color: #0f172a; border-top: 1px solid #e2e8f0; padding-top: 10px; margin-top: 6px; }
     /* MM info */
@@ -154,8 +155,19 @@
     <div class="co-section">
       <h2>🛒 Résumé de la commande</h2>
       <div id="co-cart-lines"></div>
+
+      <!-- Code promo -->
+      <div class="co-coupon">
+        <input type="text" id="co-coupon-input" placeholder="Code promo" autocomplete="off"
+               style="flex:1;padding:9px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;text-transform:uppercase">
+        <button type="button" id="co-coupon-btn" onclick="applyCoupon()"
+                style="padding:9px 16px;border:none;border-radius:8px;background:#1e3a8a;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Appliquer</button>
+      </div>
+      <div id="co-coupon-msg" style="display:none;font-size:13px;margin-top:6px"></div>
+
       <div class="co-summary">
         <div class="co-line"><span>Sous-total</span><span id="co-subtotal">—</span></div>
+        <div class="co-line" id="co-discount-line" style="display:none;color:#16a34a"><span id="co-discount-label">Remise</span><span id="co-discount">—</span></div>
         <div class="co-line"><span id="delivery-label">Retrait boutique</span><span id="co-delivery">Gratuit</span></div>
         <div class="co-line total"><span>Total</span><span id="co-total">—</span></div>
       </div>

@@ -719,6 +719,10 @@
         });
       })();
 
+      // Expose le produit pour js/product-extras.js (avis, similaires, alerte stock)
+      window._productData = p;
+      document.dispatchEvent(new CustomEvent('product:loaded'));
+
       // Connecte sticky add-to-cart mobile
       setTimeout(() => {
         const mainBtn = document.querySelector('.btn-add-cart');
@@ -780,6 +784,7 @@
     });
   </script>
   <script src="js/auth-client.js" defer></script>
+  <script src="js/product-extras.js" defer></script>
   <script src="js/share.js" defer></script>
   <script src="js/account-guard.js" defer></script>
   <script src="js/cart.js" defer></script>

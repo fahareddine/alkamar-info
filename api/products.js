@@ -10,6 +10,10 @@ module.exports = async function handler(req, res) {
   if (req.query._route === 'promotions') {
     return require('./_lib/promotions')(req, res);
   }
+  // Délégation engagement : avis produits + alertes retour en stock (public)
+  if (req.query._route === 'reviews' || req.query._route === 'stock_alert') {
+    return require('./_lib/engagement')(req, res);
+  }
 
   // Route publique : GET /api/products/:id (slug, legacy_id ou UUID)
   if (req.query._route === 'product_id') {

@@ -5,6 +5,7 @@
   var _delivery = 'pickup';
   var _payment  = 'stripe';
   var _items    = [];
+  var _coupon   = null; // { code, discount_eur }
 
   /* ── Init ── */
   document.addEventListener('DOMContentLoaded', function () {
@@ -49,12 +50,57 @@
     if (mmInfo) mmInfo.style.display = method === 'mobile_money' ? '' : 'none';
   };
 
+  /* ── Code promo ── */
+  window.applyCoupon = async function () {
+    var input = document.getElementById('co-coupon-input');
+    var btn   = document.getElementById('co-coupon-btn');
+    var msg   = document.getElementById('co-coupon-msg');
+    var code  = (input.value || '').trim().toUpperCase();
+    if (!code) { _coupon = null; msg.style.display = 'none'; renderSummary(); return; }
+
+    btn.disabled = true; btn.textContent = '…';
+    try {
+      var subtotal = _items.reduce(function (s, i) { return s + (i.price_eur || 0) * (i.qty || 1); }, 0);
+      var r = await fetch('/api/coupons?_route=check', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: code, order_total_eur: subtotal }),
+      });
+      var data = await r.json();
+      if (!r.ok || !data.valid) {
+        _coupon = null;
+        msg.textContent = '✖ ' + (data.error || 'Code promo invalide');
+        msg.style.color = '#dc2626';
+      } else {
+        _coupon = { code: data.coupon_code, discount_eur: data.discount_eur };
+        msg.textContent = '✔ Code « ' + data.coupon_code + ' » appliqué : -' + data.discount_eur.toFixed(2).replace('.', ',') + ' €';
+        msg.style.color = '#16a34a';
+      }
+    } catch (e) {
+      _coupon = null;
+      msg.textContent = '✖ Erreur réseau, réessayez.';
+      msg.style.color = '#dc2626';
+    }
+    msg.style.display = '';
+    btn.disabled = false; btn.textContent = 'Appliquer';
+    renderSummary();
+  };
+
   /* ── Rendu résumé ── */
   function renderSummary() {
     var fee      = _delivery === 'home_delivery' ? 5 : 0;
     var subtotal = _items.reduce(function (s, i) { return s + (i.price_eur || 0) * (i.qty || 1); }, 0);
-    var total    = subtotal + fee;
+    var discount = _coupon ? Math.min(_coupon.discount_eur, subtotal) : 0;
+    var total    = subtotal + fee - discount;
     var fmt      = function (n) { return n.toFixed(2).replace('.', ',') + ' €'; };
+
+    var dLine = document.getElementById('co-discount-line');
+    if (dLine) {
+      dLine.style.display = discount > 0 ? '' : 'none';
+      if (discount > 0) {
+        setText('co-discount-label', 'Remise (' + _coupon.code + ')');
+        setText('co-discount', '-' + fmt(discount));
+      }
+    }
 
     var lines = document.getElementById('co-cart-lines');
     if (lines) {
@@ -123,6 +169,7 @@
       delivery_notes:    val('co-dnotes') || null,
       payment_method:    _payment,
       cart_items:        _items.map(function (i) { return { id: i.id, qty: i.qty || 1 }; }),
+      coupon_code:       _coupon ? _coupon.code : null,
     };
 
     try {
