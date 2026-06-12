@@ -111,6 +111,12 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .card-wishlist{transition:transform .15s var(--ease-out)}
 .card-wishlist:hover{transform:scale(1.12)}
 .card-wishlist:active{transform:scale(.85)}
+/* Fix clic wishlist : contain:paint sur .card-img créait un stacking context qui
+   confinait le z-index du cœur SOUS le stretched-link (z-index:1) → incliquable.
+   contain:layout suffit (pas de stacking context). Et une règle tardive écrasait
+   position:absolute en relative → on restaure absolute + z-index au-dessus. */
+.card-img{contain:layout}
+.product-card .card-wishlist{position:absolute;z-index:3}
 /* Navigation */
 .quick-cat:hover{color:#fff;border-bottom-color:rgba(245,158,11,.55)}
 .header__action{transition:opacity .15s}
