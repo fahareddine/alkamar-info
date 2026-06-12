@@ -169,3 +169,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .wish-toast--link{pointer-events:auto}
 .wish-toast a{color:#fbbf24;font-weight:700;text-decoration:underline;margin-left:6px}
 .wish-toast a:hover{color:#fcd34d}
+
+/* Bandeau badge haut de card : le texte nowrap débordait du bord droit de la card,
+   l'overflow:hidden tranchait le coin droit au carré pendant que le gauche restait
+   arrondi. Contraint à la largeur de la card → les deux coins suivent le radius. */
+.card-badges{max-width:100%}
+.card-badges .badge{max-width:100%;overflow:hidden;text-overflow:ellipsis}
