@@ -11,10 +11,10 @@ const RETENTION = 14; // 2/jour × 7 jours
 
 // Tables sauvegardées (ordre de restauration : parents avant enfants)
 const TABLES = [
-  'categories', 'products', 'customers', 'orders', 'order_items',
-  'coupon_codes', 'promotions', 'product_reviews', 'stock_alerts',
+  'user_profiles', 'categories', 'products', 'customers', 'orders', 'order_items',
+  'invoices', 'coupon_codes', 'promotions', 'product_reviews', 'stock_alerts',
   'product_pricing', 'category_pricing_rules', 'pricing_settings',
-  'product_price_history',
+  'product_price_history', 'stock_movements', 'digital_licenses', 'admin_logs',
 ];
 
 const PAGE = 1000;
@@ -58,12 +58,14 @@ async function createBackup(trigger) {
     tables,
   };
 
-  const stamp = startedAt.toISOString().slice(0, 16).replace('T', '-').replace(':', 'h');
-  const file = `backup-${stamp}.json`;
+  // Nom unique à la seconde + trigger — évite toute collision (une pré-sauvegarde
+  // dans la même minute écraserait sinon la sauvegarde en cours de restauration)
+  const stamp = startedAt.toISOString().slice(0, 19).replace('T', '-').replace(':', 'h').replace(':', 'm');
+  const file = `backup-${stamp}-${trigger.replace(/[^a-z-]/gi, '')}.json`;
   const body = Buffer.from(JSON.stringify(payload));
 
   const { error: upErr } = await supabase.storage.from(BUCKET)
-    .upload(file, body, { contentType: 'application/json', upsert: true });
+    .upload(file, body, { contentType: 'application/json', upsert: false });
   if (upErr) throw new Error(`Upload échoué : ${upErr.message}`);
 
   // Rétention : supprime les plus anciennes au-delà de RETENTION
@@ -82,7 +84,7 @@ async function createBackup(trigger) {
   };
 }
 
-async function restoreBackup(file, selectedTables) {
+async function restoreBackup(file, selectedTables, mode = 'upsert') {
   const { data: blob, error: dlErr } = await supabase.storage.from(BUCKET).download(file);
   if (dlErr || !blob) throw new Error(`Téléchargement impossible : ${dlErr?.message || 'fichier introuvable'}`);
   const payload = JSON.parse(await blob.text());
@@ -92,6 +94,7 @@ async function restoreBackup(file, selectedTables) {
   const pre = await createBackup('pre-restore');
 
   const restored = {};
+  const deleted = {};
   const errors = [];
   const wanted = Array.isArray(selectedTables) && selectedTables.length
     ? TABLES.filter(t => selectedTables.includes(t))
@@ -99,18 +102,40 @@ async function restoreBackup(file, selectedTables) {
 
   for (const t of wanted) {
     const rows = payload.tables[t];
-    if (!rows || !rows.length) { restored[t] = 0; continue; }
+    if (!rows) { restored[t] = 0; continue; }
+
+    // 1. Upsert des lignes de la sauvegarde
     let ok = 0;
+    let failed = false;
     for (let i = 0; i < rows.length; i += 500) {
       const chunk = rows.slice(i, i + 500);
       const { error } = await supabase.from(t).upsert(chunk, { onConflict: 'id' });
-      if (error) { errors.push(`${t}: ${error.message}`); break; }
+      if (error) { errors.push(`${t}: ${error.message}`); failed = true; break; }
       ok += chunk.length;
     }
     restored[t] = ok;
+    if (failed) continue;
+
+    // 2. Mode remplacement exact : supprime les lignes absentes de la sauvegarde
+    //    (lignes parasites créées après — ex. import raté). En cas de contrainte
+    //    FK bloquante, l'erreur est remontée sans interrompre les autres tables.
+    if (mode === 'replace') {
+      const backupIds = new Set(rows.map(r => r.id).filter(Boolean));
+      const current = await dumpTable(t);
+      if (current.error) { errors.push(`${t} (purge): ${current.error}`); continue; }
+      const extra = current.rows.map(r => r.id).filter(id => id && !backupIds.has(id));
+      let del = 0;
+      for (let i = 0; i < extra.length; i += 200) {
+        const chunk = extra.slice(i, i + 200);
+        const { error } = await supabase.from(t).delete().in('id', chunk);
+        if (error) { errors.push(`${t} (purge): ${error.message}`); break; }
+        del += chunk.length;
+      }
+      deleted[t] = del;
+    }
   }
 
-  return { restored, errors, pre_restore_backup: pre.file };
+  return { mode, restored, deleted, errors, pre_restore_backup: pre.file };
 }
 
 function isVercelCron(req) {
@@ -120,7 +145,13 @@ function isVercelCron(req) {
   return String(req.headers['user-agent'] || '').startsWith('vercel-cron');
 }
 
-module.exports = async function backup(req, res) {
+module.exports = backupHandler;
+// Exports internes pour scripts de test/maintenance (scripts/test-restore.mjs)
+module.exports.createBackup = createBackup;
+module.exports.restoreBackup = restoreBackup;
+module.exports.TABLES = TABLES;
+
+async function backupHandler(req, res) {
   const action = req.query.action || 'list';
 
   // ── Cron (sans auth admin — vérifié par header Vercel) ──
@@ -161,11 +192,14 @@ module.exports = async function backup(req, res) {
     }
 
     if (action === 'restore' && req.method === 'POST') {
-      const { file, tables } = req.body || {};
+      const { file, tables, mode } = req.body || {};
       if (!file || !/^backup-[\w.-]+\.json$/.test(file)) {
         return res.status(400).json({ error: 'Nom de fichier invalide' });
       }
-      const result = await restoreBackup(file, tables);
+      if (mode && !['upsert', 'replace'].includes(mode)) {
+        return res.status(400).json({ error: 'Mode invalide (upsert | replace)' });
+      }
+      const result = await restoreBackup(file, tables, mode || 'upsert');
       return res.status(200).json({ ok: true, ...result });
     }
 

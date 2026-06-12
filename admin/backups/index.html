@@ -77,6 +77,16 @@
       <p id="bk-modal-file" style="font-weight:600"></p>
       <p>Choisis les tables à restaurer (tout par défaut). Une pré-sauvegarde de l'état actuel sera créée automatiquement avant la restauration.</p>
       <div class="bk-tables" id="bk-tables"></div>
+      <div style="border-top:1px solid var(--admin-border);padding-top:14px;margin-bottom:16px;display:grid;gap:8px">
+        <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--admin-text-2);cursor:pointer">
+          <input type="radio" name="bk-mode" value="upsert" checked style="margin-top:2px">
+          <span><strong>Fusion (recommandé)</strong> — remet les données de la sauvegarde, conserve les lignes créées après (ex. commandes récentes)</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--admin-text-2);cursor:pointer">
+          <input type="radio" name="bk-mode" value="replace" style="margin-top:2px">
+          <span><strong>Remplacement exact</strong> — état identique à la sauvegarde : supprime aussi les lignes créées après (ex. nettoyer un import raté)</span>
+        </label>
+      </div>
       <div class="bk-modal__actions">
         <button class="btn btn--ghost" onclick="closeModal()">Annuler</button>
         <button class="btn btn--danger" id="btn-confirm-restore" onclick="confirmRestore()">♻️ Restaurer</button>

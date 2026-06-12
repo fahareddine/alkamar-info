@@ -110,18 +110,25 @@ function closeModal() {
 
 async function confirmRestore() {
   if (!_restoreFile) return;
-  const checked = [...document.querySelectorAll('#bk-tables input:checked')].map(c => c.value);
+  const checked = [...document.querySelectorAll('#bk-tables input[type=checkbox]:checked')].map(c => c.value);
   if (!checked.length) { alert('Sélectionne au moins une table.'); return; }
-  if (!confirm(`Restaurer ${checked.length} table(s) depuis ${_restoreFile} ?\nUne pré-sauvegarde de l'état actuel sera créée d'abord.`)) return;
+  const mode = document.querySelector('input[name=bk-mode]:checked')?.value || 'upsert';
+  const modeLabel = mode === 'replace'
+    ? 'REMPLACEMENT EXACT (les lignes créées après la sauvegarde seront SUPPRIMÉES)'
+    : 'fusion (les lignes récentes sont conservées)';
+  if (!confirm(`Restaurer ${checked.length} table(s) depuis ${_restoreFile} ?\nMode : ${modeLabel}.\nUne pré-sauvegarde de l'état actuel sera créée d'abord.`)) return;
 
   const btn = document.getElementById('btn-confirm-restore');
   btn.disabled = true;
   btn.textContent = '⏳ Restauration…';
   try {
-    const r = await api.post(`${BK_BASE}&action=restore`, { file: _restoreFile, tables: checked });
+    const r = await api.post(`${BK_BASE}&action=restore`, { file: _restoreFile, tables: checked, mode });
     const total = Object.values(r.restored || {}).reduce((s, n) => s + n, 0);
+    const purged = Object.values(r.deleted || {}).reduce((s, n) => s + n, 0);
     closeModal();
-    bkStatus(`✔ Restauration terminée : ${total} lignes restaurées. Pré-sauvegarde : ${r.pre_restore_backup}` +
+    bkStatus(`✔ Restauration terminée (${mode}) : ${total} lignes restaurées` +
+      (mode === 'replace' ? `, ${purged} lignes parasites supprimées` : '') +
+      `. Pré-sauvegarde : ${r.pre_restore_backup}` +
       (r.errors?.length ? ` — erreurs : ${r.errors.join(' · ')}` : ''), r.errors?.length ? 'error' : 'ok');
     await loadBackups();
   } catch (e) {
