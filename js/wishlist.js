@@ -53,7 +53,7 @@
       var entry = Object.assign({ id: id }, productData || {});
       list.push(entry);
       added = true;
-      _showToast('Ajouté aux favoris ♡');
+      _showToast('Ajouté aux favoris ♡ ', true);
     } else {
       list.splice(idx, 1);
       added = false;
@@ -73,7 +73,7 @@
 
   /* ── Toast ────────────────────────────────────────────────── */
 
-  function _showToast(msg) {
+  function _showToast(msg, withLink) {
     var toast = document.getElementById('wish-toast');
     if (!toast) {
       toast = document.createElement('div');
@@ -83,15 +83,23 @@
     }
 
     toast.textContent = msg;
+    if (withLink) {
+      var link = document.createElement('a');
+      link.href = 'favoris.html';
+      link.textContent = 'Voir mes favoris →';
+      toast.appendChild(link);
+    }
+    toast.classList.toggle('wish-toast--link', !!withLink);
     toast.classList.add('wish-toast--visible');
 
     if (_toastTimer) {
       clearTimeout(_toastTimer);
     }
+    // Laisse plus de temps quand il y a un lien à cliquer
     _toastTimer = setTimeout(function () {
       toast.classList.remove('wish-toast--visible');
       _toastTimer = null;
-    }, 2200);
+    }, withLink ? 4000 : 2200);
   }
 
   /* ── Listeners ────────────────────────────────────────────── */
@@ -136,6 +144,9 @@
     if (wishLink.getAttribute('href') !== 'favoris.html') {
       wishLink.href = 'favoris.html';
     }
+
+    // Classe CSS pour rendre le cœur visible aussi sur mobile (cf. style.css)
+    wishLink.classList.add('header__action--wishlist');
 
     // Crée le badge s'il n'existe pas déjà
     var badge = document.getElementById('wish-badge');

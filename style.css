@@ -157,3 +157,15 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .search-bar__btn:active{transform:scale(.95)}
 /* Images cassées : fond rayé discret */
 .card-img--broken{background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 12px,#f1f5f9 12px,#f1f5f9 24px)}
+
+/* Accès favoris intuitif :
+   Mobile : le cœur Favoris reste visible dans le header (classe posée par wishlist.js),
+   avec badge compteur — avant, seul le panier était affiché et la page favoris
+   était introuvable sur mobile. Toast cliquable avec lien direct. */
+@media(max-width:768px){
+  .header__actions .header__action--wishlist{display:flex}
+  .header__action--wishlist span:not(.wish-badge){display:none}
+}
+.wish-toast--link{pointer-events:auto}
+.wish-toast a{color:#fbbf24;font-weight:700;text-decoration:underline;margin-left:6px}
+.wish-toast a:hover{color:#fcd34d}
