@@ -14,6 +14,10 @@ module.exports = async function handler(req, res) {
   if (req.query._route === 'reviews' || req.query._route === 'stock_alert') {
     return require('./_lib/engagement')(req, res);
   }
+  // Délégation sauvegardes (admin + cron Vercel)
+  if (req.query._route === 'backup') {
+    return require('./_lib/backup')(req, res);
+  }
 
   // Route publique : GET /api/products/:id (slug, legacy_id ou UUID)
   if (req.query._route === 'product_id') {

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sauvegardes — Info Experts Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+  <style>
+    .bk-schedule { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+    .bk-schedule__item {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--admin-surface); border: 1px solid var(--admin-border);
+      border-radius: var(--radius-sm); padding: 10px 16px;
+      font-size: 13px; color: var(--admin-text-2);
+    }
+    .bk-schedule__item strong { color: var(--admin-text); }
+    .bk-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--admin-success); flex-shrink: 0; }
+    .bk-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .bk-status { margin: 14px 0; display: none; }
+    .bk-counts { font-size: 12px; color: var(--admin-muted); }
+    .bk-modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 100;
+      align-items: center; justify-content: center; padding: 16px;
+    }
+    .bk-modal-overlay.is-open { display: flex; }
+    .bk-modal {
+      background: var(--admin-surface); border: 1px solid var(--admin-border);
+      border-radius: var(--radius-md); padding: 24px; max-width: 460px; width: 100%;
+      max-height: 85dvh; overflow-y: auto;
+    }
+    .bk-modal h2 { font-size: 17px; margin-bottom: 10px; }
+    .bk-modal p { font-size: 13.5px; color: var(--admin-text-2); margin-bottom: 14px; line-height: 1.6; }
+    .bk-tables { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 16px; }
+    .bk-tables label { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--admin-text-2); cursor: pointer; }
+    .bk-modal__actions { display: flex; gap: 10px; justify-content: flex-end; }
+    @media (max-width: 600px) { .bk-tables { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>💾 Sauvegardes</h1>
+        <button class="btn btn--primary" id="btn-run" onclick="runBackup()">⬇️ Sauvegarder maintenant</button>
+      </div>
+
+      <div class="bk-schedule">
+        <div class="bk-schedule__item"><span class="bk-dot"></span> Automatique : <strong>tous les jours à 00h00 et 06h00</strong> (UTC)</div>
+        <div class="bk-schedule__item">🗄️ Rétention : <strong>14 sauvegardes</strong> (7 jours)</div>
+        <div class="bk-schedule__item">📍 Stockage : <strong>Supabase Storage</strong> (privé)</div>
+      </div>
+
+      <div class="alert bk-status" id="bk-status"></div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr><th>Sauvegarde</th><th>Date</th><th>Taille</th><th>Actions</th></tr>
+          </thead>
+          <tbody id="bk-body">
+            <tr><td colspan="4" style="text-align:center;color:var(--admin-muted);padding:24px">Chargement…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p style="font-size:12.5px;color:var(--admin-muted);margin-top:14px;line-height:1.6">
+        ℹ️ La restauration réécrit les données des tables choisies à partir de la sauvegarde (les lignes créées après la sauvegarde sont conservées).
+        Une <strong>pré-sauvegarde automatique</strong> de l'état actuel est créée avant chaque restauration : un retour arrière est toujours possible.
+      </p>
+    </main>
+  </div>
+
+  <!-- Modal restauration -->
+  <div class="bk-modal-overlay" id="bk-modal">
+    <div class="bk-modal">
+      <h2>♻️ Restaurer une sauvegarde</h2>
+      <p id="bk-modal-file" style="font-weight:600"></p>
+      <p>Choisis les tables à restaurer (tout par défaut). Une pré-sauvegarde de l'état actuel sera créée automatiquement avant la restauration.</p>
+      <div class="bk-tables" id="bk-tables"></div>
+      <div class="bk-modal__actions">
+        <button class="btn btn--ghost" onclick="closeModal()">Annuler</button>
+        <button class="btn btn--danger" id="btn-confirm-restore" onclick="confirmRestore()">♻️ Restaurer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/backups.js"></script>
+</body>
+</html>

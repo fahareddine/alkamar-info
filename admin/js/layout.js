@@ -29,6 +29,7 @@ function injectSidebar() {
       <a href="/admin/pricing/" data-path="/admin/pricing/">💰 Prix Comores</a>
 
       <div class="section">Paramètres</div>
+      <a href="/admin/backups/" data-path="/admin/backups/">💾 Sauvegardes</a>
       <a href="/admin/users/" data-path="/admin/users/">🔑 Utilisateurs</a>
       <a href="#" id="logout-btn">🚪 Déconnexion</a>
     </nav>

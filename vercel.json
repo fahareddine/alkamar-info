@@ -1,4 +1,8 @@
 {
+  "crons": [
+    { "path": "/api/backup-cron", "schedule": "0 0 * * *" },
+    { "path": "/api/backup-cron", "schedule": "0 6 * * *" }
+  ],
   "redirects": [
     { "source": "/defaultsite", "destination": "/", "permanent": true },
     { "source": "/defaultsite/(.*)", "destination": "/", "permanent": true }
@@ -39,6 +43,7 @@
   ],
   "rewrites": [
     { "source": "/digital",                      "destination": "/digital.html"                         },
+    { "source": "/api/backup-cron",              "destination": "/api/products?_route=backup&action=cron" },
     { "source": "/api/digital/licenses",         "destination": "/api/digital?_route=licenses"          },
     { "source": "/api/digital/subscriptions",    "destination": "/api/digital?_route=subscriptions"     },
     { "source": "/api/digital/downloads",        "destination": "/api/digital?_route=download"          },
