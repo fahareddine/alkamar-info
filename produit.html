@@ -317,6 +317,37 @@
       grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
       gap: 16px;
     }
+
+    /* ── Polish 2026-06 : micro-interactions (transform/opacity only) ── */
+    .prod-price-main { letter-spacing: -.025em; font-variant-numeric: tabular-nums; }
+    .prod-price-kmf { font-variant-numeric: tabular-nums; }
+    .btn-add-cart, .btn-whatsapp {
+      transition: background-color .15s, box-shadow .2s, transform .1s;
+    }
+    .btn-add-cart:hover { box-shadow: 0 6px 18px rgba(26,58,143,.35); }
+    .btn-whatsapp:hover { box-shadow: 0 6px 18px rgba(37,211,102,.35); }
+    .btn-add-cart:active, .btn-whatsapp:active { transform: scale(.97); }
+    .gallery__thumb { transition: border-color .2s, transform .2s cubic-bezier(.22,.8,.26,.99); }
+    .gallery__thumb:hover { transform: translateY(-2px); }
+    .gallery__main img { transition: transform .45s cubic-bezier(.22,.8,.26,.99); }
+    @media (hover:hover) and (prefers-reduced-motion:no-preference) {
+      .gallery__main:hover img { transform: scale(1.04); }
+    }
+    .detail-tab-btn { position: relative; transition: color .2s; }
+    .detail-tab-btn::after {
+      content: ''; position: absolute; left: 14px; right: 14px; bottom: 0;
+      height: 3px; border-radius: 99px; background: var(--accent, #f59e0b);
+      transform: scaleX(0); transform-origin: center; transition: transform .25s cubic-bezier(.22,.8,.26,.99);
+    }
+    .detail-tab-btn.active::after { transform: scaleX(1); }
+    .specs-table tr { transition: background-color .12s; }
+    .specs-table tr:nth-child(even) { background: #f8fafc; }
+    .specs-table tr:hover { background: #eff6ff; }
+    .assurance-item { transition: transform .2s cubic-bezier(.22,.8,.26,.99); }
+    @media (hover:hover) { .assurance-item:hover { transform: translateY(-2px); } }
+    .breadcrumb a { transition: color .15s; }
+    a:focus-visible, button:focus-visible { outline: 2px solid #f59e0b; outline-offset: 2px; }
+    ::selection { background: #1a3a8f; color: #fff; }
   </style>
 <script>(function(){var l=0;function g(){if(l)return;l=1;var s=document.createElement('script');s.async=1;s.src='https://www.googletagmanager.com/gtag/js?id=G-E8J20K1852';document.head.appendChild(s);window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}window.gtag=gtag;gtag('js',new Date());gtag('config','G-E8J20K1852');}['pointerdown','scroll','keydown','touchstart'].forEach(function(e){document.addEventListener(e,g,{once:true,passive:true});});window.addEventListener('load',function(){setTimeout(g,30000);});})()</script>
 </head>
