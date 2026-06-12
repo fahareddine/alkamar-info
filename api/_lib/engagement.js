@@ -6,8 +6,60 @@ const { supabase } = require('./supabase');
 const UUID_RE = /^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Recalcule la note moyenne d'un produit depuis ses avis approuvés
+async function recomputeRating(productId) {
+  const { data } = await supabase.from('product_reviews')
+    .select('rating').eq('product_id', productId).eq('status', 'approved');
+  const count = (data || []).length;
+  const avg = count ? Math.round((data.reduce((s, r) => s + r.rating, 0) / count)) : 0;
+  // Ne touche au rating produit que s'il y a au moins un avis approuvé
+  if (count > 0) {
+    await supabase.from('products').update({ rating: avg, rating_count: count }).eq('id', productId);
+  }
+}
+
 // ── Avis produits ───────────────────────────────────────────────────────────
 async function handleReviews(req, res) {
+  // ── Admin : liste tous les avis / modère / supprime ──
+  if (req.query.admin === '1') {
+    const { requireRole } = require('./auth');
+    const auth = await requireRole(req, 'admin', 'commercial');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+
+    if (req.method === 'GET') {
+      const status = req.query.status || null;
+      let q = supabase.from('product_reviews')
+        .select('id, product_id, author_name, email, rating, comment, status, created_at, products(name, slug, legacy_id)')
+        .order('created_at', { ascending: false }).limit(200);
+      if (status) q = q.eq('status', status);
+      const { data, error } = await q;
+      if (error) return res.status(500).json({ error: error.message });
+      return res.status(200).json(data);
+    }
+
+    if (req.method === 'PATCH') {
+      const { id, status } = req.body || {};
+      if (!id || !['approved', 'rejected', 'pending'].includes(status)) {
+        return res.status(400).json({ error: 'id et status (approved|rejected|pending) requis' });
+      }
+      const { data, error } = await supabase.from('product_reviews')
+        .update({ status }).eq('id', id).select('product_id').single();
+      if (error) return res.status(500).json({ error: error.message });
+      await recomputeRating(data.product_id);
+      return res.status(200).json({ ok: true });
+    }
+
+    if (req.method === 'DELETE') {
+      const { data, error } = await supabase.from('product_reviews')
+        .delete().eq('id', req.query.id).select('product_id').maybeSingle();
+      if (error) return res.status(500).json({ error: error.message });
+      if (data) await recomputeRating(data.product_id);
+      return res.status(200).json({ ok: true });
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
   // GET — avis approuvés d'un produit + stats
   if (req.method === 'GET') {
     const { product_id } = req.query;
@@ -73,6 +125,18 @@ async function handleReviews(req, res) {
 
 // ── Alertes retour en stock ─────────────────────────────────────────────────
 async function handleStockAlert(req, res) {
+  // Admin : liste des alertes en attente, groupées par produit
+  if (req.query.admin === '1' && req.method === 'GET') {
+    const { requireRole } = require('./auth');
+    const auth = await requireRole(req, 'admin', 'commercial');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    const { data, error } = await supabase.from('stock_alerts')
+      .select('id, product_id, email, notified_at, created_at, products(name, slug, legacy_id, stock_label)')
+      .order('created_at', { ascending: false }).limit(300);
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
+
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { product_id, email, website } = req.body || {};

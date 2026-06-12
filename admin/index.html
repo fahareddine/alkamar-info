@@ -19,6 +19,43 @@
         <div class="stat-card"><div class="stat-card__label">Commandes totales</div><div class="stat-card__value" id="orders-total">—</div><div class="stat-card__sub" id="orders-pending"></div></div>
         <div class="stat-card"><div class="stat-card__label">Alertes stock faible</div><div class="stat-card__value" id="stock-alerts">—</div><div class="stat-card__sub">produits &lt; 3 unités</div></div>
       </div>
+      <!-- Analytics 30 jours -->
+      <div class="stats-grid" id="ana-kpis" style="display:none">
+        <div class="stat-card"><div class="stat-card__label">CA 30 jours</div><div class="stat-card__value" id="ana-ca">—</div></div>
+        <div class="stat-card"><div class="stat-card__label">Panier moyen</div><div class="stat-card__value" id="ana-cart">—</div></div>
+        <div class="stat-card"><div class="stat-card__label">Taux payé</div><div class="stat-card__value" id="ana-paid">—</div><div class="stat-card__sub" id="ana-paid-sub"></div></div>
+        <div class="stat-card"><div class="stat-card__label">Jamais vendus (30j)</div><div class="stat-card__value" id="ana-neversold">—</div><div class="stat-card__sub">produits actifs sans vente</div></div>
+      </div>
+
+      <div class="form-card" id="ana-chart-card" style="display:none">
+        <h2>📈 Chiffre d'affaires — 30 derniers jours</h2>
+        <div id="ana-chart" style="display:flex;align-items:flex-end;gap:2px;height:120px"></div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--admin-muted);margin-top:6px">
+          <span id="ana-chart-start"></span><span id="ana-chart-end"></span>
+        </div>
+      </div>
+
+      <div class="dash-grid" id="ana-tables" style="display:none;margin-bottom:24px">
+        <div>
+          <h2 style="margin-bottom:12px;font-size:16px">🏆 Top produits vendus (30j)</h2>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Produit</th><th>Qté</th><th>CA</th></tr></thead>
+              <tbody id="ana-top-body"><tr><td colspan="3" style="text-align:center;color:var(--admin-muted);padding:16px">—</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div>
+          <h2 style="margin-bottom:12px;font-size:16px">😴 Jamais vendus — à promouvoir ou déstocker</h2>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead><tr><th>Produit</th><th>Prix</th></tr></thead>
+              <tbody id="ana-never-body"><tr><td colspan="2" style="text-align:center;color:var(--admin-muted);padding:16px">—</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
       <div class="dash-grid">
         <div>
           <h2 style="margin-bottom:12px;font-size:16px">Dernières commandes</h2>

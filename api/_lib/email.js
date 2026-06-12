@@ -369,5 +369,5 @@ ${ctaButton('https://boutique.info-experts.fr/admin/orders/index.html', "Voir da
 module.exports = {
   sendEmail, sendContactConfirmation, sendContactAdminNotification,
   sendOrderConfirmation, sendOrderAdminNotification, logEmail,
-  isValidEmail, baseTemplate,
+  isValidEmail, baseTemplate, ctaButton, infoBox, esc, formatPrice,
 };

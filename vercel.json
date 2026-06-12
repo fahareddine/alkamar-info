@@ -44,6 +44,8 @@
   "rewrites": [
     { "source": "/digital",                      "destination": "/digital.html"                         },
     { "source": "/api/backup-cron",              "destination": "/api/products?_route=backup&action=cron" },
+    { "source": "/api/orders/unpaid",            "destination": "/api/orders?action=unpaid" },
+    { "source": "/api/orders/:id",               "destination": "/api/orders?_route=order_id&_id=:id" },
     { "source": "/api/digital/licenses",         "destination": "/api/digital?_route=licenses"          },
     { "source": "/api/digital/subscriptions",    "destination": "/api/digital?_route=subscriptions"     },
     { "source": "/api/digital/downloads",        "destination": "/api/digital?_route=download"          },

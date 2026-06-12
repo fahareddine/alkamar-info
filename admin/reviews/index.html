@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Avis & Alertes — Info Experts Admin</title>
+  <link rel="stylesheet" href="/admin/css/admin.css">
+  <style>
+    .rv-tabs { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+    .rv-comment { max-width: 420px; font-size: 13px; color: var(--admin-text-2); line-height: 1.5; }
+    .rv-stars { color: #fcd34d; letter-spacing: 1px; }
+    .rv-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    h2.section-title { font-size: 17px; margin: 34px 0 14px; }
+  </style>
+</head>
+<body>
+  <div class="admin-layout">
+    <main class="admin-main">
+      <div class="page-header">
+        <h1>⭐ Avis clients</h1>
+      </div>
+
+      <div class="rv-tabs">
+        <button class="btn btn--sm btn--primary"  data-filter="pending"  onclick="setFilter('pending', this)">🕓 En attente</button>
+        <button class="btn btn--sm btn--ghost"    data-filter="approved" onclick="setFilter('approved', this)">✅ Approuvés</button>
+        <button class="btn btn--sm btn--ghost"    data-filter="rejected" onclick="setFilter('rejected', this)">🚫 Rejetés</button>
+        <button class="btn btn--sm btn--ghost"    data-filter=""         onclick="setFilter('', this)">Tous</button>
+      </div>
+
+      <div class="alert" id="rv-status" style="display:none"></div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Produit</th><th>Auteur</th><th>Note</th><th>Commentaire</th><th>Date</th><th>Actions</th></tr></thead>
+          <tbody id="rv-body"><tr><td colspan="6" style="text-align:center;color:var(--admin-muted);padding:24px">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+
+      <h2 class="section-title">🔔 Alertes retour en stock</h2>
+      <p style="font-size:13px;color:var(--admin-muted);margin-bottom:14px">
+        Clients en attente d'un produit. L'email leur est envoyé <strong>automatiquement</strong> quand tu remets le produit en stock (champ stock &gt; 0 ou libellé « En stock » lors de l'enregistrement du produit).
+      </p>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>Produit</th><th>Email client</th><th>Demandé le</th><th>Statut</th></tr></thead>
+          <tbody id="al-body"><tr><td colspan="4" style="text-align:center;color:var(--admin-muted);padding:24px">Chargement…</td></tr></tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="/admin/js/config.js"></script>
+  <script src="/admin/js/auth.js"></script>
+  <script src="/admin/js/api.js"></script>
+  <script src="/admin/js/layout.js"></script>
+  <script src="/admin/js/reviews.js"></script>
+</body>
+</html>

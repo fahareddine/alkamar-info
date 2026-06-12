@@ -64,7 +64,31 @@ module.exports = async function handler(req, res) {
       });
       if (logErr) console.error('[admin_logs] insert failed:', logErr.message);
 
-      return res.status(200).json(data);
+      // ── Retour en stock : notifie les clients en attente (alertes 🔔) ──
+      // Déclenché quand la mise à jour signale du stock dispo. Les alertes sont
+      // marquées notified_at → jamais de double envoi.
+      let alertsSent = 0;
+      const backInStock = (Number(patch.stock) > 0)
+        || (typeof patch.stock_label === 'string' && /en stock/i.test(patch.stock_label));
+      if (backInStock) {
+        const { data: alerts } = await supabase.from('stock_alerts')
+          .select('id, email').eq('product_id', data.id).is('notified_at', null).limit(100);
+        if (alerts && alerts.length) {
+          const { sendBackInStock } = require('./_lib/email-extra');
+          for (const a of alerts) {
+            const r = await sendBackInStock({ product: data, email: a.email })
+              .catch(e => ({ success: false, error: e.message }));
+            if (r.success || r.skipped) {
+              await supabase.from('stock_alerts')
+                .update({ notified_at: new Date().toISOString() }).eq('id', a.id);
+              if (r.success) alertsSent++;
+            }
+          }
+          console.log(`[stock_alert] ${alertsSent}/${alerts.length} notifications envoyées pour ${data.name}`);
+        }
+      }
+
+      return res.status(200).json({ ...data, _alerts_sent: alertsSent });
     }
 
     if (req.method === 'DELETE') {

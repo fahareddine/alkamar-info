@@ -117,6 +117,133 @@ module.exports = async function handler(req, res) {
   if (req.query._route === 'stats' || req.query._route === 'logs') {
     return require('./_lib/stats')(req, res);
   }
+  // Délégation analytics ventes (dashboard admin)
+  if (req.query._route === 'analytics') {
+    return require('./_lib/analytics')(req, res);
+  }
+
+  // ── Route /api/orders/:id — GET détail + PUT (statut → email client auto) ──
+  if (req.query._route === 'order_id') {
+    const _id = req.query._id;
+    if (!_id) return res.status(400).json({ error: 'id requis' });
+    const auth = await requireRole(req, 'admin', 'commercial');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+
+    if (req.method === 'GET') {
+      const { data, error } = await supabase.from('orders')
+        .select('*, customers(name, email, phone, city), order_items(*, products(name, image))')
+        .eq('id', _id).maybeSingle();
+      if (error) return res.status(500).json({ error: error.message });
+      if (!data) return res.status(404).json({ error: 'Commande introuvable' });
+      return res.status(200).json(data);
+    }
+
+    if (req.method === 'PUT') {
+      const ALLOWED = new Set(['status', 'notes', 'payment_status']);
+      const patch = {};
+      for (const [k, v] of Object.entries(req.body || {})) {
+        if (ALLOWED.has(k)) patch[k] = v;
+      }
+      if (!Object.keys(patch).length) return res.status(400).json({ error: 'Aucun champ modifiable fourni' });
+      if (patch.status && !['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'].includes(patch.status)) {
+        return res.status(400).json({ error: 'status invalide' });
+      }
+
+      const { data: before } = await supabase.from('orders')
+        .select('status, customer_email, customer_name, total_eur, customers(email, name)')
+        .eq('id', _id).maybeSingle();
+      if (!before) return res.status(404).json({ error: 'Commande introuvable' });
+
+      patch.updated_at = new Date().toISOString();
+      const { data, error } = await supabase.from('orders').update(patch).eq('id', _id).select().single();
+      if (error) return res.status(500).json({ error: error.message });
+
+      // Email de suivi automatique au client quand le statut change
+      let emailResult = null;
+      if (patch.status && patch.status !== before.status) {
+        const { sendOrderStatusUpdate } = require('./_lib/email-extra');
+        emailResult = await sendOrderStatusUpdate({
+          order: {
+            ...data,
+            customer_email: data.customer_email || before.customers?.email || null,
+            customer_name: data.customer_name || before.customers?.name || '',
+          },
+          newStatus: patch.status,
+        }).catch(e => ({ success: false, error: e.message }));
+      }
+
+      return res.status(200).json({ ...data, _email: emailResult });
+    }
+
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  // ── Relances impayés ──
+  // GET ?action=unpaid : commandes Stripe non payées avec email (admin)
+  if (req.method === 'GET' && req.query.action === 'unpaid') {
+    const auth = await requireRole(req, 'admin', 'commercial');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    const { data, error } = await supabase.from('orders')
+      .select('id, created_at, customer_name, customer_email, total_eur, payment_status, status, reminder_sent_at')
+      .eq('payment_status', 'unpaid').eq('payment_method', 'stripe')
+      .neq('status', 'cancelled')
+      .not('customer_email', 'is', null)
+      .order('created_at', { ascending: false }).limit(100);
+    if (error) return res.status(500).json({ error: error.message });
+    return res.status(200).json(data);
+  }
+
+  // POST ?action=remind : envoie l'email de relance avec un nouveau lien de paiement
+  if (req.method === 'POST' && req.query.action === 'remind') {
+    const auth = await requireRole(req, 'admin', 'commercial');
+    if (auth.error) return res.status(auth.status).json({ error: auth.error });
+    const { order_id } = req.body || {};
+    if (!order_id) return res.status(400).json({ error: 'order_id requis' });
+
+    const { data: order } = await supabase.from('orders')
+      .select('id, customer_name, customer_email, total_eur, payment_status')
+      .eq('id', order_id).maybeSingle();
+    if (!order) return res.status(404).json({ error: 'Commande introuvable' });
+    if (order.payment_status !== 'unpaid') return res.status(400).json({ error: 'Commande déjà payée' });
+    if (!order.customer_email) return res.status(400).json({ error: 'Pas d\'email client sur cette commande' });
+
+    // Nouvelle session Stripe sur le montant total (les anciennes sessions expirent)
+    const key = (process.env.STRIPE_SECRET_KEY || '').replace(/[\r\n\s]/g, '');
+    if (!key) return res.status(500).json({ error: 'STRIPE_SECRET_KEY manquante' });
+    const BASE = 'https://boutique.info-experts.fr';
+    const orderNum = order.id.split('-')[0].toUpperCase();
+    const session = await stripeRequest('checkout/sessions', {
+      mode: 'payment',
+      line_items: [{
+        price_data: {
+          currency: 'eur',
+          product_data: { name: `Commande #${orderNum} — Boutique Info Experts` },
+          unit_amount: Math.round(Number(order.total_eur) * 100),
+        },
+        quantity: 1,
+      }],
+      locale: 'fr',
+      customer_email: order.customer_email,
+      success_url: `${BASE}/success.html?order_id=${order.id}&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${BASE}/index.html`,
+      metadata: { order_id: order.id },
+    }, key);
+    if (session.status !== 200 || !session.data.url) {
+      return res.status(500).json({ error: session.data?.error?.message || 'Erreur Stripe' });
+    }
+
+    const { sendPaymentReminder } = require('./_lib/email-extra');
+    const result = await sendPaymentReminder({ order, payUrl: session.data.url });
+    if (!result.success && !result.skipped) {
+      return res.status(500).json({ error: 'Envoi email échoué : ' + (result.error || 'inconnu') });
+    }
+    await supabase.from('orders').update({
+      reminder_sent_at: new Date().toISOString(),
+      stripe_session_id: session.data.id,
+    }).eq('id', order.id);
+
+    return res.status(200).json({ ok: true, sent_to: order.customer_email, skipped: !!result.skipped });
+  }
 
   // Route client: GET /api/orders?my=1 — commandes de l'utilisateur connecté
   if (req.method === 'GET' && req.query.my === '1') {
