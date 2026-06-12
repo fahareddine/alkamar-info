@@ -94,10 +94,10 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 @media(hover:hover) and (prefers-reduced-motion:no-preference){.product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-card-hover);border-color:#d4ddec}.product-card:hover .card-img img{transform:scale(1.05)}.product-card:hover .card-title{color:var(--primary)}}
 .badge{box-shadow:0 2px 8px rgba(15,23,42,.14)}
 /* Hiérarchie CTA : primaire fort, secondaire discret */
-.btn-detail{background:transparent;border-color:transparent;color:var(--primary);font-weight:600;gap:5px}
-.btn-detail::after{content:'→';display:inline-block;margin-left:5px;transition:transform .2s var(--ease-out)}
+.btn-detail{background:transparent;border-color:transparent;color:var(--primary);font-weight:600}
+/* NE PAS toucher .btn-detail::after : c'est le stretched-link (content:'';inset:0)
+   qui rend toute la card cliquable — y injecter du contenu casse les cards. */
 .btn-detail:hover{background:rgba(26,58,143,.06);border-color:transparent;color:var(--primary)}
-.btn-detail:hover::after{transform:translateX(3px)}
 .btn-cart{box-shadow:0 1px 3px rgba(245,158,11,.25);transition:background .2s,box-shadow .2s,transform .1s}
 .btn-cart:hover{box-shadow:var(--shadow-accent)}
 .btn-cart:active,.btn-detail:active,.btn-checkout:active,.hero-slide__cta:active,.btn-voir-tout:active,.page-btn:active{transform:scale(.97)}
