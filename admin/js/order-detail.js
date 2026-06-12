@@ -8,6 +8,20 @@ async function loadOrder() {
   document.getElementById('page-title').textContent = `Commande #${o.id.slice(0,8)}`;
   document.getElementById('status-select').value = o.status;
   document.getElementById('notes').value = o.notes || '';
+  if (o.payment_status) document.getElementById('payment-select').value = o.payment_status;
+
+  // Bouton WhatsApp avec message pré-rempli (canal n°1 aux Comores)
+  const waNum = (o.customer_whatsapp || o.customers?.phone || '').replace(/[^\d+]/g, '').replace(/^\+/, '');
+  if (waNum) {
+    const orderNum = o.id.slice(0, 8).toUpperCase();
+    const msg = encodeURIComponent(
+      `Bonjour ${o.customer_name || o.customers?.name || ''}, c'est la Boutique Info Experts. ` +
+      `Au sujet de votre commande #${orderNum} (${Number(o.total_eur).toFixed(2)} €) : `
+    );
+    const wa = document.getElementById('wa-link');
+    wa.href = `https://wa.me/${waNum}?text=${msg}`;
+    wa.style.display = 'flex';
+  }
 
   document.getElementById('customer-info').innerHTML = o.customers ? `
     <p style="font-weight:600">${esc(o.customers.name)}</p>
@@ -40,11 +54,15 @@ async function init() {
   document.getElementById('save-status').addEventListener('click', async () => {
     const alertEl = document.getElementById('alert');
     try {
-      await api.put(`/api/orders/${orderId}`, {
+      const updated = await api.put(`/api/orders/${orderId}`, {
         status: document.getElementById('status-select').value,
+        payment_status: document.getElementById('payment-select').value,
         notes: document.getElementById('notes').value,
       });
-      alertEl.className = 'alert alert--success'; alertEl.textContent = 'Commande mise à jour !'; alertEl.style.display = 'block';
+      alertEl.className = 'alert alert--success';
+      alertEl.textContent = 'Commande mise à jour !' +
+        (updated?._email?.success ? ' 📧 Email de suivi envoyé au client.' : '');
+      alertEl.style.display = 'block';
       setTimeout(() => alertEl.style.display = 'none', 2000);
     } catch (e) {
       alertEl.className = 'alert alert--error'; alertEl.textContent = e.message; alertEl.style.display = 'block';

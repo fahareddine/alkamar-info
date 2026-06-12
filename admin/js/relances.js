@@ -66,11 +66,26 @@ async function loadUnpaid() {
       tdReminded.appendChild(badge);
 
       const tdAction = document.createElement('td');
+      tdAction.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap';
       const btn = document.createElement('button');
       btn.className = 'btn btn--sm ' + (o.reminder_sent_at ? 'btn--ghost' : 'btn--primary');
       btn.textContent = o.reminder_sent_at ? '↩️ Relancer encore' : '📧 Relancer';
       btn.addEventListener('click', () => remind(o, btn));
       tdAction.appendChild(btn);
+
+      // WhatsApp pré-rempli — canal le plus lu aux Comores
+      const waNum = (o.customer_whatsapp || '').replace(/[^\d+]/g, '').replace(/^\+/, '');
+      if (waNum) {
+        const wa = document.createElement('a');
+        wa.className = 'btn btn--sm btn--success';
+        wa.target = '_blank';
+        wa.textContent = '💬';
+        wa.title = 'Relancer sur WhatsApp';
+        wa.href = 'https://wa.me/' + waNum + '?text=' + encodeURIComponent(
+          `Bonjour ${o.customer_name || ''}, c'est la Boutique Info Experts 👋 Votre commande #${o.id.slice(0, 8).toUpperCase()} (${Number(o.total_eur).toFixed(2)} €) vous attend — souhaitez-vous finaliser le paiement ? Nous acceptons aussi Mobile Money et espèces au retrait.`
+        );
+        tdAction.appendChild(wa);
+      }
 
       tr.append(tdNum, tdClient, tdTotal, tdDate, tdReminded, tdAction);
       body.appendChild(tr);

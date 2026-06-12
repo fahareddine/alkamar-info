@@ -15,7 +15,7 @@ module.exports = async function analytics(req, res) {
         .select('id, created_at, total_eur, status, payment_status')
         .gte('created_at', since30).limit(2000),
       supabase.from('order_items')
-        .select('product_id, product_name, quantity, price_eur, orders!inner(created_at, status)')
+        .select('product_id, quantity, unit_price_eur, product_snapshot, orders!inner(created_at, status)')
         .gte('orders.created_at', since30).neq('orders.status', 'cancelled').limit(5000),
       supabase.from('products')
         .select('id, name, price_eur').eq('status', 'active').gt('price_eur', 0).limit(500),
@@ -37,10 +37,11 @@ module.exports = async function analytics(req, res) {
     // Top produits vendus (depuis order_items)
     const sold = {};
     (items || []).forEach(i => {
-      const k = i.product_id || i.product_name;
-      if (!sold[k]) sold[k] = { name: i.product_name, qty: 0, revenue: 0, product_id: i.product_id };
+      const name = i.product_snapshot?.name || 'Produit';
+      const k = i.product_id || name;
+      if (!sold[k]) sold[k] = { name, qty: 0, revenue: 0, product_id: i.product_id };
       sold[k].qty += i.quantity || 1;
-      sold[k].revenue += (Number(i.price_eur) || 0) * (i.quantity || 1);
+      sold[k].revenue += (Number(i.unit_price_eur) || 0) * (i.quantity || 1);
     });
     const topProducts = Object.values(sold).sort((a, b) => b.qty - a.qty).slice(0, 8);
 

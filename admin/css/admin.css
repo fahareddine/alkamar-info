@@ -458,6 +458,52 @@ input[type=checkbox].row-check { width: 15px; height: 15px; cursor: pointer; acc
 /* Empêche le scroll du fond quand le drawer est ouvert */
 body.admin-drawer-open { overflow: hidden; }
 
+/* ── Badges compteurs menu ── */
+.nav-count {
+  margin-left: auto;
+  background: var(--admin-danger);
+  color: #fff;
+  font-size: 11px; font-weight: 700;
+  min-width: 20px; height: 20px;
+  border-radius: 10px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0 6px; line-height: 1;
+}
+
+/* ── Recherche globale Ctrl+K ── */
+.gs-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.6); z-index: 200;
+  padding: 10vh 16px 16px; justify-content: center; align-items: flex-start;
+}
+.gs-overlay.is-open { display: flex; }
+.gs-box {
+  background: var(--admin-surface);
+  border: 1px solid var(--admin-border-strong);
+  border-radius: var(--radius-md);
+  width: 100%; max-width: 560px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.6);
+  overflow: hidden;
+}
+.gs-input {
+  width: 100%; padding: 16px 18px;
+  background: transparent; border: none; outline: none;
+  color: var(--admin-text); font-size: 16px; font-family: inherit;
+  border-bottom: 1px solid var(--admin-border);
+}
+.gs-results { max-height: 50vh; overflow-y: auto; }
+.gs-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 18px;
+  color: var(--admin-text-2); text-decoration: none;
+  border-bottom: 1px solid rgba(42,53,69,.5);
+}
+.gs-item:hover, .gs-item.is-active { background: var(--admin-accent-subtle); text-decoration: none; }
+.gs-item__label { font-size: 14px; font-weight: 600; color: var(--admin-text); }
+.gs-item__sub { font-size: 12px; color: var(--admin-muted); }
+.gs-empty { padding: 24px; text-align: center; color: var(--admin-muted); font-size: 14px; }
+.gs-hint { padding: 8px 18px; font-size: 11px; color: var(--admin-muted); border-top: 1px solid var(--admin-border); }
+
 /* Grilles inline 2 colonnes (edit produit, détail commande…) → 1 colonne mobile.
    Cible les styles inline existants sans devoir éditer chaque page. */
 @media (max-width: 700px) {

@@ -46,6 +46,26 @@ function stripeRequest(path, params, apiKey) {
   });
 }
 
+// ── Stock automatique ─────────────────────────────────────────────────────────
+// direction -1 : commande passée (décrément) · +1 : commande annulée (restock)
+// Met aussi à jour le libellé de stock affiché sur le site.
+async function adjustStock(items, direction) {
+  const { supabase } = require('./_lib/supabase');
+  for (const it of items) {
+    if (!it.product_id || !it.quantity) continue;
+    const { data: p } = await supabase.from('products')
+      .select('stock, stock_label').eq('id', it.product_id).maybeSingle();
+    if (!p || typeof p.stock !== 'number') continue;
+    const newStock = Math.max(0, p.stock + direction * it.quantity);
+    const patch = { stock: newStock };
+    if (newStock <= 0) patch.stock_label = 'Rupture de stock';
+    else if (newStock <= 2) patch.stock_label = `Plus que ${newStock} en stock`;
+    else if (/rupture|plus que/i.test(p.stock_label || '')) patch.stock_label = 'En stock';
+    const { error } = await supabase.from('products').update(patch).eq('id', it.product_id);
+    if (error) console.error('[stock] ajustement échoué', it.product_id, error.message);
+  }
+}
+
 // ── Stripe Checkout (action=checkout, public, no auth) ────────────────────────
 async function handleStripeCheckout(req, res) {
   const key = (process.env.STRIPE_SECRET_KEY || '').replace(/[\r\n\s]/g, '');
@@ -121,6 +141,10 @@ module.exports = async function handler(req, res) {
   if (req.query._route === 'analytics') {
     return require('./_lib/analytics')(req, res);
   }
+  // Compteurs badges menu admin
+  if (req.query._route === 'counts') {
+    return require('./_lib/counts')(req, res);
+  }
 
   // ── Route /api/orders/:id — GET détail + PUT (statut → email client auto) ──
   if (req.query._route === 'order_id') {
@@ -170,6 +194,17 @@ module.exports = async function handler(req, res) {
           },
           newStatus: patch.status,
         }).catch(e => ({ success: false, error: e.message }));
+
+        // Stock : restock si annulation, re-décrément si réactivation d'une commande annulée
+        if (patch.status === 'cancelled' || before.status === 'cancelled') {
+          const { data: orderItems } = await supabase.from('order_items')
+            .select('product_id, quantity').eq('order_id', _id);
+          if (orderItems?.length) {
+            const dir = patch.status === 'cancelled' ? +1 : -1;
+            await adjustStock(orderItems, dir)
+              .catch(e => console.error('[stock] ajustement annulation échoué:', e.message));
+          }
+        }
       }
 
       return res.status(200).json({ ...data, _email: emailResult });
@@ -184,7 +219,7 @@ module.exports = async function handler(req, res) {
     const auth = await requireRole(req, 'admin', 'commercial');
     if (auth.error) return res.status(auth.status).json({ error: auth.error });
     const { data, error } = await supabase.from('orders')
-      .select('id, created_at, customer_name, customer_email, total_eur, payment_status, status, reminder_sent_at')
+      .select('id, created_at, customer_name, customer_email, customer_whatsapp, total_eur, payment_status, status, reminder_sent_at')
       .eq('payment_status', 'unpaid').eq('payment_method', 'stripe')
       .neq('status', 'cancelled')
       .not('customer_email', 'is', null)
@@ -420,9 +455,23 @@ module.exports = async function handler(req, res) {
 
     // Créer les order_items
     if (validItems.length) {
-      await supabase.from('order_items').insert(
-        validItems.map(i => ({ order_id: order.id, product_id: i.product_id, product_name: i.product_name, price_eur: i.price_eur, price_kmf: i.price_kmf, quantity: i.quantity }))
+      // Colonnes réelles : unit_price_eur / unit_price_kmf / product_snapshot (NOT NULL).
+      // L'ancien insert (price_eur/product_name) échouait silencieusement → commandes sans détail.
+      const { error: itemsErr } = await supabase.from('order_items').insert(
+        validItems.map(i => ({
+          order_id: order.id,
+          product_id: i.product_id,
+          quantity: i.quantity,
+          unit_price_eur: i.price_eur,
+          unit_price_kmf: i.price_kmf || Math.round((i.price_eur || 0) * 491),
+          product_snapshot: { name: i.product_name, price_eur: i.price_eur, price_kmf: i.price_kmf },
+        }))
       );
+      if (itemsErr) console.error('[guest_checkout] order_items insert failed:', itemsErr.message);
+
+      // Décrément automatique du stock (anti-survente) — restocké si annulation
+      await adjustStock(validItems.map(i => ({ product_id: i.product_id, quantity: i.quantity })), -1)
+        .catch(e => console.error('[stock] décrément échoué:', e.message));
     }
 
     // Incrémenter l'usage du coupon (best-effort, ne bloque pas la commande)
