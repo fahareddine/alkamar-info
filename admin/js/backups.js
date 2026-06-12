@@ -1,7 +1,7 @@
 // admin/js/backups.js — Page Sauvegardes (liste, création, restauration, téléchargement)
 'use strict';
 
-const BK_BASE = '/products?_route=backup';
+const BK_BASE = '/api/products?_route=backup';
 let _tables = [];
 let _restoreFile = null;
 
