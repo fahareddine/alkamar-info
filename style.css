@@ -171,6 +171,9 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .wish-toast--link{pointer-events:auto}
 .wish-toast a{color:#fbbf24;font-weight:700;text-decoration:underline;margin-left:6px}
 .wish-toast a:hover{color:#fcd34d}
+/* Badge favoris : animation « bump » au changement de compteur (retour visuel ajout) */
+.wish-badge{transition:transform .2s}
+.wish-badge.bump{transform:scale(1.5)}
 
 /* Bandeau badge haut de card : le texte nowrap débordait du bord droit de la card,
    l'overflow:hidden tranchait le coin droit au carré pendant que le gauche restait

@@ -116,11 +116,30 @@
   /* ── Badge navigation ─────────────────────────────────────── */
 
   function _updateNavBadge() {
+    var count = getCount();
+
+    // Cœur du header : rouge plein quand au moins 1 favori (retour visuel clair
+    // pour le client — il voit que son ajout a fonctionné). Gris/contour si vide.
+    var wishLink = document.querySelector('.header__action--wishlist');
+    if (wishLink && !wishLink.hasAttribute('aria-current')) {
+      var svg = wishLink.querySelector('svg');
+      if (svg) {
+        svg.setAttribute('fill', count > 0 ? '#ef4444' : 'none');
+        svg.setAttribute('stroke', count > 0 ? '#ef4444' : 'currentColor');
+      }
+    }
+
     var badge = document.getElementById('wish-badge');
     if (!badge) return;
-    var count = getCount();
+    var prev = badge.textContent;
     badge.textContent = count;
     badge.style.display = count > 0 ? '' : 'none';
+    // Animation « bump » quand le compteur change → le client perçoit le +1
+    if (count > 0 && String(count) !== prev) {
+      badge.classList.remove('bump');
+      void badge.offsetWidth; // reflow pour rejouer l'animation
+      badge.classList.add('bump');
+    }
   }
 
   function _initNavBadge() {
