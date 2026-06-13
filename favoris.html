@@ -84,7 +84,7 @@
 <div class="wish-grid" id="wish-grid"></div>
 
 <!-- Scripts -->
-<script src="/js/wishlist.js?v=2"></script>
+<script src="/js/wishlist.js?v=3"></script>
 <script src="/js/nav.js?v=5" defer></script>
 <script src="/js/cart.js?v=3" defer></script>
 <script src="/js/cart-ui.js?v=3" defer></script>
@@ -298,6 +298,18 @@
   /* ── Premier rendu au chargement ────────────────────────── */
   render();
   enrichFavorites();
+
+  /* ── Resync mobile (bfcache) ─────────────────────────────
+     Quand on revient sur cette page via retour/avance, le navigateur mobile
+     la restaure depuis le cache mémoire SANS ré-exécuter le script → la liste
+     reste figée (il fallait rafraîchir). pageshow.persisted relance le rendu. */
+  window.addEventListener('pageshow', function (e) {
+    if (e.persisted) { render(); enrichFavorites(); }
+  });
+  /* Sync entre onglets */
+  window.addEventListener('storage', function (e) {
+    if (e.key === 'alkamar_wish') render();
+  });
 
 }());
 </script>

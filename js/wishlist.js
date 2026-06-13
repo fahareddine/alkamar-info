@@ -170,6 +170,13 @@
     _initNavBadge();
   }
 
+  /* ── Resync mobile ──────────────────────────────────────────
+     bfcache : sur mobile, revenir sur une page la restaure depuis le cache
+     mémoire SANS ré-exécuter le JS → le badge reste figé. pageshow.persisted
+     détecte cette restauration et relit le compteur. storage : sync entre onglets. */
+  window.addEventListener('pageshow', function () { _updateNavBadge(); });
+  window.addEventListener('storage', function (e) { if (e.key === KEY) _emit(); });
+
   /* ── toggleWish global — onclick="toggleWish(this)" sur toutes les pages ── */
 
   window.toggleWish = function (btn) {
