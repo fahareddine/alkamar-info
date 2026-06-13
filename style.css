@@ -159,12 +159,14 @@ input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px soli
 .card-img--broken{background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 12px,#f1f5f9 12px,#f1f5f9 24px)}
 
 /* Accès favoris intuitif :
-   Mobile : le cœur Favoris reste visible dans le header (classe posée par wishlist.js),
-   avec badge compteur — avant, seul le panier était affiché et la page favoris
-   était introuvable sur mobile. Label "Favoris" gardé comme Panier/Chercher pour
-   un alignement vertical identique (icône+label empilés). Toast cliquable. */
+   Mobile : le cœur Favoris reste visible dans le header (classe posée par wishlist.js).
+   Header compact en icônes seules (labels masqués) — empêche le débordement quand
+   logo + Favoris + Panier + Chercher se serrent sur écran étroit. Badges conservés,
+   cibles tactiles ≥40px. Standard mobile (Amazon, AliExpress). Toast cliquable. */
 @media(max-width:768px){
   .header__actions .header__action--wishlist{display:flex}
+  .header__actions .header__action>span:not(.cart-badge):not(.wish-badge){display:none}
+  .header__actions .header__action{min-width:40px;padding-left:6px;padding-right:6px}
 }
 .wish-toast--link{pointer-events:auto}
 .wish-toast a{color:#fbbf24;font-weight:700;text-decoration:underline;margin-left:6px}
