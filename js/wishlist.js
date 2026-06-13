@@ -134,11 +134,13 @@
     var prev = badge.textContent;
     badge.textContent = count;
     badge.style.display = count > 0 ? '' : 'none';
-    // Animation « bump » quand le compteur change → le client perçoit le +1
+    // Animation « bump » quand le compteur change → le client perçoit le +1.
+    // La classe est RETIRÉE après l'anim (sinon le scale 1.5 reste figé = badge gonflé).
     if (count > 0 && String(count) !== prev) {
       badge.classList.remove('bump');
       void badge.offsetWidth; // reflow pour rejouer l'animation
       badge.classList.add('bump');
+      setTimeout(function () { badge.classList.remove('bump'); }, 250);
     }
   }
 
