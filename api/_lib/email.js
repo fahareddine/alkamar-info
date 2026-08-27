@@ -156,7 +156,7 @@ ${content}
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="em-footer-cols"><tr>
 <td valign="top" style="padding-right:16px">
   <p style="margin:0 0 6px;color:#e2e8f0;font-size:13px;font-weight:700;mso-line-height-rule:exactly;line-height:18px">Info Experts</p>
-  <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">&#128222; <a href="tel:+2697772722" style="color:#9ca3af;text-decoration:none">+269 777 27 22</a></p>
+  <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">&#128222; <a href="tel:+2694777865" style="color:#9ca3af;text-decoration:none">+269 477 78 65</a></p>
   <p style="margin:0 0 4px;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">&#128231; <a href="mailto:contact@info-experts.fr" style="color:#60a5fa;text-decoration:none">contact@info-experts.fr</a></p>
   <p style="margin:0;color:#9ca3af;font-size:12px;mso-line-height-rule:exactly;line-height:18px">&#128205; Moroni, Grande Comore, Comores</p>
 </td>
@@ -235,12 +235,12 @@ ${nextSteps([
   ])}
 <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:16px 20px;margin:20px 0">
   <p style="margin:0 0 8px;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:1px">&#128241; Contact rapide</p>
-  <p style="margin:0;font-size:13px;color:#374151">WhatsApp : <a href="https://wa.me/2697772722" style="color:#1e3a8a;font-weight:600;text-decoration:none">+269 777 27 22</a></p>
+  <p style="margin:0;font-size:13px;color:#374151">WhatsApp : <a href="https://wa.me/2694777865" style="color:#1e3a8a;font-weight:600;text-decoration:none">+269 477 78 65</a></p>
 </div>
 ${ctaButton('https://boutique.info-experts.fr', 'Découvrir la boutique')}
 <p style="margin:24px 0 0;font-size:11px;color:#9ca3af;border-top:1px solid #f1f5f9;padding-top:16px">Info Experts &middot; Boutique informatique officielle aux Comores &middot; <a href="mailto:contact@info-experts.fr" style="color:#6b7280;text-decoration:none">contact@info-experts.fr</a></p>`;
   const html = baseTemplate({ title: subject, preheader, content });
-  const text = `Bonjour ${name},\n\nVotre message a bien été reçu.\nNous vous répondrons dans les meilleurs délais (24-48h).\n\nEmail : ${email}${phone ? `\nTéléphone : ${phone}` : ''}\nMessage : ${message}\n\nBoutique Info Experts\nhttps://boutique.info-experts.fr\ncontact@info-experts.fr\n+269 777 27 22`;
+  const text = `Bonjour ${name},\n\nVotre message a bien été reçu.\nNous vous répondrons dans les meilleurs délais (24-48h).\n\nEmail : ${email}${phone ? `\nTéléphone : ${phone}` : ''}\nMessage : ${message}\n\nBoutique Info Experts\nhttps://boutique.info-experts.fr\ncontact@info-experts.fr\n+269 477 78 65`;
   const result = await sendEmail({ to: email, subject, html, text });
   await logEmail({ eventType: 'contact_confirmation', recipientEmail: email, subject, status: result.success ? 'sent' : (result.skipped ? 'skipped' : 'failed'), errorMsg: result.error });
   return result;
@@ -286,7 +286,7 @@ async function sendOrderConfirmation({ order, items }) {
   const mmBlock = order.payment_method === 'mobile_money' ? `
 <div style="background:#fef3c7;border:1px solid #f59e0b;border-radius:8px;padding:16px 20px;margin:16px 0">
   <p style="margin:0 0 8px;font-size:11px;font-weight:700;color:#92400e;text-transform:uppercase;letter-spacing:1px">&#128179; Instructions Mobile Money</p>
-  <p style="margin:0 0 4px;font-size:13px;color:#374151">Num&eacute;ro : <strong>+269 331 27 22</strong></p>
+  <p style="margin:0 0 4px;font-size:13px;color:#374151">Num&eacute;ro : <strong>+269 477 78 65</strong></p>
   <p style="margin:0 0 4px;font-size:13px;color:#374151">Nom : <strong>Info Experts</strong></p>
   <p style="margin:0;font-size:13px;color:#374151">R&eacute;f&eacute;rence : <strong>#${orderNum}</strong></p>
 </div>` : '';
@@ -318,13 +318,13 @@ ${mmBlock}
 ${nextSteps(steps)}
 <div style="background:#f8fafc;border:1px solid #e5e7eb;border-radius:8px;padding:16px 20px;margin:20px 0">
   <p style="margin:0 0 6px;font-size:11px;font-weight:700;color:#374151;text-transform:uppercase;letter-spacing:1px">&#128241; Besoin d'aide ?</p>
-  <p style="margin:0;font-size:13px;color:#374151">WhatsApp : <a href="https://wa.me/2697772722?text=Commande+%23${orderNum}" style="color:#1e3a8a;font-weight:600;text-decoration:none">+269 777 27 22</a></p>
+  <p style="margin:0;font-size:13px;color:#374151">WhatsApp : <a href="https://wa.me/2694777865?text=Commande+%23${orderNum}" style="color:#1e3a8a;font-weight:600;text-decoration:none">+269 477 78 65</a></p>
 </div>
 ${ctaButton('https://boutique.info-experts.fr', 'Continuer mes achats')}
 <p style="margin:24px 0 0;font-size:11px;color:#9ca3af;border-top:1px solid #f1f5f9;padding-top:16px">Info Experts &middot; Boutique informatique officielle aux Comores &middot; <a href="mailto:contact@info-experts.fr" style="color:#6b7280;text-decoration:none">contact@info-experts.fr</a></p>`;
   const html = baseTemplate({ title: subject, preheader, content });
   const itemsText = (items || []).map(i => `- ${i.product_name || i.name} x${i.quantity} : ${formatPrice(i.price_eur)} €`).join('\n');
-  const text = `Bonjour ${name},\n\nVotre commande #${orderNum} est enregistrée !\nTotal : ${formatPrice(order.total_eur)} € (≈ ${Math.round((Number(order.total_eur)||0)*491).toLocaleString('fr-FR')} KMF)\nDate : ${dateStr}\nLivraison : ${delivLabel}\nPaiement : ${pmLabel}\n\n${itemsText}\n\nBoutique Info Experts\nhttps://boutique.info-experts.fr\ncontact@info-experts.fr\n+269 777 27 22\nMoroni, Grande Comore, Comores`;
+  const text = `Bonjour ${name},\n\nVotre commande #${orderNum} est enregistrée !\nTotal : ${formatPrice(order.total_eur)} € (≈ ${Math.round((Number(order.total_eur)||0)*491).toLocaleString('fr-FR')} KMF)\nDate : ${dateStr}\nLivraison : ${delivLabel}\nPaiement : ${pmLabel}\n\n${itemsText}\n\nBoutique Info Experts\nhttps://boutique.info-experts.fr\ncontact@info-experts.fr\n+269 477 78 65\nMoroni, Grande Comore, Comores`;
   const result = await sendEmail({ to: email, subject, html, text });
   await logEmail({ eventType: 'order_confirmation', recipientEmail: email, subject, status: result.success ? 'sent' : (result.skipped ? 'skipped' : 'failed'), orderId: order.id, errorMsg: result.error });
   return result;

@@ -674,7 +674,7 @@ git commit -m "feat(stripe): endpoint checkout session mode test"
         Merci pour votre commande. Vous recevrez un email de confirmation sous peu.<br>
         Notre équipe traite votre commande et vous contactera pour la livraison.
       </p>
-      <p><strong>📞 +269 377 57 04</strong> — Questions ? Appelez-nous !</p>
+      <p><strong>📞 +269 477 78 65</strong> — Questions ? Appelez-nous !</p>
     </div>
     <a href="index.html" class="btn-voir-tout" style="display:inline-flex">
       ← Retour à la boutique
@@ -729,7 +729,7 @@ git commit -m "feat(stripe): endpoint checkout session mode test"
       <a href="index.html" class="btn-cart" style="display:inline-flex;align-items:center;text-decoration:none">Continuer les achats</a>
     </div>
     <p style="margin-top:24px;font-size:12px;color:#94a3b8">
-      📞 Besoin d'aide ? +269 377 57 04
+      📞 Besoin d'aide ? +269 477 78 65
     </p>
   </main>
 </body>
@@ -968,7 +968,7 @@ Dans `index.html`, la section `.promo-banner` :
     <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
       <span style="background:rgba(255,255,255,.15);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700">💳 Mobile Money accepté</span>
       <span style="background:rgba(255,255,255,.15);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700">🛡️ Garantie 12–24 mois</span>
-      <span style="background:rgba(255,255,255,.15);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700">📞 +269 377 57 04</span>
+      <span style="background:rgba(255,255,255,.15);border-radius:6px;padding:6px 12px;font-size:12px;font-weight:700">📞 +269 477 78 65</span>
     </div>
   </div>
   <a href="#produits" class="promo-banner__cta">

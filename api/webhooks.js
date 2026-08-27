@@ -113,12 +113,12 @@ async function sendLicenseEmail({ to, name, productName, licenseKey, expiresAt }
   </td></tr></table>
 </td></tr>
 <tr><td style="background:#0a0f1e;padding:24px 36px;border-radius:0 0 12px 12px">
-  <p style="margin:0;color:#9ca3af;font-size:12px">📞 <a href="tel:+2697772722" style="color:#9ca3af;text-decoration:none">+269 777 27 22</a> · 📧 <a href="mailto:contact@info-experts.fr" style="color:#60a5fa;text-decoration:none">contact@info-experts.fr</a></p>
+  <p style="margin:0;color:#9ca3af;font-size:12px">📞 <a href="tel:+2694777865" style="color:#9ca3af;text-decoration:none">+269 477 78 65</a> · 📧 <a href="mailto:contact@info-experts.fr" style="color:#60a5fa;text-decoration:none">contact@info-experts.fr</a></p>
   <p style="margin:12px 0 0;padding-top:12px;border-top:1px solid #1f2937;color:#9ca3af;font-size:10px;text-align:center">&copy; 2026 Info Experts · Boutique informatique aux Comores</p>
 </td></tr>
 </table></td></tr></table>
 </body></html>`;
-  const text = `Bonjour ${name || 'Client'},\n\nVotre licence ${productName} est prête.\nClé : ${licenseKey}\nExpiration : ${expStr}\n\nConnectez-vous sur https://boutique.info-experts.fr/compte.html\n\nInfo Experts · contact@info-experts.fr · +269 777 27 22`;
+  const text = `Bonjour ${name || 'Client'},\n\nVotre licence ${productName} est prête.\nClé : ${licenseKey}\nExpiration : ${expStr}\n\nConnectez-vous sur https://boutique.info-experts.fr/compte.html\n\nInfo Experts · contact@info-experts.fr · +269 477 78 65`;
   await sendEmail({ to, subject, html, text });
 }
 

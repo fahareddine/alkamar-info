@@ -270,7 +270,7 @@ if (req.query.action === 'guest_checkout') {
     order_number: order.id.split('-')[0].toUpperCase(),
     total_eur,
     payment_instructions: payment_method === 'mobile_money'
-      ? { number: '+269 331 27 22', name: 'Alkamar Info', reference: order.id.split('-')[0].toUpperCase() }
+      ? { number: '+269 477 78 65', name: 'Alkamar Info', reference: order.id.split('-')[0].toUpperCase() }
       : null,
   });
 }
@@ -471,7 +471,7 @@ git commit -m "feat(checkout): route API guest_checkout — validation + command
 
       <div id="mobile-money-info" class="mobile-money-info" style="display:none">
         📱 <strong>Instructions Mobile Money</strong><br>
-        Envoyez le montant total au numéro <strong>+269 331 27 22</strong> (Alkamar Info).<br>
+        Envoyez le montant total au numéro <strong>+269 477 78 65</strong> (Alkamar Info).<br>
         Après envoi, transmettez la preuve par WhatsApp ou email avec votre numéro de commande.
       </div>
     </div>
@@ -781,7 +781,7 @@ git commit -m "feat(checkout): cart-ui.js redirige vers checkout.html sans bloqu
       <div style="background:#fef3c7;border:1px solid #fde68a;border-radius:10px;padding:14px;margin-top:16px;text-align:left;font-size:13px">
         <strong style="color:#92400e">📱 Instructions de paiement Mobile Money</strong><br><br>
         Envoyez <strong>${totalEur ? parseFloat(totalEur).toFixed(2).replace('.',',') + ' €' : 'le montant total'}</strong> au numéro :<br>
-        <strong style="font-size:16px">+269 331 27 22</strong> — Alkamar Info<br><br>
+        <strong style="font-size:16px">+269 477 78 65</strong> — Alkamar Info<br><br>
         Référence : <strong>#${orderNum}</strong><br><br>
         Après envoi, transmettez la preuve par WhatsApp ou email avec votre numéro de commande.
       </div>` : ''}

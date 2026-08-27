@@ -6,7 +6,7 @@ Boutique informatique en ligne (Comores) vendant ordinateurs, composants, périp
 
 - **URL de production** : déployé sur Vercel
 - **Langue** : français (code, commentaires, commits)
-- **Contact boutique** : +269 331 27 22
+- **Contact boutique** : +269 477 78 65
 
 ---
 

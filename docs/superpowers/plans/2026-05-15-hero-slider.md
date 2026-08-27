@@ -412,7 +412,7 @@ Remplacer tout le bloc `<!-- ── BANNIÈRE PROMO ── -->` jusqu'à la bali
           <div class="hero-slide__content">
             <div class="hero-slide__tag" style="background:#1d4ed8">EXPERT LOCAL</div>
             <h2 class="hero-slide__title">Votre expert info<br><em style="color:#bfdbfe">aux Comores.</em></h2>
-            <p class="hero-slide__sub">Réparation · Installation · Formation · Livraison 24h · +269 777 27 22</p>
+            <p class="hero-slide__sub">Réparation · Installation · Formation · Livraison 24h · +269 477 78 65</p>
             <a href="/services.html" class="hero-slide__cta">Nos services →</a>
           </div>
           <div class="hero-slide__img">
@@ -469,7 +469,7 @@ Remplacer tout le bloc `<!-- ── BANNIÈRE PROMO ── -->` jusqu'à la bali
   <div class="hero-trust">
     <span class="hero-trust__badge">💳 Mobile Money</span>
     <span class="hero-trust__badge">🛡️ Garantie 12–24 mois</span>
-    <span class="hero-trust__badge">📞 +269 777 27 22</span>
+    <span class="hero-trust__badge">📞 +269 477 78 65</span>
     <span class="hero-trust__badge">🔒 Paiement sécurisé</span>
     <span class="hero-trust__badge">📦 Livraison rapide</span>
     <!-- cro.js détecte #cro-countdown existant → ne réinjecte pas (zéro CLS) -->

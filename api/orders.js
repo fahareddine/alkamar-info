@@ -544,7 +544,7 @@ module.exports = async function handler(req, res) {
       order_number: orderNum,
       total_eur,
       payment_instructions: payment_method === 'mobile_money'
-        ? { number: '+269 331 27 22', name: 'Info Experts', reference: orderNum }
+        ? { number: '+269 477 78 65', name: 'Info Experts', reference: orderNum }
         : null,
     });
   }

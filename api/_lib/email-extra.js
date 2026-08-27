@@ -53,7 +53,7 @@ async function sendOrderStatusUpdate({ order, newStatus }) {
         ['Statut', `${info.emoji} ${info.label.charAt(0).toUpperCase() + info.label.slice(1)}`],
         ['Total', `${formatPrice(order.total_eur)} €`],
       ])}
-      <p>Une question ? Répondez à cet email ou contactez-nous au <strong>+269 331 27 22</strong> (WhatsApp).</p>
+      <p>Une question ? Répondez à cet email ou contactez-nous au <strong>+269 477 78 65</strong> (WhatsApp).</p>
     `,
   });
   const result = await sendEmail({ to, subject, html });
@@ -80,7 +80,7 @@ async function sendPaymentReminder({ order, payUrl }) {
       ])}
       ${ctaButton(payUrl, 'Finaliser mon paiement')}
       <p style="font-size:13px;color:#64748b">Vous préférez payer en Mobile Money ou en espèces au retrait ?
-      Répondez simplement à cet email ou écrivez-nous au <strong>+269 331 27 22</strong>.</p>
+      Répondez simplement à cet email ou écrivez-nous au <strong>+269 477 78 65</strong>.</p>
     `,
   });
   const result = await sendEmail({ to, subject, html });
