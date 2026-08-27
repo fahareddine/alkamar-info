@@ -27,3 +27,7 @@ backup-system/reports/*
 *.enc
 *.asc
 backup-system/config/rclone.conf
+
+# Captures d'ecran de dev (racine)
+/*.png
+/*.jpeg
